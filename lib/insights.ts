@@ -2,7 +2,7 @@ import { all, run as exec } from "./db";
 import { comparison } from "./compare";
 import { citationStats, engineLangMatrix, getRuns, overview } from "./metrics";
 import { completeJSON } from "./engines";
-import { engineLabel, env } from "./config";
+import { engineLabel, env, geminiOnly } from "./config";
 import type { Lang } from "./types";
 
 export type Insight = { tone: "good" | "warn" | "bad" | "info"; text: string };
@@ -80,6 +80,7 @@ export async function aiInsights(lang: Lang): Promise<Insight[] | null> {
 }
 
 export async function generateAiInsights(runId: number) {
+  if (geminiOnly()) return; // keep the small free Gemini quota for answers
   const engine = env("OPENAI_API_KEY") ? "openai" : env("ANTHROPIC_API_KEY") ? "anthropic" : env("GEMINI_API_KEY") ? "gemini" : null;
   if (!engine) return;
   const f = await facts();

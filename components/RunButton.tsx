@@ -17,8 +17,8 @@ export default function RunButton({ labels, disabled, disabledHint }: { labels: 
       const res = await fetch("/api/run", { method: "POST", headers: { "x-admin-token": token } });
       const j = await res.json();
       if (!res.ok) throw new Error(j.error || res.statusText);
-      setState("done");
-      setMsg(`${j.total - j.failed}/${j.total}`);
+      setState(j.realTotal && !j.realOk ? "failed" : "done");
+      setMsg(j.realTotal ? `${j.real.join(", ")}: ${j.realOk}/${j.realTotal}${j.lastError ? ` · ${j.lastError}` : ""}` : `${j.total - j.failed}/${j.total}`);
       router.refresh();
     } catch (e) {
       setState("failed");

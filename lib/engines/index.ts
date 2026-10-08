@@ -7,6 +7,13 @@ import { env } from "../config";
 
 const TIMEOUT = 120_000;
 
+/** A daily (not per-minute) quota is used up: retrying soon will not help. */
+export class QuotaError extends Error {}
+
+function isDailyQuota(text: string) {
+  return /per ?day|PerDay|daily|retry in \d+h|"retryDelay": ?"(\d{3,})s"/i.test(text);
+}
+
 async function post(url: string, headers: Record<string, string>, body: unknown, attempt = 0): Promise<any> {
   const res = await fetch(url, {
     method: "POST",
@@ -15,10 +22,11 @@ async function post(url: string, headers: Record<string, string>, body: unknown,
     signal: AbortSignal.timeout(TIMEOUT),
   });
   const text = await res.text();
-  // Free tiers have per-minute limits: wait and retry a few times
-  if ((res.status === 429 || res.status === 503) && attempt < 3) {
+  if (res.status === 429 && isDailyQuota(text)) throw new QuotaError(`429 daily quota: ${text.slice(0, 200)}`);
+  // Free tiers also have per-minute limits: wait briefly and retry
+  if ((res.status === 429 || res.status === 503) && attempt < 2) {
     const after = Number(res.headers.get("retry-after")) || 0;
-    await new Promise((r) => setTimeout(r, Math.min(30, after || 6 * 2 ** attempt) * 1000));
+    await new Promise((r) => setTimeout(r, Math.min(20, after || 5 * 2 ** attempt) * 1000));
     return post(url, headers, body, attempt + 1);
   }
   if (!res.ok) throw new Error(`${res.status} ${text.slice(0, 300)}`);
@@ -54,26 +62,51 @@ async function askChatGPT(q: string): Promise<EngineResult> {
   return { text, citations: dedupe(citations) };
 }
 
-// Free Google AI Studio keys may not include Google Search grounding.
-// We try with search first and fall back to the model's own knowledge (GEMINI_SEARCH=false skips the try).
+// Free Google AI Studio keys may not include Google Search grounding, and each model has its own
+// small daily free quota. We try search first, and move to the next model when a model's quota is used up.
 let geminiSearchBlocked = process.env.GEMINI_SEARCH === "false";
+const exhausted = new Set<string>();
+
+export function geminiModels(): string[] {
+  const fromEnv = (process.env.GEMINI_MODEL || "").split(",").map((m) => m.trim()).filter(Boolean);
+  const defaults = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3.8-flash", "gemini-3.5-flash"];
+  return [...new Set([...fromEnv, ...defaults])];
+}
+
+async function geminiCall(body: object): Promise<any> {
+  const headers = { "x-goog-api-key": env("GEMINI_API_KEY")! };
+  let last: Error | null = null;
+  for (const model of geminiModels()) {
+    if (exhausted.has(model)) continue;
+    try {
+      return await post(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, headers, body);
+    } catch (e) {
+      last = e as Error;
+      const m = String(last.message);
+      // quota used up or model not available to this account: try the next model
+      if (e instanceof QuotaError || /^(404|429)/.test(m)) {
+        exhausted.add(model);
+        continue;
+      }
+      throw e;
+    }
+  }
+  throw new QuotaError(`All Gemini models have used today's free quota. Try again tomorrow or enable billing. (${last?.message.slice(0, 120) ?? ""})`);
+}
 
 async function askGemini(q: string): Promise<EngineResult> {
-  const model = process.env.GEMINI_MODEL || "gemini-3.5-flash";
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
-  const headers = { "x-goog-api-key": env("GEMINI_API_KEY")! };
   const body = { contents: [{ role: "user", parts: [{ text: q }] }] };
   let j;
   if (!geminiSearchBlocked) {
     try {
-      j = await post(url, headers, { ...body, tools: [{ google_search: {} }] });
+      j = await geminiCall({ ...body, tools: [{ google_search: {} }] });
     } catch (e) {
       const m = String((e as Error).message);
-      if (!/^(400|403|429)/.test(m)) throw e;
-      geminiSearchBlocked = /^(400|403)/.test(m); // plan without search: stop trying for this instance
+      if (!/^(400|403)/.test(m)) throw e;
+      geminiSearchBlocked = true; // plan without search: stop trying for this instance
     }
   }
-  if (!j) j = await post(url, headers, body);
+  if (!j) j = await geminiCall(body);
   const cand = j.candidates?.[0];
   const text = (cand?.content?.parts ?? []).map((p: { text?: string }) => p.text ?? "").join("");
   // Gemini returns redirect links; the title holds the real domain
@@ -156,11 +189,6 @@ export async function completeJSON(engine: "openai" | "anthropic" | "gemini", pr
     );
     return (j.content ?? []).map((b: { text?: string }) => b.text ?? "").join("");
   }
-  const model = process.env.ANALYZER_MODEL || process.env.GEMINI_MODEL || "gemini-3.5-flash";
-  const j = await post(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-    { "x-goog-api-key": env("GEMINI_API_KEY")! },
-    { contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } },
-  );
+  const j = await geminiCall({ contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } });
   return j.candidates?.[0]?.content?.parts?.[0]?.text ?? "{}";
 }

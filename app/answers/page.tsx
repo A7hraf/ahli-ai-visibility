@@ -19,6 +19,7 @@ type Row = {
   facts: string;
   citations: string;
   error: string | null;
+  simulated: number;
   prompt_text: string;
   lang: string;
 };
@@ -106,6 +107,7 @@ export default async function AnswersPage({ searchParams }: { searchParams: SP }
             <Card key={r.id} className="flex flex-col gap-3">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge tone="brand">{engineLabel(r.engine)}</Badge>
+                {Number(r.simulated) === 1 && <Badge tone="gold">{t.hybrid.badge}</Badge>}
                 {r.error ? <Badge tone="bad">{t.answers.error}</Badge> : Number(r.mentioned) ? <Badge tone={r.rank && Number(r.rank) <= 3 ? "good" : "warn"}>{t.answers.named} · #{r.rank}</Badge> : <Badge>{t.answers.notNamed}</Badge>}
                 {!r.error && Number(r.mentioned) === 1 && <Badge tone={r.sentiment === "positive" ? "good" : r.sentiment === "negative" ? "bad" : "muted"}>{t.answers.sentiment[r.sentiment]}</Badge>}
                 {r.repeat > 1 && <span className="text-xs text-ink-soft">#{r.repeat}</span>}

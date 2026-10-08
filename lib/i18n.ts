@@ -148,6 +148,14 @@ const en = {
     enginesWord: "engines",
     limit: "Usage limit reached. Try again later.",
     privacy: "Do not type customer names, account numbers or any personal data. Questions are sent to external AI services.",
+    simShort: "simulated",
+    realShort: "real",
+  },
+  hybrid: {
+    banner: "Real answers from",
+    simulated: "Simulated until connected",
+    history: "Weeks before the first real measurement are simulated.",
+    badge: "Simulated",
   },
   insights: {
     title: "Key insights",
@@ -475,6 +483,14 @@ const ar: Dict = {
     enginesWord: "محركات",
     limit: "تم الوصول إلى حد الاستخدام. حاول لاحقاً.",
     privacy: "لا تكتب أسماء العملاء أو أرقام الحسابات أو أي بيانات شخصية. الأسئلة تُرسل إلى خدمات ذكاء اصطناعي خارجية.",
+    simShort: "محاكاة",
+    realShort: "حقيقي",
+  },
+  hybrid: {
+    banner: "إجابات حقيقية من",
+    simulated: "محاكاة إلى أن يتم ربطها",
+    history: "الأسابيع قبل أول قياس حقيقي هي بيانات محاكاة.",
+    badge: "محاكاة",
   },
   insights: {
     title: "أبرز الملاحظات",

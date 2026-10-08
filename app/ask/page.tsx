@@ -6,7 +6,7 @@ import AskClient from "@/components/AskClient";
 export default async function AskPage() {
   const { lang, t } = await getT();
   const demo = isDemoMode();
-  const available = demo ? ENGINES.map((e) => e.id) : configuredEngines();
+  const real = demo ? [] : configuredEngines();
   const examples =
     lang === "ar"
       ? ["أريد أفتح حساب في سلطنة عمان، أي بنك أختار؟", "أفضل بنك للتمويل الشخصي للموظف الحكومي في عمان", "أي بنك في عمان عنده أفضل بطاقة للسفر؟"]
@@ -18,7 +18,7 @@ export default async function AskPage() {
         t={t.ask}
         lang={lang}
         demo={demo}
-        engines={ENGINES.filter((e) => available.includes(e.id)).map((e) => ({ id: e.id, label: e.label, color: e.color }))}
+        engines={ENGINES.map((e) => ({ id: e.id, label: e.label, color: e.color, simulated: !real.includes(e.id) }))}
         examples={examples}
         brandAliases={BRAND.aliases}
         competitorAliases={COMPETITORS.flatMap((c) => c.aliases.filter((a) => a.length > 3))}

@@ -1,13 +1,26 @@
 import { createClient, type Client, type InValue } from "@libsql/client";
 import { mkdirSync } from "node:fs";
 import { DEFAULT_FACTS, DEFAULT_PROMPTS } from "./seed";
-import { isDemoMode } from "./config";
+import { ENGINES, configuredEngines, isDemoMode } from "./config";
 
 let client: Client | null = null;
 let ready: Promise<void> | null = null;
 
+// Accept the names used by Vercel's Turso integration as well as our own
+const pickEnv = (...names: string[]) => {
+  for (const n of names) {
+    const k = Object.keys(process.env).find((x) => x.toLowerCase() === n.toLowerCase());
+    const v = k ? process.env[k]?.trim() : undefined;
+    if (v) return v;
+  }
+  return undefined;
+};
+export const DB_URL_ENV = () => pickEnv("DATABASE_URL", "TURSO_DATABASE_URL", "TURSO_URL", "LIBSQL_URL");
+const DB_TOKEN_ENV = () => pickEnv("DATABASE_AUTH_TOKEN", "TURSO_AUTH_TOKEN", "TURSO_DATABASE_AUTH_TOKEN", "LIBSQL_AUTH_TOKEN");
+
 function dbUrl(): string {
-  if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
+  const external = DB_URL_ENV();
+  if (external) return external;
   // Serverless file systems are read-only except /tmp
   if (process.env.VERCEL) return "file:/tmp/ahli-visibility.db";
   try {
@@ -18,7 +31,7 @@ function dbUrl(): string {
 
 function getClient(): Client {
   if (!client) {
-    client = createClient({ url: dbUrl(), authToken: process.env.DATABASE_AUTH_TOKEN || undefined });
+    client = createClient({ url: dbUrl(), authToken: DB_TOKEN_ENV() || undefined });
   }
   return client;
 }
@@ -55,6 +68,7 @@ const SCHEMA = [
     facts TEXT NOT NULL DEFAULT '[]',
     citations TEXT NOT NULL DEFAULT '[]',
     error TEXT,
+    simulated INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL
   )`,
   `CREATE INDEX IF NOT EXISTS idx_answers_run ON answers(run_id)`,
@@ -103,6 +117,10 @@ const SCHEMA = [
 async function init() {
   const c = getClient();
   for (const s of SCHEMA) await c.execute(s);
+  // migration for databases created before the "simulated" column existed
+  try {
+    await c.execute("ALTER TABLE answers ADD COLUMN simulated INTEGER NOT NULL DEFAULT 0");
+  } catch {}
   const p = await c.execute("SELECT COUNT(*) AS n FROM prompts");
   if (Number(p.rows[0].n) === 0) {
     for (const pr of DEFAULT_PROMPTS) {
@@ -121,11 +139,13 @@ async function init() {
       });
     }
   }
-  if (isDemoMode()) {
+  // Demo mode, or engines still without keys: start with clearly-flagged simulated history
+  if (isDemoMode() || configuredEngines().length < ENGINES.length) {
     const a = await c.execute("SELECT COUNT(*) AS n FROM answers");
     if (Number(a.rows[0].n) === 0) {
       const { seedDemoHistory } = await import("./demo");
       await seedDemoHistory(c);
+      await c.execute("UPDATE answers SET simulated = 1 WHERE run_id IN (SELECT id FROM runs WHERE mode = 'demo')");
     }
   }
   // improvement plan: one row per action, keeps the team's status updates

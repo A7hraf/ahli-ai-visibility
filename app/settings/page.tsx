@@ -22,7 +22,7 @@ export default async function SettingsPage() {
                   <span className="text-xs text-ink-soft">{e.webSearch ? t.settings.webSearch : t.settings.memoryOnly}</span>
                   <span className="ms-auto flex items-center gap-2">
                     <code dir="ltr" className="hidden rounded bg-canvas px-1.5 py-0.5 text-[11px] text-ink-muted sm:inline">{e.envKey}</code>
-                    <Badge tone={on ? "good" : "muted"}>{on ? t.settings.connected : t.settings.notConnected}</Badge>
+                    <Badge tone={on ? "good" : demo ? "muted" : "gold"}>{on ? t.settings.connected : demo ? t.settings.notConnected : t.hybrid.badge}</Badge>
                   </span>
                 </li>
               );

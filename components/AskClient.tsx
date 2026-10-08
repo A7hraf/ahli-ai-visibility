@@ -6,6 +6,7 @@ import { Icon } from "./Icon";
 type Result = {
   engine: string;
   ok: boolean;
+  simulated?: boolean;
   text?: string;
   error?: string;
   citations?: { url: string; title?: string }[];
@@ -70,7 +71,7 @@ export default function AskClient({
   t: T;
   lang: string;
   demo: boolean;
-  engines: { id: string; label: string; color: string }[];
+  engines: { id: string; label: string; color: string; simulated: boolean }[];
   examples: string[];
   brandAliases: string[];
   competitorAliases: string[];
@@ -117,7 +118,9 @@ export default function AskClient({
     if (res.ok) setSaved(true);
   }
 
-  const ok = results?.filter((r) => r.ok) ?? [];
+  const okAll = results?.filter((r) => r.ok) ?? [];
+  const okReal = okAll.filter((r) => !r.simulated);
+  const ok = okReal.length ? okReal : okAll;
   const namedCount = ok.filter((r) => r.mentioned).length;
 
   return (
@@ -178,6 +181,7 @@ export default function AskClient({
               >
                 <span className="h-2 w-2 rounded-full" style={{ background: e.color }} />
                 {e.label}
+                {e.simulated && <span className="text-[10px] opacity-70">({t.simShort})</span>}
               </button>
             );
           })}
@@ -229,6 +233,11 @@ export default function AskClient({
                     <span className="flex items-center gap-2 font-display font-semibold text-navy">
                       <span className="h-2.5 w-2.5 rounded-full" style={{ background: eng?.color }} />
                       {eng?.label}
+                      {r.simulated ? (
+                        <span className="rounded-full bg-gold-50 px-2 py-0.5 text-[11px] font-medium text-gold-700">{t.simShort}</span>
+                      ) : (
+                        <span className="rounded-full bg-good-soft px-2 py-0.5 text-[11px] font-medium text-good">{t.realShort}</span>
+                      )}
                     </span>
                     {r.ok &&
                       (r.mentioned ? (

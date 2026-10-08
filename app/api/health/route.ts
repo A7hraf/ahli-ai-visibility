@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { all } from "@/lib/db";
 import { configuredEngines, env, isDemoMode } from "@/lib/config";
+import { geminiModels } from "@/lib/engines";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -19,11 +20,12 @@ async function quick(url: string, init: RequestInit) {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const test = new URL(req.url).searchParams.get("test") === "1"; // model tests use quota: opt-in
   const out: Record<string, unknown> = { mode: isDemoMode() ? "demo" : "live", engines: configuredEngines() };
   const key = env("GEMINI_API_KEY");
   if (key) {
-    const model = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+    const model = geminiModels()[0];
     const headers = { "x-goog-api-key": key, "content-type": "application/json" };
     const base = "https://generativelanguage.googleapis.com/v1beta";
     const body = JSON.stringify({ contents: [{ parts: [{ text: "Reply with one word: OK" }] }] });
@@ -33,13 +35,13 @@ export async function GET() {
     const models = await quick(`${base}/models?pageSize=200`, { headers });
     const ids = [...new Set((models.raw ?? "").match(/gemini-[a-z0-9.\-]*flash[a-z0-9.\-]*/g) ?? [])];
     out.flashModels = ids.slice(0, 20);
-    const tryModels = [...new Set([model, "gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-2.5-flash"])];
+    const tryModels = geminiModels();
     const tests: Record<string, unknown> = {};
-    for (const m of tryModels) {
+    for (const m of test ? tryModels : []) {
       const r = await quick(`${base}/models/${m}:generateContent`, { method: "POST", headers, body });
       tests[m] = r.status === 200 ? { status: 200, ms: r.ms } : strip(r);
     }
-    out.modelTests = tests;
+    out.modelTests = test ? tests : "add ?test=1 to test each model (uses quota)";
   }
   try {
     out.lastRuns = await all("SELECT id, status, notes, started_at, mode FROM runs ORDER BY id DESC LIMIT 3");
