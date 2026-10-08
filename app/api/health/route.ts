@@ -6,14 +6,14 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 // Diagnostics: one quick, no-retry call per check. Never returns keys.
-const clean = (s: string) => s.replace(/key=[^&\s"]+/gi, "key=***").replace(/\s+/g, " ").slice(0, 300);
+const clean = (s: string, n = 300) => s.replace(/key=[^&\s"]+/gi, "key=***").replace(/\s+/g, " ").slice(0, n);
 
 async function quick(url: string, init: RequestInit) {
   const t0 = Date.now();
   try {
     const r = await fetch(url, { ...init, signal: AbortSignal.timeout(15000) });
     const text = await r.text();
-    return { status: r.status, ms: Date.now() - t0, body: clean(text) };
+    return { status: r.status, ms: Date.now() - t0, body: clean(text, 900), raw: text };
   } catch (e) {
     return { status: 0, ms: Date.now() - t0, body: clean(String((e as Error).message)) };
   }
@@ -28,15 +28,18 @@ export async function GET() {
     const base = "https://generativelanguage.googleapis.com/v1beta";
     const body = JSON.stringify({ contents: [{ parts: [{ text: "Reply with one word: OK" }] }] });
     out.geminiModel = model;
-    out.geminiPlain = await quick(`${base}/models/${model}:generateContent`, { method: "POST", headers, body });
-    out.geminiSearch = await quick(`${base}/models/${model}:generateContent`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({ contents: [{ parts: [{ text: "Reply with one word: OK" }] }], tools: [{ google_search: {} }] }),
-    });
+    void body;
+    const strip = (x: { status: number; ms: number; body: string }) => ({ status: x.status, ms: x.ms, body: x.body });
     const models = await quick(`${base}/models?pageSize=200`, { headers });
-    out.flashModels = (models.body.match(/models\/gemini-[a-z0-9.\-]*flash[a-z0-9.\-]*/g) ?? []).slice(0, 15);
-    if (models.status !== 200) out.modelsList = models;
+    const ids = [...new Set((models.raw ?? "").match(/gemini-[a-z0-9.\-]*flash[a-z0-9.\-]*/g) ?? [])];
+    out.flashModels = ids.slice(0, 20);
+    const tryModels = [...new Set([model, "gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-2.5-flash"])];
+    const tests: Record<string, unknown> = {};
+    for (const m of tryModels) {
+      const r = await quick(`${base}/models/${m}:generateContent`, { method: "POST", headers, body });
+      tests[m] = r.status === 200 ? { status: 200, ms: r.ms } : strip(r);
+    }
+    out.modelTests = tests;
   }
   try {
     out.lastRuns = await all("SELECT id, status, notes, started_at, mode FROM runs ORDER BY id DESC LIMIT 3");
