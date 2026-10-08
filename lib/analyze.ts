@@ -1,9 +1,9 @@
-import { BRAND, COMPETITORS } from "./config";
+import { BRAND, COMPETITORS, geminiOnly } from "./config";
 import { completeJSON } from "./engines";
 import type { Analysis, ExtractedFact, Fact } from "./types";
 
 function analyzerEngine(): "openai" | "anthropic" | "gemini" | null {
-  const pref = process.env.ANALYZER_ENGINE || "auto";
+  const pref = process.env.ANALYZER_ENGINE || (geminiOnly() ? "none" : "auto");
   if (pref === "none") return null; // rule-based reading only (saves API calls on free plans)
   const has = { openai: !!process.env.OPENAI_API_KEY, anthropic: !!process.env.ANTHROPIC_API_KEY, gemini: !!process.env.GEMINI_API_KEY };
   if (pref !== "auto" && has[pref as keyof typeof has]) return pref as "openai" | "anthropic" | "gemini";

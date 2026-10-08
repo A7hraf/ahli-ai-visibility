@@ -83,7 +83,7 @@ You can run the system live **for free** with a Google Gemini key:
 1. Go to https://aistudio.google.com/apikey, sign in with a Google account, **Create API key**.
 2. In Vercel → Project → Settings → Environment Variables add:
    * `GEMINI_API_KEY` = your key
-   * `REPEATS` = `1`, `ANALYZER_ENGINE` = `none`, `CONCURRENCY` = `2` (stays inside the free per-minute limits)
+   * Nothing else is required: with only a Gemini key the app uses free-tier-friendly defaults (1 repeat, rule-based reading, 2 parallel requests).
 3. Create a free database at https://turso.tech and add `DATABASE_URL` and `DATABASE_AUTH_TOKEN` so results are kept.
 4. Redeploy.
 

@@ -54,7 +54,13 @@ export function isDemoMode(): boolean {
   return configuredEngines().length === 0;
 }
 
+/** Only the free Gemini key is set: use light defaults that fit free-tier limits. */
+export function geminiOnly(): boolean {
+  const e = configuredEngines();
+  return e.length === 1 && e[0] === "gemini";
+}
+
 export function repeats(): number {
-  const n = Number(process.env.REPEATS ?? 3);
+  const n = Number(process.env.REPEATS ?? (geminiOnly() ? 1 : 3));
   return Number.isFinite(n) && n >= 1 && n <= 10 ? Math.floor(n) : 3;
 }

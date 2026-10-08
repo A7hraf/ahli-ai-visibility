@@ -2,7 +2,7 @@ import { all, db, run as exec } from "./db";
 import { ASK } from "./engines";
 import { analyzeAnswer } from "./analyze";
 import { compareFacts } from "./accuracy";
-import { configuredEngines, isDemoMode, repeats } from "./config";
+import { configuredEngines, geminiOnly, isDemoMode, repeats } from "./config";
 import type { Fact, Prompt } from "./types";
 
 /**
@@ -29,7 +29,7 @@ export async function collect(opts: { promptIds?: number[] } = {}) {
 
   let failed = 0;
   // small concurrency pool: polite to the APIs, still finishes in minutes
-  const CONCURRENCY = Math.max(1, Math.min(8, Number(process.env.CONCURRENCY ?? 4) || 4));
+  const CONCURRENCY = Math.max(1, Math.min(8, Number(process.env.CONCURRENCY ?? (geminiOnly() ? 2 : 4)) || 4));
   let next = 0;
   async function worker() {
     while (next < jobs.length) {
