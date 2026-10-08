@@ -29,7 +29,7 @@ export async function collect(opts: { promptIds?: number[] } = {}) {
 
   let failed = 0;
   // small concurrency pool: polite to the APIs, still finishes in minutes
-  const CONCURRENCY = 4;
+  const CONCURRENCY = Math.max(1, Math.min(8, Number(process.env.CONCURRENCY ?? 4) || 4));
   let next = 0;
   async function worker() {
     while (next < jobs.length) {

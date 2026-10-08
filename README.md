@@ -76,6 +76,19 @@ Open `.env.local` and paste the keys you have (any subset works):
 
 Restart, then press **Run now** (or run `npm run run:collect` in the terminal). Delete the demo database first so live results start clean: `npm run db:reset`.
 
+### Free setup (no credit card)
+
+You can run the system live **for free** with a Google Gemini key:
+
+1. Go to https://aistudio.google.com/apikey, sign in with a Google account, **Create API key**.
+2. In Vercel → Project → Settings → Environment Variables add:
+   * `GEMINI_API_KEY` = your key
+   * `REPEATS` = `1`, `ANALYZER_ENGINE` = `none`, `CONCURRENCY` = `2` (stays inside the free per-minute limits)
+3. Create a free database at https://turso.tech and add `DATABASE_URL` and `DATABASE_AUTH_TOKEN` so results are kept.
+4. Redeploy.
+
+Limits of the free plan: free keys may not include Google Search grounding, so Gemini answers from its own knowledge (no cited sources); Google may use free-tier prompts to improve its products (fine here, questions are public); per-minute and per-day request limits apply. Enabling billing on the Google project unlocks search grounding, with a monthly free allowance.
+
 > **Never commit `.env.local`** — it is already in `.gitignore`.
 
 Then on the **Accuracy** page, replace the sample figures with the values approved by the Product and Compliance teams.
