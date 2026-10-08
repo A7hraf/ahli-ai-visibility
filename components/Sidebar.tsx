@@ -47,10 +47,7 @@ export default function Sidebar({ nav, appName, appSub }: { nav: UIText["nav"]; 
     <nav className="flex flex-col gap-5">
       {GROUPS.map((g) => (
         <div key={g.key} className="flex flex-col gap-0.5">
-          <p className="mb-1.5 flex items-center gap-2 px-3 font-display text-[12px] font-semibold tracking-wide text-gold-400/80">
-            <span className="h-px w-3 bg-gold-400/50" />
-            {nav[g.key]}
-          </p>
+          <p className="mb-1 px-3 text-[11.5px] font-bold text-ink-soft">{nav[g.key]}</p>
           {g.items.map((it) => {
             const active = isActive(it);
             return (
@@ -58,9 +55,10 @@ export default function Sidebar({ nav, appName, appSub }: { nav: UIText["nav"]; 
                 key={it.href}
                 href={it.href}
                 aria-current={active ? "page" : undefined}
-                className={`group relative flex items-center gap-3 rounded-full px-3 py-[7px] text-[14px] transition-all duration-200 ${active ? "bg-gold font-semibold text-navy shadow-glow" : "text-white/70 hover:bg-white/[0.08] hover:ps-4 hover:text-white"}`}
+                className={`group relative flex items-center gap-3 rounded-lg px-3 py-2 text-[14.5px] transition-colors duration-150 ${active ? "bg-navy/[0.06] font-bold text-navy" : "font-medium text-ink-2 hover:bg-slate-100 hover:text-ink"}`}
               >
-                <span className={`transition-transform duration-200 group-hover:scale-110 ${active ? "text-navy" : "text-gold-400/70"}`}>
+                {active && <span className="absolute inset-y-1.5 start-0 w-[3px] rounded-full bg-gold" aria-hidden="true" />}
+                <span className={`transition-transform duration-150 group-hover:scale-110 ${active ? "text-navy" : "text-ink-soft group-hover:text-ink-2"}`}>
                   <Icon name={it.icon} size={17} />
                 </span>
                 {nav[it.key]}
@@ -73,7 +71,7 @@ export default function Sidebar({ nav, appName, appSub }: { nav: UIText["nav"]; 
   );
 
   const foot = (
-    <div className="grid grid-cols-3 gap-1 rounded-2xl bg-white/[0.05] p-1">
+    <div className="grid grid-cols-3 gap-1 border-t border-line pt-3">
       {FOOT.map((it) => {
         const active = isActive(it);
         return (
@@ -81,7 +79,7 @@ export default function Sidebar({ nav, appName, appSub }: { nav: UIText["nav"]; 
             key={it.href}
             href={it.href}
             aria-current={active ? "page" : undefined}
-            className={`flex flex-col items-center gap-1 rounded-xl px-1 py-2 text-center text-[10.5px] leading-tight transition ${active ? "bg-gold font-semibold text-navy" : "text-white/60 hover:bg-white/[0.08] hover:text-white"}`}
+            className={`flex flex-col items-center gap-1 rounded-lg px-1 py-2 text-center text-[11px] leading-tight transition ${active ? "bg-navy/[0.06] font-bold text-navy" : "text-ink-muted hover:bg-slate-100 hover:text-ink"}`}
           >
             <Icon name={it.icon} size={16} />
             {nav[it.key]}
@@ -94,31 +92,31 @@ export default function Sidebar({ nav, appName, appSub }: { nav: UIText["nav"]; 
   return (
     <>
       {/* desktop: pinned to the side, never scrolls with the page */}
-      <aside className="pattern-star fixed inset-y-0 start-0 z-40 hidden w-64 flex-col gap-6 overflow-hidden bg-navy px-4 py-5 lg:flex">
+      <aside className="fixed inset-y-0 start-0 z-40 hidden w-64 flex-col gap-5 overflow-hidden border-e border-line bg-white px-3 py-5 lg:flex">
         <Link href="/" className="flex items-center gap-3 px-1">
-          <span className="rounded-2xl bg-white px-2.5 py-1.5 shadow-glow">
+          <span className="px-1.5 py-1">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/ahlibank-logo.png" alt="ahlibank" className="h-8 w-auto" />
           </span>
         </Link>
         <div className="-mt-2 px-2">
-          <p className="font-display text-[16px] font-semibold leading-snug text-white">{appName}</p>
-          <p className="mt-0.5 text-[11px] text-white/50">{appSub}</p>
+          <p className="text-[15px] font-bold leading-snug text-ink">{appName}</p>
+          <p className="mt-0.5 text-[12px] text-ink-muted">{appSub}</p>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto">{list}</div>
         {foot}
       </aside>
 
       {/* mobile */}
-      <div className="sticky top-0 z-40 flex items-center justify-between bg-navy px-4 py-2.5 lg:hidden">
+      <div className="sticky top-0 z-40 flex items-center justify-between border-b border-line bg-white px-4 py-2.5 lg:hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/ahlibank-logo.png" alt="ahlibank" className="h-8 w-auto rounded-md bg-white px-2 py-1" />
-        <button onClick={() => setOpen(!open)} className="rounded-lg p-2 text-white" aria-label="Menu" aria-expanded={open}>
+        <img src="/ahlibank-logo.png" alt="ahlibank" className="h-8 w-auto" />
+        <button onClick={() => setOpen(!open)} className="rounded-lg p-2 text-ink" aria-label="Menu" aria-expanded={open}>
           <Icon name={open ? "close" : "menu"} />
         </button>
       </div>
       {open && (
-        <div className="pattern-star fixed inset-0 top-[52px] z-30 flex flex-col gap-6 overflow-y-auto bg-navy px-4 pb-8 pt-4 lg:hidden">
+        <div className="fixed inset-0 top-[53px] z-30 flex flex-col gap-6 overflow-y-auto bg-white px-4 pb-8 pt-4 lg:hidden">
           {list}
           {foot}
         </div>

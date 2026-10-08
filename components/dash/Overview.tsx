@@ -76,30 +76,30 @@ function RaceTrack({ ds, ui, rank, lang, onPick }: { ds: Dataset; ui: UIText; ra
                   {r.delta !== null && <TipRow label={ui.vsPrev} value={`${r.delta > 0 ? "+" : ""}${r.delta}`} />}
                 </span>,
               )}
-              className={`group grid w-full grid-cols-[18px_1fr] items-center gap-x-3 rounded-2xl px-2.5 py-1 text-start transition-all duration-200 hover:bg-white/[0.08] sm:grid-cols-[18px_minmax(92px,150px)_1fr] ${r.isBrand ? "bg-gold/[0.14] ring-1 ring-gold/40" : ""}`}
+              className={`group grid w-full grid-cols-[18px_1fr] items-center gap-x-3 rounded-lg px-2.5 py-0.5 text-start transition-colors duration-150 hover:bg-slate-50 sm:grid-cols-[18px_minmax(110px,160px)_1fr] ${r.isBrand ? "bg-gold-50 ring-1 ring-gold-100" : ""}`}
             >
-              <span className="num text-[12px] font-semibold text-white/45">{i + 1}</span>
-              <span dir="auto" className={`truncate text-[13px] transition-colors ${r.isBrand ? "font-bold text-gold-400" : "text-white/80 group-hover:text-white"}`}>
+              <span className="num text-[12px] font-bold text-ink-soft">{i + 1}</span>
+              <span dir="auto" className={`truncate text-[14px] ${r.isBrand ? "font-extrabold text-ink" : "font-medium text-ink-2"}`}>
                 {bankLabel(ds, ui, r.b)}
               </span>
               {/* the track runs from the bank's name outward, in reading direction */}
               <span className="relative col-span-2 h-8 sm:col-span-1">
-                <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-white/10" />
+                <span className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-slate-100" />
                 {[25, 50, 75].map((g) => (
-                  <span key={g} className="absolute bottom-1 top-1 w-px bg-white/[0.06]" style={{ insetInlineStart: `${g * SCALE}%` }} />
+                  <span key={g} className="absolute bottom-1.5 top-1.5 w-px bg-slate-200/70" style={{ insetInlineStart: `${g * SCALE}%` }} />
                 ))}
                 <span
-                  className="absolute top-1/2 h-[5px] -translate-y-1/2 rounded-full group-hover:h-[7px]"
-                  style={{ insetInlineStart: 0, width: `${at}%`, background: `linear-gradient(to ${lang === "ar" ? "left" : "right"}, ${c}00, ${c})`, transition: `width 1.3s cubic-bezier(.2,.7,.2,1) ${i * 90}ms, height .2s` }}
+                  className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full group-hover:h-2"
+                  style={{ insetInlineStart: 0, width: `${at}%`, background: c, transition: `width 1.3s cubic-bezier(.2,.7,.2,1) ${i * 90}ms, height .2s` }}
                 />
                 <span
                   className={`absolute top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center rtl:translate-x-1/2 ${r.isBrand ? "pulse-gold rounded-full" : ""}`}
                   style={{ insetInlineStart: `${at}%`, transition: `inset-inline-start 1.3s cubic-bezier(.2,.7,.2,1) ${i * 90}ms` }}
                 >
-                  <BankBadge color={c} short={ds.bankShort[r.b]} size={r.isBrand ? 32 : 28} brand={r.isBrand} />
+                  <BankBadge color={c} short={ds.bankShort[r.b]} size={r.isBrand ? 30 : 26} brand={r.isBrand} />
                 </span>
                 <span
-                  className="num absolute top-1/2 -translate-y-1/2 whitespace-nowrap ps-5 text-[12px] font-semibold text-white/80"
+                  className="num absolute top-1/2 -translate-y-1/2 whitespace-nowrap ps-5 text-[13px] font-bold text-ink"
                   style={{ insetInlineStart: `${at}%`, opacity: shown ? 1 : 0, transition: `inset-inline-start 1.3s cubic-bezier(.2,.7,.2,1) ${i * 90}ms, opacity .4s ${900 + i * 90}ms` }}
                 >
                   {r.reach}%
@@ -139,25 +139,24 @@ function ChannelColumns({ ds, ui, m, onPick }: { ds: Dataset; ui: UIText; m: { c
                 e.label
               ),
             )}
-            className="group flex h-full flex-col items-center justify-end gap-2 rounded-3xl px-1 pt-2 transition hover:bg-paper disabled:opacity-40"
+            className="group flex h-full flex-col items-center justify-end gap-2 rounded-xl px-1 pt-2 transition hover:bg-slate-50 disabled:opacity-40"
           >
-            <span className="font-display text-[20px] font-bold leading-none transition-transform group-hover:-translate-y-1" style={{ color: e.color }}>
+            <span className="text-[18px] font-extrabold leading-none text-ink transition-transform group-hover:-translate-y-0.5">
               {c ? <CountUp value={c.reach} /> : "–"}
               {c ? "%" : ""}
             </span>
             <Delta v={c && pv ? c.reach - pv.reach : null} size="xs" />
-            <span className="relative w-full max-w-[64px] flex-1">
+            <span className="relative w-full max-w-[52px] flex-1 rounded-t-lg bg-slate-100">
               <span
-                className="absolute inset-x-0 bottom-0 rounded-b-md rounded-t-[18px] group-hover:brightness-110"
+                className="absolute inset-x-0 bottom-0 rounded-t-lg group-hover:brightness-110"
                 style={{
                   height: shown && c ? `${Math.max(3, (c.reach / top) * 100)}%` : "0%",
-                  background: `linear-gradient(180deg, ${e.color}, ${e.color}bb)`,
-                  boxShadow: `0 10px 24px -10px ${e.color}`,
+                  background: e.color,
                   transition: `height 1.1s cubic-bezier(.2,.7,.2,1) ${i * 110}ms, filter .2s`,
                 }}
               />
             </span>
-            <span className="truncate text-[12.5px] font-semibold text-ink-2">{e.label}</span>
+            <span className="flex items-center gap-1.5 truncate text-[13px] font-bold text-ink-2"><span className="h-2 w-2 rounded-full" style={{ background: e.color }} />{e.label}</span>
           </button>
         );
       })}
@@ -225,7 +224,7 @@ function OverviewInner({ ds, ui, lang, plan }: { ds: Dataset; ui: UIText; lang: 
   const gap = arM && enM ? Math.round((enM.reach - arM.reach) * 10) / 10 : null;
   const sentData = [
     { key: "pos", label: ui.sent.pos, value: m.s.pos, color: "#16A34A" },
-    { key: "neu", label: ui.sent.neu, value: m.s.neu, color: "#D3C8B5" },
+    { key: "neu", label: ui.sent.neu, value: m.s.neu, color: "#D0D5DD" },
     { key: "neg", label: ui.sent.neg, value: m.s.neg, color: "#DB2B39" },
   ];
   const sov = [...m.rank].sort((a, b) => b.sov - a.sov);
@@ -254,134 +253,107 @@ function OverviewInner({ ds, ui, lang, plan }: { ds: Dataset; ui: UIText; lang: 
 
       {/* 1. WHERE ARE WE TODAY */}
       <Chapter id="now" n={1} title={ui.story.s1}>
-        <Reveal className="relative overflow-hidden rounded-[32px] shadow-pop">
-          <section {...spotlight} className="pattern-star spot spot-dark relative overflow-hidden bg-navy p-6 text-white sm:p-8">
-            <span className="drift pointer-events-none absolute -end-24 -top-24 h-80 w-80 rounded-full bg-gold/25 blur-3xl" aria-hidden="true" />
-            <span className="drift pointer-events-none absolute -bottom-28 -start-20 h-80 w-80 rounded-full bg-turq/25 blur-3xl [animation-delay:-7s]" aria-hidden="true" />
-            <div className="relative grid gap-8 lg:grid-cols-12 lg:items-center">
-              <div className="flex flex-col gap-5 lg:col-span-5">
-                <span className="inline-flex items-center gap-2 self-start rounded-full bg-white/10 px-3 py-1 text-[12px] font-medium text-gold-400 ring-1 ring-white/10">
-                  <Star size={12} /> {ui.kpi.index} <InfoTip text={ui.help.index} light />
-                </span>
-                <p className="font-display text-[28px] font-semibold leading-[1.3] sm:text-[34px]">
-                  {ar ? (
-                    <>
-                      الذكاء الاصطناعي يذكرنا في{" "}
-                      <span className="text-gold-400">
-                        <CountUp value={m.s.reach} />%
-                      </span>{" "}
-                      من إجاباته
-                    </>
-                  ) : (
-                    <>
-                      AI mentions us in{" "}
-                      <span className="text-gold-400">
-                        <CountUp value={m.s.reach} />%
-                      </span>{" "}
-                      of its answers
-                    </>
-                  )}
-                </p>
-                <div className="flex flex-wrap items-center gap-6">
-                  <div {...pressable(() => setMetric("index"))} aria-pressed={metric === "index"} className="rounded-full transition-transform hover:scale-105">
-                    <Ring value={m.s.index} color="url(#heroGold)" size={150}>
-                      <svg width="0" height="0" className="absolute">
-                        <defs>
-                          <linearGradient id="heroGold" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stopColor="#F3DC7B" />
-                            <stop offset="100%" stopColor="#C9A227" />
-                          </linearGradient>
-                        </defs>
-                      </svg>
-                      <span className="font-display text-[46px] font-bold leading-none">
-                        <CountUp value={m.s.index} />
-                      </span>
-                      <span className="mt-1 text-[11px] text-white/55">/ 100</span>
-                    </Ring>
-                  </div>
-                  <div className="flex flex-col gap-3">
-                    <div>
-                      <p className="text-[12px] text-white/55">{ui.kpi.rank}</p>
-                      <p className="font-display text-[40px] font-bold leading-none">
-                        #{m.pos}
-                        <span className="ms-1.5 text-[15px] font-normal text-white/55">
-                          {ui.of} {ds.banks.length}
-                        </span>
-                      </p>
-                    </div>
-                    <span className="flex items-center gap-2 text-[12px] text-white/60">
-                      <Delta v={m.p ? m.s.index - m.p.index : null} /> {ui.vsPrev}
+        {/* KPI row: the five numbers that matter, all clickable */}
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
+          <Reveal>
+            <div
+              {...pressable(() => setMetric("index"))}
+              aria-pressed={metric === "index"}
+              className={`group flex h-full flex-col gap-3 rounded-2xl border bg-white p-4 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-pop ${metric === "index" ? "border-gold ring-2 ring-gold/30" : "border-line"}`}
+            >
+              <span className="flex items-center justify-between gap-2 text-[13.5px] font-bold text-ink-2">
+                {ui.kpi.index}
+                <InfoTip text={ui.help.index} />
+              </span>
+              <div className="flex items-center gap-3">
+                <Ring value={m.s.index} color="#C9A227" track="#F2F4F7" size={76} stroke={8}>
+                  <span className="text-[22px] font-extrabold leading-none text-ink">
+                    <CountUp value={m.s.index} />
+                  </span>
+                </Ring>
+                <div>
+                  <p className="text-[12px] text-ink-muted">{ui.kpi.rank}</p>
+                  <p className="text-[24px] font-extrabold leading-none text-ink">
+                    #{m.pos}
+                    <span className="ms-1 text-[13px] font-medium text-ink-muted">
+                      {ui.of} {ds.banks.length}
                     </span>
-                  </div>
+                  </p>
                 </div>
               </div>
-              <div className="lg:col-span-7">
-                <div className="mb-2 flex items-center justify-between gap-3">
-                  <p className="font-display text-[18px] font-semibold">{ui.overview.race}</p>
-                  <span className="text-[11.5px] text-white/50">{ui.clickHint}</span>
-                </div>
-                <RaceTrack ds={ds} ui={ui} rank={m.rank} lang={lang} onPick={(b) => setSel({ kind: "bank", b })} />
-              </div>
+              <span className="mt-auto flex items-center gap-1.5">
+                <Delta v={m.p ? m.s.index - m.p.index : null} />
+                <span className="truncate text-[12px] text-ink-muted">{ui.vsPrev}</span>
+              </span>
             </div>
-          </section>
-        </Reveal>
+          </Reveal>
+          {METRICS.map((k, i) => {
+            const v = m.s[k.key];
+            const pv = m.p ? m.p[k.key] : null;
+            const on = metric === k.key;
+            return (
+              <Reveal key={k.key} delay={(i + 1) * 70}>
+                <div
+                  {...pressable(() => setMetric(k.key))}
+                  aria-pressed={on}
+                  className={`group flex h-full flex-col gap-2 rounded-2xl border bg-white p-4 text-start shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-pop ${on ? "ring-2" : "border-line"}`}
+                  style={on ? { borderColor: k.color, ["--tw-ring-color" as string]: `${k.color}33` } : undefined}
+                >
+                  <span className="flex items-center justify-between gap-2">
+                    <span className="flex items-center gap-2 text-[13.5px] font-bold text-ink-2">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-lg transition-transform duration-200 group-hover:scale-110" style={{ background: `${k.color}17`, color: k.color }}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d={k.icon} />
+                        </svg>
+                      </span>
+                      {ui.kpi[k.k]}
+                    </span>
+                    <InfoTip text={ui.help[k.k]} />
+                  </span>
+                  <span className="text-[30px] font-extrabold leading-none text-ink">
+                    <CountUp value={v} />
+                    <span className="text-[17px] font-bold text-ink-muted">%</span>
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Delta v={pv !== null ? v - pv : null} />
+                    <span className="truncate text-[12px] text-ink-muted">{ui.vsPrev}</span>
+                  </span>
+                  <span className="mt-auto">
+                    <Sparkline data={m.spark(k.key)} color={k.color} w={220} h={32} />
+                  </span>
+                </div>
+              </Reveal>
+            );
+          })}
+        </div>
 
-        <div className="grid gap-4 lg:grid-cols-12">
-          <Reveal className="lg:col-span-4">
-            <div {...spotlight} className="spot relative flex h-full flex-col items-center justify-center gap-4 overflow-hidden rounded-4xl bg-white p-6 text-center shadow-card transition-shadow hover:shadow-pop">
-              <Waffle value={m.s.reach} empty="#F1EBE0" size={15} gap={5} />
-              <p className="font-display text-[19px] font-semibold leading-snug text-ink">
+        <div className="grid gap-5 lg:grid-cols-12">
+          <Panel className="lg:col-span-8" accent={GOLD} title={ui.overview.race} sub={ui.overview.rankSub} action={<ClickHint>{ui.clickHint}</ClickHint>}>
+            <Insight tone={m.pos === 1 ? "good" : "gold"}>
+              {ar ? (
+                <>
+                  الذكاء الاصطناعي يذكرنا في <b>{m.s.reach}%</b> من إجاباته، وترتيبنا <b>#{m.pos}</b> من {ds.banks.length} بنوك.
+                </>
+              ) : (
+                <>
+                  AI mentions us in <b>{m.s.reach}%</b> of its answers. We rank <b>#{m.pos}</b> of {ds.banks.length} banks.
+                </>
+              )}
+            </Insight>
+            <RaceTrack ds={ds} ui={ui} rank={m.rank} lang={lang} onPick={(b) => setSel({ kind: "bank", b })} />
+          </Panel>
+          <Panel className="flex flex-col lg:col-span-4" accent={GOLD} title={ui.kpi.reach} sub={ui.term.reach}>
+            <div className="flex flex-1 flex-col items-center justify-center gap-5 pb-4 text-center">
+              <Waffle value={m.s.reach} empty="#EEF0F3" size={16} gap={6} />
+              <p className="text-[16px] font-bold leading-snug text-ink">
                 {ar ? "من كل 100 إجابة، " : "Out of every 100 answers, "}
-                <span className="text-[30px] text-gold-600">
+                <span className="text-[26px] font-extrabold text-gold-600">
                   <CountUp value={Math.round(m.s.reach)} />
                 </span>
                 {ar ? " تذكرنا" : " mention us"}
               </p>
             </div>
-          </Reveal>
-          <div className="grid grid-cols-2 gap-4 lg:col-span-8">
-            {METRICS.map((k, i) => {
-              const v = m.s[k.key];
-              const pv = m.p ? m.p[k.key] : null;
-              const on = metric === k.key;
-              return (
-                <Reveal key={k.key} delay={i * 90}>
-                  <div
-                    {...pressable(() => {
-                      setMetric(k.key);
-                      document.getElementById("rivals")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                    })}
-                    {...spotlight}
-                    aria-pressed={on}
-                    className={`spot group relative flex h-full flex-col gap-2.5 overflow-hidden rounded-4xl ${k.tint} p-5 text-start transition-all duration-300 hover:-translate-y-1 ${on ? "shadow-pop" : "shadow-card hover:shadow-pop"}`}
-                    style={on ? { boxShadow: `0 0 0 2px ${k.color}, 0 14px 30px -12px ${k.color}88` } : undefined}
-                  >
-                    <span className="flex items-center justify-between gap-2">
-                      <span className="flex items-center gap-2 text-[13.5px] font-semibold text-ink-2">
-                        <span className="flex h-8 w-8 items-center justify-center rounded-full text-white transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" style={{ background: k.color }}>
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <path d={k.icon} />
-                          </svg>
-                        </span>
-                        {ui.kpi[k.k]}
-                      </span>
-                      <InfoTip text={ui.help[k.k]} />
-                    </span>
-                    <span className="font-display text-[44px] font-bold leading-none" style={{ color: k.color }}>
-                      <CountUp value={v} />
-                      <span className="text-[22px]">%</span>
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <Delta v={pv !== null ? v - pv : null} />
-                      <span className="truncate text-[11px] text-ink-muted">{ui.vsPrev}</span>
-                    </span>
-                    <span className="text-[10.5px] font-medium uppercase tracking-wider text-ink-soft">{ui.term[k.k]}</span>
-                    <Sparkline data={m.spark(k.key)} color={k.color} w={260} h={36} />
-                  </div>
-                </Reveal>
-              );
-            })}
-          </div>
+          </Panel>
         </div>
       </Chapter>
 
@@ -466,8 +438,8 @@ function OverviewInner({ ds, ui, lang, plan }: { ds: Dataset; ui: UIText; lang: 
               {(["ar", "en"] as const).map((k) => {
                 const v = m.markets.find((x) => x.key === k);
                 return (
-                  <button key={k} disabled={!v} onClick={() => setSel({ kind: "seg", kicker: ui.drawer.market, title: ui.markets[k], f: { mk: k } })} className="group flex flex-col items-center gap-2 rounded-3xl p-2 transition hover:-translate-y-1 hover:bg-paper">
-                    <Ring value={v?.reach ?? 0} size={136} stroke={14} color={MARKET_COLOR[k]} track="#F1EBE0">
+                  <button key={k} disabled={!v} onClick={() => setSel({ kind: "seg", kicker: ui.drawer.market, title: ui.markets[k], f: { mk: k } })} className="group flex flex-col items-center gap-2 rounded-xl p-2 transition hover:bg-slate-50">
+                    <Ring value={v?.reach ?? 0} size={136} stroke={14} color={MARKET_COLOR[k]} track="#F2F4F7">
                       <span className="font-display text-[32px] font-bold leading-none" style={{ color: MARKET_COLOR[k] }}>
                         {v ? <CountUp value={v.reach} /> : "–"}
                         {v ? "%" : ""}
@@ -533,7 +505,7 @@ function OverviewInner({ ds, ui, lang, plan }: { ds: Dataset; ui: UIText; lang: 
             />
             <Legend className="mt-4 justify-center" items={sentData.map((d) => ({ label: d.label, color: d.color, value: `${d.value}%` }))} />
             {ds.openAlerts > 0 && (
-              <Link href="/accuracy" className="group mt-5 flex items-center gap-3 rounded-2xl bg-bad-soft p-3.5 transition hover:-translate-y-0.5 hover:shadow-card">
+              <Link href="/accuracy" className="group mt-5 flex items-center gap-3 rounded-xl border border-bad/20 bg-bad-soft p-3.5 transition hover:shadow-card">
                 <span className="font-display text-[26px] font-bold leading-none text-bad">{ds.openAlerts}</span>
                 <span className="text-[12.5px] font-medium text-ink">
                   {ui.kpi.alerts} <span className="inline-block transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1">{arrow}</span>
@@ -552,7 +524,7 @@ function OverviewInner({ ds, ui, lang, plan }: { ds: Dataset; ui: UIText; lang: 
             title={ui.overview.media}
             sub={ui.overview.mediaSub}
             action={
-              <Link href="/sources" className="rounded-full bg-paper px-3 py-1.5 text-[12.5px] font-semibold text-ink transition hover:bg-gold-50">
+              <Link href="/sources" className="rounded-lg border border-line px-3 py-1.5 text-[13px] font-bold text-ink transition hover:bg-slate-50">
                 {ui.nav.sources} {arrow}
               </Link>
             }
@@ -588,7 +560,7 @@ function OverviewInner({ ds, ui, lang, plan }: { ds: Dataset; ui: UIText; lang: 
           </Panel>
           <Panel accent="#DB2B39" title={ui.overview.lost} sub={ui.overview.lostSub} action={<ClickHint>{ui.clickHint}</ClickHint>}>
             {m.lost.banks[0] && <Insight tone="bad">{fill(ui.ins.lost, { bank: bankLabel(ds, ui, m.lost.banks[0].b) })}</Insight>}
-            <div className="mb-4 flex items-center gap-3 rounded-2xl bg-paper p-3.5">
+            <div className="mb-4 flex items-center gap-3 rounded-xl border border-line bg-slate-50 p-3.5">
               <span className="font-display text-[30px] font-bold leading-none text-bad">
                 <CountUp value={Math.round((1000 * m.lost.missed) / m.n) / 10} />%
               </span>
@@ -611,7 +583,7 @@ function OverviewInner({ ds, ui, lang, plan }: { ds: Dataset; ui: UIText; lang: 
             title={ui.overview.plan}
             sub={ui.overview.planSub}
             action={
-              <Link href="/plan" className="group rounded-full bg-navy px-4 py-2 text-[12.5px] font-semibold text-white transition hover:-translate-y-0.5 hover:bg-navy-700">
+              <Link href="/plan" className="group rounded-lg bg-navy px-3.5 py-2 text-[13px] font-bold text-white transition hover:bg-navy-700">
                 {ui.overview.openPlan} <span className="inline-block transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1">{arrow}</span>
               </Link>
             }
@@ -619,9 +591,9 @@ function OverviewInner({ ds, ui, lang, plan }: { ds: Dataset; ui: UIText; lang: 
             {dIdx !== null && <Insight tone={dIdx >= 0 ? "good" : "bad"}>{dIdx > 0.5 ? fill(ui.ins.up, { d: dIdx }) : dIdx < -0.5 ? fill(ui.ins.down, { d: Math.abs(dIdx) }) : ui.ins.flat}</Insight>}
             <div className="grid gap-6 lg:grid-cols-12">
               <div className="flex flex-col gap-5 lg:col-span-4">
-                <div className="rounded-3xl bg-white/80 p-5">
+                <div className="rounded-xl border border-line p-5">
                   <p className="text-[12px] text-ink-muted">{ui.plan.progress}</p>
-                  <p className="mt-1 font-display text-[36px] font-bold leading-none text-ink">
+                  <p className="mt-1 text-[32px] font-extrabold leading-none text-ink">
                     <CountUp value={plan.done} />
                     <span className="text-[16px] font-normal text-ink-muted"> / {plan.done + plan.doing + plan.todo}</span>
                   </p>
@@ -639,19 +611,19 @@ function OverviewInner({ ds, ui, lang, plan }: { ds: Dataset; ui: UIText; lang: 
                     ]}
                   />
                 </div>
-                <div className="pattern-star relative rounded-3xl bg-navy p-5 text-white">
-                  <p className="text-[12px] font-medium text-gold-400">{ui.overview.forecastTo}</p>
+                <div className="rounded-xl border border-gold-100 bg-gold-50 p-5">
+                  <p className="text-[13px] font-bold text-gold-700">{ui.overview.forecastTo}</p>
                   <p className="mt-1 flex items-baseline gap-2">
-                    <span className="font-display text-[22px] font-semibold text-white/60">{plan.current}%</span>
-                    <span className="text-white/40">{arrow}</span>
-                    <span className="font-display text-[42px] font-bold leading-none text-gold-400">
+                    <span className="text-[22px] font-bold text-ink-muted">{plan.current}%</span>
+                    <span className="text-ink-soft">{arrow}</span>
+                    <span className="text-[38px] font-extrabold leading-none text-gold-700">
                       <CountUp value={plan.target} />%
                     </span>
                   </p>
-                  <p className="mt-1 text-[12px] text-white/55">{ui.term.reach}</p>
+                  <p className="mt-1 text-[12px] text-ink-muted">{ui.term.reach}</p>
                 </div>
               </div>
-              <div className="rounded-3xl bg-white/80 p-4 lg:col-span-8">
+              <div className="rounded-xl border border-line p-4 lg:col-span-8">
                 <TrendLines
                   height={250}
                   data={plan.points}

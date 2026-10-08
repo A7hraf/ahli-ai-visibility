@@ -51,23 +51,23 @@ function PositionMap({ data, ui, onPick, ds }: { data: ReturnType<typeof ranking
         <rect x={x(avgX)} y={P.t} width={W - P.r - x(avgX)} height={y(avgY) - P.t} fill="#FBF5DF" rx={14} />
         {ticks(maxY).map((v) => (
           <g key={`y${v}`}>
-            <line x1={P.l} x2={W - P.r} y1={y(v)} y2={y(v)} stroke="#EFE8DB" />
-            <text x={P.l - 8} y={y(v) + 4} fontSize="11" textAnchor="end" fill="#8C8371">
+            <line x1={P.l} x2={W - P.r} y1={y(v)} y2={y(v)} stroke="#EEF0F3" />
+            <text x={P.l - 8} y={y(v) + 4} fontSize="11" textAnchor="end" fill="#667085">
               {v}%
             </text>
           </g>
         ))}
         {ticks(maxX).map((v) => (
-          <text key={`x${v}`} x={x(v)} y={H - P.b + 18} fontSize="11" textAnchor="middle" fill="#8C8371">
+          <text key={`x${v}`} x={x(v)} y={H - P.b + 18} fontSize="11" textAnchor="middle" fill="#667085">
             {v}%
           </text>
         ))}
-        <line x1={x(avgX)} x2={x(avgX)} y1={P.t} y2={H - P.b} stroke="#D3C8B5" />
-        <line x1={P.l} x2={W - P.r} y1={y(avgY)} y2={y(avgY)} stroke="#D3C8B5" />
-        <text x={x(avgX) + 10} y={P.t + 18} fontSize="12.5" fill="#A6841A" fontWeight="700" fontFamily="Reem Kufi, sans-serif">
+        <line x1={x(avgX)} x2={x(avgX)} y1={P.t} y2={H - P.b} stroke="#D0D5DD" />
+        <line x1={P.l} x2={W - P.r} y1={y(avgY)} y2={y(avgY)} stroke="#D0D5DD" />
+        <text x={x(avgX) + 10} y={P.t + 18} fontSize="12.5" fill="#A6841A" fontWeight="700" fontFamily="Tajawal, sans-serif">
           ★ {ui.lang === "ar" ? "منطقة القادة" : "Leaders' corner"}
         </text>
-        <text x={P.l + 8} y={H - P.b - 10} fontSize="11.5" fill="#B3A894" fontWeight="600">
+        <text x={P.l + 8} y={H - P.b - 10} fontSize="11.5" fill="#98A2B3" fontWeight="600">
           {ui.lang === "ar" ? "منخفض الظهور" : "Low visibility"}
         </text>
         <text x={(P.l + W - P.r) / 2} y={H - 4} fontSize="12" textAnchor="middle" fill="#66717E">
@@ -103,7 +103,7 @@ function PositionMap({ data, ui, onPick, ds }: { data: ReturnType<typeof ranking
             >
               {d.isBrand && <circle cx={x(d.reach)} cy={y(d.first)} r={r + 7} fill={c} opacity={0.22} />}
               <circle cx={x(d.reach)} cy={y(d.first)} r={r} fill={c} fillOpacity={0.92} stroke="#fff" strokeWidth={3} />
-              <text x={x(d.reach)} y={y(d.first) + 4} fontSize={short.length > 3 ? 9 : short.length > 2 ? 10.5 : 12.5} fontWeight="700" textAnchor="middle" fill="#fff" fontFamily="Reem Kufi, sans-serif">
+              <text x={x(d.reach)} y={y(d.first) + 4} fontSize={short.length > 3 ? 9 : short.length > 2 ? 10.5 : 12.5} fontWeight="700" textAnchor="middle" fill="#fff" fontFamily="Tajawal, sans-serif">
                 {short}
               </text>
               {lab && (
@@ -166,44 +166,40 @@ function Inner({ ds, ui, lang }: { ds: Dataset; ui: UIText; lang: "en" | "ar" })
 
       {/* headline tiles */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="pattern-star hero-glow rise relative overflow-hidden rounded-4xl bg-navy p-6 text-white shadow-pop">
-          <p className="flex items-center gap-2 text-[12.5px] font-semibold text-gold-400">
-            <Star size={12} /> {ui.competitors.position}
-          </p>
-          <p className="mt-3 font-display text-[56px] font-bold leading-none">
+        <div className="rise flex flex-col rounded-2xl border border-line bg-white p-5 shadow-card">
+          <p className="text-[13.5px] font-bold text-ink-2">{ui.competitors.position}</p>
+          <p className="mt-2 text-[36px] font-extrabold leading-none text-ink">
             #{pos}
-            <span className="ms-1.5 text-[16px] font-normal text-white/55">
+            <span className="ms-1.5 text-[15px] font-medium text-ink-muted">
               {ui.of} {ds.banks.length}
             </span>
           </p>
         </div>
         <button
           onClick={() => setSel({ kind: "bank", b: leader.b })}
-          className="rise relative flex flex-col overflow-hidden rounded-4xl p-6 text-start text-white shadow-card transition hover:-translate-y-0.5"
-          style={{ background: `linear-gradient(135deg, ${lc}, ${lc}cc)` }}
+          className="rise relative flex flex-col overflow-hidden rounded-2xl border border-line bg-white p-5 text-start shadow-card transition hover:-translate-y-0.5 hover:shadow-pop"
+          style={{ borderTop: `3px solid ${lc}` }}
         >
-          <p className="text-[12.5px] font-medium text-white/80">{ui.competitors.leader}</p>
-          <p className="mt-2 flex items-center gap-2.5 font-display text-[24px] font-bold leading-tight">
-            <span className="rounded-full bg-white/20 p-0.5">
-              <BankBadge color={lc} short={ds.bankShort[leader.b]} size={34} />
-            </span>
+          <p className="text-[13.5px] font-bold text-ink-2">{ui.competitors.leader}</p>
+          <p className="mt-2 flex items-center gap-2.5 text-[20px] font-extrabold leading-tight text-ink">
+            <BankBadge color={lc} short={ds.bankShort[leader.b]} size={32} />
             {name(leader.b)}
           </p>
-          <p className="mt-auto pt-3 text-[12.5px] text-white/80">
-            {ui.kpi.reach} <b className="text-white">{leader.reach}%</b>
+          <p className="mt-auto pt-3 text-[13px] text-ink-muted">
+            {ui.kpi.reach} <b className="text-ink">{leader.reach}%</b>
           </p>
         </button>
-        <div className="rise flex flex-col rounded-4xl bg-coral-50 p-6 shadow-card">
-          <p className="text-[12.5px] font-medium text-ink-2">{ui.competitors.gap}</p>
-          <p className={`mt-2 font-display text-[48px] font-bold leading-none ${gap < 0 ? "text-coral" : "text-good"}`}>
+        <div className="rise flex flex-col rounded-2xl border border-line bg-white p-5 shadow-card">
+          <p className="text-[13.5px] font-bold text-ink-2">{ui.competitors.gap}</p>
+          <p className={`mt-2 text-[36px] font-extrabold leading-none ${gap < 0 ? "text-bad" : "text-good"}`}>
             {gap > 0 ? "+" : gap < 0 ? "−" : ""}
             {Math.abs(gap)}
           </p>
           <p className="mt-auto pt-2 text-[12.5px] text-ink-muted">{ui.competitors.gapUnit}</p>
         </div>
-        <div className="rise flex flex-col rounded-4xl bg-white p-6 shadow-card">
-          <p className="text-[12.5px] font-medium text-ink-2">{ui.kpi.sov}</p>
-          <p className="mt-2 font-display text-[48px] font-bold leading-none text-gold-600">{brand.sov}%</p>
+        <div className="rise flex flex-col rounded-2xl border border-line bg-white p-5 shadow-card">
+          <p className="text-[13.5px] font-bold text-ink-2">{ui.kpi.sov}</p>
+          <p className="mt-2 text-[36px] font-extrabold leading-none text-ink">{brand.sov}%</p>
           <div className="mt-auto flex h-3 gap-[3px] overflow-hidden rounded-full pt-0" dir="ltr">
             {m.rank.map((r) => (
               <span key={r.b} className="rounded-full" style={{ flex: r.sov, background: bankColor(ds, r.b), opacity: r.isBrand ? 1 : 0.85 }} title={`${name(r.b)} ${r.sov}%`} />

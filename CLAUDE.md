@@ -27,7 +27,7 @@ Internal tool for Ahli Bank Oman's Digital Marketing team. It measures how AI as
 
 ## Conventions
 - Layout: the sidebar is `position: fixed` (never scrolls with the page); `.pattern-star` must not set `position` or it breaks that.
-- Look: "Muscat night & sand" — warm sand background, midnight-blue hero/sidebar with an Omani eight-point-star pattern (`.pattern-star` in `globals.css`), Ahli gold accents. Fonts: Reem Kufi for headings and big numbers (`font-display`), Readex Pro for text; both cover Arabic and English. Palette tokens live in `tailwind.config.ts` (`slate` is remapped to warm greys).
+- Look: clean dashboard. One typeface, Tajawal (Google Fonts, Arabic + Latin). Neutral grey page (`canvas`), white cards with a 1px border (`rounded-2xl border border-line bg-white p-5 shadow-card`), card titles 16px bold with a short coloured bar, Ahli navy for primary actions and gold for Ahli. No decorative patterns or glows (`.pattern-star`, `.hero-glow`, `.drift` are switched off in `globals.css`). Palette tokens live in `tailwind.config.ts`.
 - Every bank has its own colour and short code (`color`, `short` on `BRAND` and `COMPETITORS` in `lib/config.ts`). Ahli Bank is always gold. Show a bank with `BankBadge` / `BankName` (colour disc + code) so it is never identified by colour alone. AI channel colours are set in `lib/config.ts` too; don't reuse them for other meanings.
 - Add new UI text to BOTH `en` and `ar` in `lib/i18n.ts`. Use logical Tailwind classes (`ms-`, `pe-`, `start-`) so RTL works.
 - Charts are client components in `components/viz/`; plotted SVG/Recharts areas are wrapped in `dir="ltr"`. Every chart element that shows a number should open the detail drawer or carry a tooltip.

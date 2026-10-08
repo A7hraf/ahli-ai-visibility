@@ -21,7 +21,7 @@ export default async function SitePage() {
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {report ? (
-          <div className="flex items-center gap-4 rise rounded-4xl bg-white p-6 shadow-card">
+          <div className="flex items-center gap-4 rise rounded-2xl border border-line bg-white p-5 shadow-card">
             <Donut
               size={92}
               thickness={11}
@@ -47,9 +47,9 @@ export default async function SitePage() {
           const n = AUDIT_FINDINGS.filter((f) => f.severity === sv).length;
           const tone = sv === "high" ? "text-bad bg-bad-soft/50 border-bad/20" : sv === "medium" ? "text-warn bg-warn-soft/50 border-warn/20" : "text-ink-muted bg-white border-line";
           return (
-            <div key={sv} className={`flex flex-col rise rounded-4xl border p-6 shadow-card ${tone}`}>
+            <div key={sv} className={`flex flex-col rise rounded-2xl border p-5 shadow-card ${tone}`}>
               <p className="text-[12.5px] font-medium text-ink-muted">{lang === "ar" ? "أولوية" : "Priority"}: {t.site.severity[sv]}</p>
-              <p className="mt-2 font-display text-[44px] font-bold leading-none">{n}</p>
+              <p className="mt-2 text-[34px] font-extrabold leading-none">{n}</p>
               <div className="mt-auto flex gap-1 pt-3">
                 {Array.from({ length: AUDIT_FINDINGS.length }).map((_, i) => (
                   <span key={i} className={`h-1.5 flex-1 rounded-full ${i < n ? "bg-current" : "bg-slate-200"}`} />

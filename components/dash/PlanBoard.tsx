@@ -120,7 +120,7 @@ function Inner({ actions, colors, ui, t, lang, proj }: Props) {
             data={(["done", "doing", "todo"] as const).map((k) => ({ key: k, label: t.status[k], value: counts[k], color: statusColor[k] }))}
             center={
               <>
-                <span className="font-display text-[36px] font-bold leading-none text-ink">
+                <span className="text-[32px] font-extrabold leading-none text-ink">
                   {counts.done}
                   <span className="text-[15px] font-normal text-ink-muted">/{actions.length}</span>
                 </span>
@@ -130,7 +130,7 @@ function Inner({ actions, colors, ui, t, lang, proj }: Props) {
           />
           <Legend className="mt-4 justify-center" items={(["done", "doing", "todo"] as const).map((k) => ({ label: t.status[k], color: statusColor[k], value: counts[k] }))} />
           <div className="mt-4 rounded-xl bg-good-soft p-3 text-center">
-            <p className="font-display text-[28px] font-bold leading-none text-good">+{gain}</p>
+            <p className="text-[26px] font-extrabold leading-none text-good">+{gain}</p>
             <p className="mt-1 text-[11.5px] text-ink-muted">{t.plan.expectedTotal}</p>
           </div>
         </Panel>

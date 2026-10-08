@@ -10,16 +10,16 @@ import TrendLines from "./TrendLines";
 
 export const GOLD = "#C9A227";
 export const NAVY = "#0E2235";
-export const GREY = "#A79C88";
+export const GREY = "#98A2B3";
 export const KIND_COLOR: Record<string, string> = {
   own: GOLD,
   comparison: "#1F86E0",
   news: "#0F9F94",
   community: "#7A4FE0",
-  competitor: "#A79C88",
+  competitor: "#98A2B3",
   lookalike: "#DB2B39",
   government: "#E0559A",
-  other: "#D3C8B5",
+  other: "#D0D5DD",
 };
 
 export type Sel =

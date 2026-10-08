@@ -78,7 +78,7 @@ export default async function HowPage() {
         <h2 className="font-display mb-4 text-[22px] font-bold text-navy">{t.how.glossary}</h2>
         <dl className="grid gap-3 md:grid-cols-2">
           {glossary.map((g) => (
-            <div key={g.k} className="rise rounded-4xl bg-white p-6 shadow-card">
+            <div key={g.k} className="rise rounded-2xl border border-line bg-white p-5 shadow-card">
               <dt className="font-semibold text-navy">{g.k}</dt>
               <dd className="mt-1 text-[14px] leading-relaxed text-ink-muted">{g.v}</dd>
             </div>

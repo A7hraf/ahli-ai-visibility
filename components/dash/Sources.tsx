@@ -50,29 +50,28 @@ function Inner({ ds, ui, lang, ownPages }: { ds: Dataset; ui: UIText; lang: "en"
       <FilterBar ds={ds} ui={ui} f={f} set={set} />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="pattern-star rise relative overflow-hidden rounded-4xl bg-navy p-6 text-white shadow-pop">
-          <div className="hero-glow pointer-events-none absolute inset-0" />
-          <p className="relative text-[12px] font-semibold uppercase tracking-[0.08em] text-gold-400">{ui.sources.owned}</p>
-          <p className="relative mt-3 font-display text-[48px] font-bold leading-none">{m.s.ownRate}%</p>
-          <p className="relative mt-2 flex items-center gap-2 text-[12px] text-white/65">
+        <div className="rise flex flex-col rounded-2xl border border-line bg-white p-5 shadow-card" style={{ borderTop: "3px solid #C9A227" }}>
+          <p className="text-[13.5px] font-bold text-ink-2">{ui.sources.owned}</p>
+          <p className="mt-2 text-[36px] font-extrabold leading-none text-ink">{m.s.ownRate}%</p>
+          <p className="mt-2 flex items-center gap-2 text-[12px] text-ink-muted">
             <Delta v={m.p ? m.s.ownRate - m.p.ownRate : null} /> {ui.vsPrev}
           </p>
         </div>
-        <div className="flex flex-col rise rounded-4xl bg-white p-6 shadow-card">
+        <div className="flex flex-col rise rounded-2xl border border-line bg-white p-5 shadow-card">
           <p className="text-[12.5px] font-medium text-ink-muted">{lang === "ar" ? "إجمالي الاستشهادات" : "Total citations"}</p>
-          <p className="mt-2 font-display text-[44px] font-bold leading-none text-ink">{m.s.total}</p>
+          <p className="mt-2 text-[34px] font-extrabold leading-none text-ink">{m.s.total}</p>
           <p className="mt-auto pt-2 text-[12.5px] text-ink-muted">
             {m.s.withCites} {ui.answers}
           </p>
         </div>
-        <div className="flex flex-col rise rounded-4xl bg-white p-6 shadow-card">
+        <div className="flex flex-col rise rounded-2xl border border-line bg-white p-5 shadow-card">
           <p className="text-[12.5px] font-medium text-ink-muted">{lang === "ar" ? "مواقع مختلفة" : "Unique websites"}</p>
-          <p className="mt-2 font-display text-[44px] font-bold leading-none text-ink">{m.s.domains.length}</p>
+          <p className="mt-2 text-[34px] font-extrabold leading-none text-ink">{m.s.domains.length}</p>
           <p className="mt-auto pt-2 text-[12.5px] text-ink-muted">{lang === "ar" ? "يقرأها الذكاء الاصطناعي" : "read by AI"}</p>
         </div>
-        <div className={`flex flex-col rise rounded-4xl border p-6 shadow-card ${risky ? "border-bad/30 bg-bad-soft/50" : "border-line bg-white"}`}>
+        <div className={`flex flex-col rise rounded-2xl border p-5 shadow-card ${risky ? "border-bad/30 bg-bad-soft/50" : "border-line bg-white"}`}>
           <p className="text-[12.5px] font-medium text-ink-muted">{ui.media.lookalike}</p>
-          <p className={`mt-2 font-display text-[44px] font-bold leading-none ${risky ? "text-bad" : "text-ink"}`}>{risky}</p>
+          <p className={`mt-2 text-[34px] font-extrabold leading-none ${risky ? "text-bad" : "text-ink"}`}>{risky}</p>
           <p className="mt-auto pt-2 text-[12.5px] text-ink-muted">{lang === "ar" ? "استشهاد قد يسبب خلطاً بالعلامة" : "citations that risk brand confusion"}</p>
         </div>
       </div>

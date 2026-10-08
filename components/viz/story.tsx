@@ -22,8 +22,8 @@ export function SectionNav({ items, label }: { items: { id: string; label: strin
     return () => io.disconnect();
   }, [items]);
   return (
-    <nav aria-label={label} className="sticky top-[110px] z-20 -mx-1 overflow-x-auto px-1 py-2 lg:top-[62px]">
-      <ol className="flex w-max gap-1.5 rounded-full bg-white/85 p-1.5 shadow-card backdrop-blur-md">
+    <nav aria-label={label} className="sticky top-[110px] z-20 -mx-4 overflow-x-auto border-b border-line bg-canvas/95 px-4 backdrop-blur-md sm:-mx-8 sm:px-8 lg:top-[57px]">
+      <ol className="flex w-max gap-1">
         {items.map((it, i) => {
           const on = active === it.id;
           return (
@@ -31,10 +31,11 @@ export function SectionNav({ items, label }: { items: { id: string; label: strin
               <a
                 href={`#${it.id}`}
                 aria-current={on ? "true" : undefined}
-                className={`flex items-center gap-2 whitespace-nowrap rounded-full px-3.5 py-1.5 text-[12.5px] font-medium transition-all duration-300 ${on ? "bg-navy text-white shadow-sm" : "text-ink-muted hover:bg-paper hover:text-ink"}`}
+                className={`relative flex items-center gap-2 whitespace-nowrap px-3 py-3 text-[14px] transition-colors duration-200 ${on ? "font-bold text-navy" : "font-medium text-ink-muted hover:text-ink"}`}
               >
-                <span className={`font-display text-[11px] font-bold ${on ? "text-gold-400" : "text-gold-600"}`}>{String(i + 1).padStart(2, "0")}</span>
+                <span className={`flex h-5 w-5 items-center justify-center rounded-md text-[11px] font-bold ${on ? "bg-navy text-white" : "bg-slate-200 text-ink-2"}`}>{i + 1}</span>
                 {it.label}
+                <span className={`absolute inset-x-2 -bottom-px h-[2px] rounded-full bg-gold transition-transform duration-300 ${on ? "scale-x-100" : "scale-x-0"}`} />
               </a>
             </li>
           );
@@ -47,11 +48,10 @@ export function SectionNav({ items, label }: { items: { id: string; label: strin
 /** Numbered chapter heading. */
 export function Chapter({ id, n, title, children }: { id: string; n: number; title: string; children: ReactNode }) {
   return (
-    <section id={id} className="flex scroll-mt-32 flex-col gap-5">
-      <header className="flex items-center gap-4 pt-4">
-        <span className="font-display text-[46px] font-bold leading-none text-transparent [-webkit-text-stroke:1.5px_#C9A227]">{String(n).padStart(2, "0")}</span>
-        <h2 className="font-display text-[26px] font-bold leading-tight text-ink sm:text-[30px]">{title}</h2>
-        <span className="h-px flex-1 bg-gradient-to-r from-line to-transparent rtl:bg-gradient-to-l" />
+    <section id={id} className="flex scroll-mt-36 flex-col gap-4">
+      <header className="flex items-center gap-3 pt-3">
+        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-navy text-[13px] font-bold text-white">{n}</span>
+        <h2 className="text-[20px] font-extrabold leading-tight text-ink">{title}</h2>
       </header>
       {children}
     </section>
@@ -121,7 +121,7 @@ export function AnswerPreview({ ds, ui, rows }: { ds: Dataset; ui: UIText; rows:
             <button
               key={e.id}
               onClick={() => setEngine(e.id)}
-              className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px] font-semibold transition-all ${on ? "text-white shadow-md" : "bg-paper text-ink-2 hover:-translate-y-0.5"}`}
+              className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[13px] font-bold transition-all ${on ? "border-transparent text-white shadow-sm" : "border-line bg-white text-ink-2 hover:bg-slate-50"}`}
               style={on ? { background: e.color } : undefined}
             >
               {e.label}
@@ -131,7 +131,7 @@ export function AnswerPreview({ ds, ui, rows }: { ds: Dataset; ui: UIText; rows:
         })}
       </div>
 
-      <div className="flex min-h-[260px] flex-col gap-3 rounded-3xl bg-paper p-4">
+      <div className="flex min-h-[260px] flex-col gap-3 rounded-xl border border-line bg-slate-50 p-4">
         <div className="flex items-end gap-2 self-start">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold text-[14px] text-navy" aria-hidden="true">
             👤
@@ -171,7 +171,7 @@ export function AnswerPreview({ ds, ui, rows }: { ds: Dataset; ui: UIText; rows:
         )}
       </div>
       {questions.length > 1 && (
-        <button onClick={() => setQi((i) => i + 1)} className="self-start rounded-full bg-navy px-4 py-2 text-[12.5px] font-semibold text-white transition hover:-translate-y-0.5 hover:bg-navy-700">
+        <button onClick={() => setQi((i) => i + 1)} className="self-start rounded-lg border border-line bg-white px-3.5 py-2 text-[13px] font-bold text-ink transition hover:bg-slate-50">
           ↻ {ui.overview.nextQ}
         </button>
       )}

@@ -113,16 +113,16 @@ export function BarList({ items, max, unit = "%", onSelect, active, labelWidth =
             <Tag
               {...(onSelect ? { type: "button" as const, onClick: () => onSelect(it.key) } : {})}
               {...(it.tip ? tip(it.tip) : {})}
-              className={`group flex w-full items-center gap-3 rounded-xl px-2 text-start transition ${dense ? "py-1" : "py-1.5"} ${onSelect ? "cursor-pointer hover:translate-x-0.5 hover:bg-paper focus-visible:bg-paper rtl:hover:-translate-x-0.5" : ""} ${active === it.key ? "bg-gold-50 ring-1 ring-gold-100" : ""}`}
+              className={`group flex w-full items-center gap-3 rounded-xl px-2 text-start transition ${dense ? "py-1" : "py-1.5"} ${onSelect ? "cursor-pointer hover:bg-slate-50 focus-visible:bg-slate-50" : ""} ${active === it.key ? "bg-brand-50 ring-1 ring-brand-100" : ""}`}
             >
               <span className={`${labelWidth} min-w-0 shrink-0 truncate text-[13px] ${it.strong ? "font-semibold text-ink" : "text-ink-2"}`}>
                 {it.label}
                 {it.sub && <span className="block truncate text-[11px] font-normal text-ink-soft">{it.sub}</span>}
               </span>
-              <span className="relative h-3 min-w-0 flex-1 rounded-full bg-slate-100">
+              <span className="relative h-2.5 min-w-0 flex-1 rounded-full bg-slate-100">
                 <span
                   className="absolute inset-y-0 start-0 rounded-full transition-[width,filter] duration-1000 ease-out group-hover:brightness-110"
-                  style={{ width: shown ? `${Math.max(1.5, (it.value / top) * 100)}%` : "0%", background: it.color ?? "#0B6298", boxShadow: `0 2px 8px -2px ${(it.color ?? "#0B6298")}66` }}
+                  style={{ width: shown ? `${Math.max(1.5, (it.value / top) * 100)}%` : "0%", background: it.color ?? "#0B6298" }}
                 />
                 {it.marker !== undefined && it.marker !== null && (
                   <span className="absolute -inset-y-1 w-0.5 rounded-full bg-ink/60" style={{ insetInlineStart: `calc(${(it.marker / top) * 100}% - 1px)` }} />
@@ -155,7 +155,7 @@ export function Donut({ data, size = 168, thickness = 22, center, onSelect }: { 
   return (
     <div className="relative mx-auto" style={{ width: size, height: size }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90" style={{ direction: "ltr" }}>
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#F1EBE0" strokeWidth={thickness} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#F2F4F7" strokeWidth={thickness} />
         {data.map((d) => {
           const len = (d.value / total) * C;
           const off = acc;
@@ -206,7 +206,7 @@ export function Legend({ items, className = "" }: { items: { label: ReactNode; c
 
 /* ---------- heatmap ---------- */
 
-const RAMP = ["#F3EEE4", "#D3EEE9", "#A6DDD4", "#6CC5B8", "#35A79A", "#15877C", "#0D6760", "#0A4845"];
+const RAMP = ["#F2F5FA", "#DCE7F4", "#BACFE9", "#8FB2DA", "#6192C9", "#3B74B5", "#255894", "#173F6D"];
 export function rampColor(v: number, max: number) {
   const t = max ? Math.max(0, Math.min(1, v / max)) : 0;
   return RAMP[Math.round(t * (RAMP.length - 1))];
@@ -246,7 +246,7 @@ export function Heatmap({
             <span className={`flex items-center truncate pe-2 text-[13px] ${r.strong ? "font-semibold text-ink" : "text-ink-2"}`}>{r.label}</span>
             {r.cells.map((v, i) => {
               const c = cols[i];
-              if (v === null) return <span key={c.key} className="h-11 rounded-xl bg-slate-50" />;
+              if (v === null) return <span key={c.key} className="h-10 rounded-lg bg-slate-50" />;
               const bg = rampColor(v, top);
               const dark = v / top > 0.5;
               return (
@@ -255,8 +255,8 @@ export function Heatmap({
                   type="button"
                   onClick={() => onSelect?.(r.key, c.key)}
                   {...tip(tipText ? tipText(r.key, c.key, v) : format(v))}
-                  className={`num h-11 rounded-xl text-[13px] font-semibold transition hover:scale-[1.06] hover:shadow-lg focus-visible:scale-[1.06] ${r.strong ? "ring-2 ring-gold ring-offset-2" : ""} ${onSelect ? "cursor-pointer" : "cursor-default"}`}
-                  style={{ background: bg, color: dark ? "#fff" : "#13263A", opacity: shown ? 1 : 0, transform: shown ? undefined : "scale(.6)", transitionDelay: shown ? `${(ri * cols.length + i) * 18}ms` : "0ms", transitionDuration: "450ms" }}
+                  className={`num h-10 rounded-lg text-[13px] font-bold transition hover:scale-[1.04] hover:shadow-md focus-visible:scale-[1.04] ${r.strong ? "ring-2 ring-gold ring-offset-1" : ""} ${onSelect ? "cursor-pointer" : "cursor-default"}`}
+                  style={{ background: bg, color: dark ? "#fff" : "#101828", opacity: shown ? 1 : 0, transform: shown ? undefined : "scale(.6)", transitionDelay: shown ? `${(ri * cols.length + i) * 18}ms` : "0ms", transitionDuration: "450ms" }}
                 >
                   {format(v)}
                 </button>
@@ -304,16 +304,16 @@ export function Drawer({ open, onClose, title, kicker, children, closeLabel = "C
         aria-modal="true"
         className={`absolute inset-y-0 end-0 flex w-full max-w-[580px] flex-col bg-canvas shadow-2xl outline-none transition-transform duration-300 ease-out ${open ? "translate-x-0" : "translate-x-full rtl:-translate-x-full"}`}
       >
-        <header className="pattern-star relative flex items-start justify-between gap-4 overflow-hidden bg-navy px-6 py-6 text-white">
-          <span className="absolute inset-x-0 bottom-0 h-1" style={{ background: accent ?? "#C9A227" }} />
+        <header className="relative flex items-start justify-between gap-4 border-b border-line bg-white px-6 py-5">
+          <span className="absolute inset-x-0 top-0 h-1" style={{ background: accent ?? "#C9A227" }} />
           <div className="flex min-w-0 items-center gap-3">
             {badge}
             <div className="min-w-0">
-              {kicker && <p className="mb-1 text-[11.5px] font-semibold uppercase tracking-[0.1em] text-gold-400">{kicker}</p>}
-              <h2 className="text-[21px] font-semibold leading-snug text-white">{title}</h2>
+              {kicker && <p className="mb-1 text-[12px] font-medium text-ink-muted">{kicker}</p>}
+              <h2 className="text-[19px] font-bold leading-snug text-ink">{title}</h2>
             </div>
           </div>
-          <button onClick={onClose} aria-label={closeLabel} className="rounded-full p-2 text-white/70 hover:bg-white/10 hover:text-white">
+          <button onClick={onClose} aria-label={closeLabel} className="rounded-lg p-2 text-ink-muted hover:bg-slate-100 hover:text-ink">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M6 6l12 12M18 6 6 18" />
             </svg>
@@ -329,14 +329,14 @@ export function Drawer({ open, onClose, title, kicker, children, closeLabel = "C
 
 export function Segmented<T extends string>({ value, options, onChange, size = "md" }: { value: T; options: { value: T; label: ReactNode }[]; onChange: (v: T) => void; size?: "sm" | "md" }) {
   return (
-    <div className="inline-flex rounded-full bg-white p-1 shadow-card" role="tablist">
+    <div className="inline-flex rounded-lg border border-line bg-slate-100 p-0.5" role="tablist">
       {options.map((o) => (
         <button
           key={o.value}
           role="tab"
           aria-selected={value === o.value}
           onClick={() => onChange(o.value)}
-          className={`whitespace-nowrap rounded-full font-medium transition ${size === "sm" ? "px-3 py-1 text-[12px]" : "px-4 py-1.5 text-[13px]"} ${value === o.value ? "bg-navy text-white shadow-sm" : "text-ink-muted hover:text-ink"}`}
+          className={`whitespace-nowrap rounded-md font-medium transition ${size === "sm" ? "px-2.5 py-1 text-[12px]" : "px-3.5 py-1.5 text-[13px]"} ${value === o.value ? "bg-white font-bold text-ink shadow-sm" : "text-ink-muted hover:text-ink"}`}
         >
           {o.label}
         </button>
@@ -346,10 +346,10 @@ export function Segmented<T extends string>({ value, options, onChange, size = "
 }
 
 const TONES = {
-  white: "bg-white text-ink",
-  midnight: "pattern-star bg-navy text-white spot-dark",
-  gold: "pattern-star pattern-gold bg-gold-50 text-ink",
-  sand: "bg-paper text-ink",
+  white: "border border-line bg-white text-ink",
+  midnight: "bg-navy text-white",
+  gold: "border border-line bg-white text-ink",
+  sand: "border border-line bg-paper text-ink",
 } as const;
 
 /** Eight-point star, the section marker. */
@@ -365,19 +365,19 @@ export function Panel({ title, sub, action, children, className = "", info, acce
   const dark = tone === "midnight";
   const { ref, inView } = useInView<HTMLElement>();
   return (
-    <section ref={ref} id={id} data-in={inView} {...spotlight} className={`reveal spot relative min-w-0 rounded-4xl p-6 shadow-card transition-shadow hover:shadow-pop ${TONES[tone]} ${className}`}>
+    <section ref={ref} id={id} data-in={inView} {...spotlight} className={`reveal relative min-w-0 rounded-2xl p-5 shadow-card transition-shadow duration-300 hover:shadow-pop ${TONES[tone]} ${className}`}>
       <InViewCtx.Provider value={inView}>
       {(title || action) && (
-        <header className="mb-5 flex flex-wrap items-start justify-between gap-3">
+        <header className="mb-4 flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
             {title && (
-              <h2 className={`flex items-center gap-2 text-[18px] font-semibold leading-tight ${dark ? "text-white" : "text-ink"}`}>
-                <Star color={accent ?? "#C9A227"} />
+              <h2 className={`flex items-center gap-2 text-[16px] font-bold leading-tight ${dark ? "text-white" : "text-ink"}`}>
+                <span className="h-4 w-1 rounded-full" style={{ background: accent ?? "#C9A227" }} aria-hidden="true" />
                 {title}
                 {info}
               </h2>
             )}
-            {sub && <p className={`mt-1 text-[12.5px] ${dark ? "text-white/60" : "text-ink-muted"}`}>{sub}</p>}
+            {sub && <p className={`mt-1 text-[13px] ${dark ? "text-white/60" : "text-ink-muted"}`}>{sub}</p>}
           </div>
           {action}
         </header>
@@ -392,8 +392,10 @@ export function Panel({ title, sub, action, children, className = "", info, acce
 export function Insight({ children, tone = "gold", dark = false }: { children: ReactNode; tone?: "gold" | "good" | "bad"; dark?: boolean }) {
   const c = { gold: "#C9A227", good: "#16A34A", bad: "#DB2B39" }[tone];
   return (
-    <p className={`mb-4 flex items-start gap-2.5 rounded-2xl px-3.5 py-2.5 text-[13.5px] leading-relaxed ${dark ? "bg-white/[0.07] text-white/90" : "bg-paper text-ink"}`}>
-      <span className="mt-1 h-2 w-2 shrink-0 rounded-full" style={{ background: c, boxShadow: `0 0 0 4px ${c}33` }} />
+    <p className={`mb-4 flex items-start gap-2 rounded-lg px-3 py-2 text-[13.5px] font-medium leading-relaxed ${dark ? "bg-white/[0.07] text-white/90" : "text-ink-2"}`} style={dark ? undefined : { background: `${c}12` }}>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0" aria-hidden="true">
+        <path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.8V16h5v-.3c0-.7.4-1.4 1-1.8A6 6 0 0 0 12 3z" />
+      </svg>
       <span>{children}</span>
     </p>
   );
@@ -417,7 +419,6 @@ export function Waffle({ value, color = "#C9A227", empty = "rgba(255,255,255,0.1
               background: shown && on ? color : empty,
               transform: shown && on ? "scale(1)" : "scale(.82)",
               transitionDelay: shown ? `${i * 9}ms` : "0ms",
-              boxShadow: shown && on ? `0 0 8px ${color}66` : "none",
             }}
           />
         );
@@ -430,8 +431,8 @@ export function Waffle({ value, color = "#C9A227", empty = "rgba(255,255,255,0.1
 export function BankBadge({ color, short, size = 28, brand = false }: { color: string; short: string; size?: number; brand?: boolean }) {
   return (
     <span
-      className={`inline-flex shrink-0 items-center justify-center rounded-full font-display font-bold leading-none text-white transition-transform duration-200 group-hover:scale-110 ${brand ? "ring-2 ring-gold-100" : ""}`}
-      style={{ width: size, height: size, background: color, fontSize: Math.max(8, size * (short.length > 3 ? 0.27 : short.length > 2 ? 0.32 : 0.4)), boxShadow: `0 3px 10px -3px ${color}aa` }}
+      className={`inline-flex shrink-0 items-center justify-center rounded-full font-bold leading-none text-white transition-transform duration-200 group-hover:scale-110 ${brand ? "ring-2 ring-gold-100" : ""}`}
+      style={{ width: size, height: size, background: color, fontSize: Math.max(8, size * (short.length > 3 ? 0.27 : short.length > 2 ? 0.32 : 0.4)) }}
       aria-hidden="true"
     >
       {short}
