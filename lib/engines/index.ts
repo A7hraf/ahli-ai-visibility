@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Citation, EngineId, EngineResult } from "../types";
+import { env } from "../config";
 
 // Each connector asks the question the way a customer would: no system prompt,
 // web search switched on where the engine supports it, location set to Oman.
@@ -32,7 +33,7 @@ function dedupe(c: Citation[]): Citation[] {
 async function askChatGPT(q: string): Promise<EngineResult> {
   const j = await post(
     "https://api.openai.com/v1/responses",
-    { authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
+    { authorization: `Bearer ${env("OPENAI_API_KEY")}` },
     {
       model: process.env.OPENAI_MODEL || "gpt-4.1",
       input: q,
@@ -60,7 +61,7 @@ let geminiSearchBlocked = process.env.GEMINI_SEARCH === "false";
 async function askGemini(q: string): Promise<EngineResult> {
   const model = process.env.GEMINI_MODEL || "gemini-3.5-flash";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
-  const headers = { "x-goog-api-key": process.env.GEMINI_API_KEY! };
+  const headers = { "x-goog-api-key": env("GEMINI_API_KEY")! };
   const body = { contents: [{ role: "user", parts: [{ text: q }] }] };
   let j;
   if (!geminiSearchBlocked) {
@@ -86,7 +87,7 @@ async function askGemini(q: string): Promise<EngineResult> {
 async function askClaude(q: string): Promise<EngineResult> {
   const j = await post(
     "https://api.anthropic.com/v1/messages",
-    { "x-api-key": process.env.ANTHROPIC_API_KEY!, "anthropic-version": "2023-06-01" },
+    { "x-api-key": env("ANTHROPIC_API_KEY")!, "anthropic-version": "2023-06-01" },
     {
       model: process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5",
       max_tokens: 1500,
@@ -108,7 +109,7 @@ async function askClaude(q: string): Promise<EngineResult> {
 async function askPerplexity(q: string): Promise<EngineResult> {
   const j = await post(
     "https://api.perplexity.ai/chat/completions",
-    { authorization: `Bearer ${process.env.PERPLEXITY_API_KEY}` },
+    { authorization: `Bearer ${env("PERPLEXITY_API_KEY")}` },
     { model: process.env.PERPLEXITY_MODEL || "sonar", messages: [{ role: "user", content: q }] },
   );
   const text = j.choices?.[0]?.message?.content ?? "";
@@ -123,7 +124,7 @@ async function askDeepSeek(q: string): Promise<EngineResult> {
   // DeepSeek's API has no built-in web search: this measures what the model "remembers".
   const j = await post(
     `${process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com"}/chat/completions`,
-    { authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}` },
+    { authorization: `Bearer ${env("DEEPSEEK_API_KEY")}` },
     { model: process.env.DEEPSEEK_MODEL || "deepseek-chat", messages: [{ role: "user", content: q }] },
   );
   return { text: j.choices?.[0]?.message?.content ?? "", citations: [] };
@@ -142,7 +143,7 @@ export async function completeJSON(engine: "openai" | "anthropic" | "gemini", pr
   if (engine === "openai") {
     const j = await post(
       "https://api.openai.com/v1/chat/completions",
-      { authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
+      { authorization: `Bearer ${env("OPENAI_API_KEY")}` },
       { model: process.env.ANALYZER_MODEL || "gpt-4.1-mini", response_format: { type: "json_object" }, messages: [{ role: "user", content: prompt }] },
     );
     return j.choices?.[0]?.message?.content ?? "{}";
@@ -150,7 +151,7 @@ export async function completeJSON(engine: "openai" | "anthropic" | "gemini", pr
   if (engine === "anthropic") {
     const j = await post(
       "https://api.anthropic.com/v1/messages",
-      { "x-api-key": process.env.ANTHROPIC_API_KEY!, "anthropic-version": "2023-06-01" },
+      { "x-api-key": env("ANTHROPIC_API_KEY")!, "anthropic-version": "2023-06-01" },
       { model: process.env.ANALYZER_MODEL || process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5", max_tokens: 1200, messages: [{ role: "user", content: prompt + "\n\nReply with the JSON object only." }] },
     );
     return (j.content ?? []).map((b: { text?: string }) => b.text ?? "").join("");
@@ -158,7 +159,7 @@ export async function completeJSON(engine: "openai" | "anthropic" | "gemini", pr
   const model = process.env.ANALYZER_MODEL || process.env.GEMINI_MODEL || "gemini-3.5-flash";
   const j = await post(
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-    { "x-goog-api-key": process.env.GEMINI_API_KEY! },
+    { "x-goog-api-key": env("GEMINI_API_KEY")! },
     { contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } },
   );
   return j.candidates?.[0]?.content?.parts?.[0]?.text ?? "{}";

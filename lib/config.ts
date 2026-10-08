@@ -45,8 +45,16 @@ export function engineLabel(id: string) {
   return ENGINES.find((e) => e.id === id)?.label ?? id;
 }
 
+/** Read an environment variable, ignoring upper/lower case in its name (e.g. "Gemini_API_Key"). */
+export function env(name: string): string | undefined {
+  const direct = process.env[name];
+  if (direct) return direct.trim();
+  const key = Object.keys(process.env).find((k) => k.toLowerCase() === name.toLowerCase());
+  return key ? process.env[key]?.trim() || undefined : undefined;
+}
+
 export function configuredEngines(): EngineId[] {
-  return ENGINES.filter((e) => !!process.env[e.envKey]).map((e) => e.id);
+  return ENGINES.filter((e) => !!env(e.envKey)).map((e) => e.id);
 }
 
 export function isDemoMode(): boolean {

@@ -1,5 +1,5 @@
 import { getT } from "@/lib/i18n";
-import { COMPETITORS, ENGINES, isDemoMode, repeats } from "@/lib/config";
+import { COMPETITORS, ENGINES, env, isDemoMode, repeats } from "@/lib/config";
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import AdminTokenField from "@/components/AdminTokenField";
@@ -14,7 +14,7 @@ export default async function SettingsPage() {
         <Card title={t.settings.engines}>
           <ul className="flex flex-col divide-y divide-line">
             {ENGINES.map((e) => {
-              const on = !!process.env[e.envKey];
+              const on = !!env(e.envKey);
               return (
                 <li key={e.id} className="flex items-center gap-3 py-3">
                   <span className="h-2.5 w-2.5 rounded-full" style={{ background: e.color }} />
