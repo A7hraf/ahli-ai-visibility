@@ -14,9 +14,11 @@ This system measures that every week, in **Arabic and English**, and shows the D
 
 | Page | What you get |
 |---|---|
-| **Overview** | Visibility score, mention rate, top-3 rate, share of voice, open accuracy alerts, weekly trend, Arabic vs English gap, competitors |
+| **Overview** | Visibility score gauge, position among Omani banks, mention rate, top-3 rate, share of voice, key insights (written by AI when a key is set), weekly trend, Arabic vs English gap, product and sentiment breakdowns |
+| **Bank comparison** | Ranking of all Omani banks in AI answers, head-to-head radar with the leader, trend per bank, heatmaps by engine and by product |
+| **Ask the AI** | Any employee types a question and sees, side by side, what each engine answers right now, with bank names highlighted. Rate-limited |
 | **Questions** | The library of real customer questions (AR/EN, by product and customer type). Add, pause or delete. Result per engine |
-| **Answers** | Read exactly what each engine said, filter by engine, language, named / not named |
+| **Answers** | Read exactly what each engine said; full-text search; filter by engine, language, named / not named |
 | **Sources** | Which websites the engines rely on (comparison sites, news, forums, competitors, look-alike names) and which Ahli pages get cited |
 | **Accuracy** | The Bank's approved figures (source of truth). Any AI answer quoting a different rate, amount or term raises an alert |
 | **Website readiness** | Audit findings plus a live check of ahlibank.om: AI crawler access (robots.txt), structured data, canonical URLs, Arabic versions, PDF dependence |
@@ -86,6 +88,8 @@ Then on the **Accuracy** page, replace the sample figures with the values approv
 2. For data that persists, create a free [Turso](https://turso.tech) database and add `DATABASE_URL` and `DATABASE_AUTH_TOKEN` in **Project → Settings → Environment Variables**. (Without it the online demo still works, but edits reset.)
 3. Add the engine keys there too, plus `CRON_SECRET` (any long random text) and optionally `ADMIN_TOKEN` to protect editing.
 4. Redeploy. The weekly run happens automatically every Monday 06:00 Muscat time (`vercel.json`).
+
+The **Ask the AI** page is public on the shared link but rate-limited: `ASK_PER_IP_PER_HOUR` (default 10) and `ASK_DAILY_LIMIT` (default 300). Set a spending limit on each AI provider's account as well.
 
 For production at the Bank, hosting should be agreed with IT (on-premise or approved cloud) to meet Central Bank of Oman outsourcing and cloud requirements.
 

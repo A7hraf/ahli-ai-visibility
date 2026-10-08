@@ -80,6 +80,12 @@ const SCHEMA = [
     status TEXT NOT NULL DEFAULT 'open',
     created_at TEXT NOT NULL
   )`,
+  `CREATE TABLE IF NOT EXISTS insights (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    run_id INTEGER NOT NULL,
+    lang TEXT NOT NULL,
+    body TEXT NOT NULL
+  )`,
   `CREATE TABLE IF NOT EXISTS site_checks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     url TEXT NOT NULL,

@@ -4,6 +4,7 @@ import { all, parseJSON } from "@/lib/db";
 import { getRuns, domainOf } from "@/lib/metrics";
 import { ENGINES, engineLabel } from "@/lib/config";
 import { Badge, Card, Empty, PageHeader } from "@/components/ui";
+import { Icon } from "@/components/Icon";
 import type { Citation, ExtractedFact } from "@/lib/types";
 
 type Row = {
@@ -22,7 +23,7 @@ type Row = {
   lang: string;
 };
 
-type SP = Promise<{ engine?: string; lang?: string; named?: string; page?: string }>;
+type SP = Promise<{ engine?: string; lang?: string; named?: string; page?: string; q?: string }>;
 
 export default async function AnswersPage({ searchParams }: { searchParams: SP }) {
   const sp = await searchParams;
@@ -37,6 +38,12 @@ export default async function AnswersPage({ searchParams }: { searchParams: SP }
   if (sp.lang === "en" || sp.lang === "ar") { where.push("p.lang = ?"); args.push(sp.lang); }
   if (sp.named === "1") where.push("a.mentioned = 1");
   if (sp.named === "0") where.push("a.mentioned = 0 AND a.error IS NULL");
+  const term = (sp.q ?? "").trim().slice(0, 100);
+  if (term) {
+    where.push("(a.text LIKE ? OR p.text LIKE ? OR a.competitors LIKE ? OR a.citations LIKE ?)");
+    const like = `%${term}%`;
+    args.push(like, like, like, like);
+  }
   const page = Math.max(1, Number(sp.page) || 1);
   const PER = 30;
 
@@ -60,6 +67,13 @@ export default async function AnswersPage({ searchParams }: { searchParams: SP }
       <PageHeader title={t.answers.title} lead={t.answers.lead} />
 
       <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-line bg-white p-4 shadow-card">
+        <form action="/answers" className="relative">
+          {sp.engine && <input type="hidden" name="engine" value={sp.engine} />}
+          {sp.lang && <input type="hidden" name="lang" value={sp.lang} />}
+          {sp.named && <input type="hidden" name="named" value={sp.named} />}
+          <span className="pointer-events-none absolute inset-y-0 start-3 flex items-center text-ink-soft"><Icon name="search" size={18} /></span>
+          <input id="answers-search" name="q" defaultValue={term} dir="auto" placeholder={t.searchAnswers} className="w-full rounded-xl border border-line bg-canvas py-2.5 pe-3 ps-10 text-sm outline-none focus:border-brand focus:bg-white" />
+        </form>
         <div className="flex flex-wrap items-center gap-2">
           <span className="w-24 text-xs font-medium uppercase tracking-wide text-ink-muted">{t.answers.filterEngine}</span>
           <Link href={q({ engine: undefined })} className={chip(!sp.engine)}>{t.answers.all}</Link>

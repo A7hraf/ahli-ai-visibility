@@ -66,5 +66,10 @@ export async function collect(opts: { promptIds?: number[] } = {}) {
     `${jobs.length} answers, ${failed} errors, engines: ${engines.join(", ")}`,
     runId,
   ]);
+  // AI-written weekly insights (stored once, so viewing the dashboard costs nothing)
+  try {
+    const { generateAiInsights } = await import("./insights");
+    await generateAiInsights(runId);
+  } catch {}
   return { runId, total: jobs.length, failed };
 }

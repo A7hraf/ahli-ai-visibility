@@ -16,6 +16,8 @@ type Props = {
 
 const LINKS: { href: string; key: string; icon: IconName }[] = [
   { href: "/", key: "overview", icon: "gauge" },
+  { href: "/compare", key: "compare", icon: "bars" },
+  { href: "/ask", key: "ask", icon: "sparkle" },
   { href: "/prompts", key: "prompts", icon: "chat" },
   { href: "/answers", key: "answers", icon: "list" },
   { href: "/sources", key: "sources", icon: "link" },

@@ -16,7 +16,10 @@ export type IconName =
   | "arrowDown"
   | "external"
   | "trash"
-  | "plus";
+  | "plus"
+  | "bars"
+  | "search"
+  | "sparkle";
 
 const P: Record<IconName, string> = {
   gauge: "M12 14l3-5M4.9 19a9 9 0 1 1 14.2 0M12 14a1 1 0 1 0 0 .01",
@@ -37,6 +40,9 @@ const P: Record<IconName, string> = {
   external: "M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5",
   trash: "M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13",
   plus: "M12 5v14M5 12h14",
+  bars: "M5 20V10M12 20V4M19 20v-7",
+  search: "M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14z M20 20l-4-4",
+  sparkle: "M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16z",
 };
 
 export function Icon({ name, size = 18, className = "" }: { name: IconName; size?: number; className?: string }) {

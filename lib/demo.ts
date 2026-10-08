@@ -49,6 +49,16 @@ const BASE: Record<string, [number, number]> = {
   deepseek: [0.16, 0.05],
 };
 
+const COMP_WEIGHT: Record<string, number> = {
+  "Bank Muscat": 0.78,
+  "National Bank of Oman": 0.6,
+  "Bank Dhofar": 0.5,
+  "Sohar International": 0.48,
+  "Bank Nizwa": 0.36,
+  "Oman Arab Bank": 0.32,
+  "HSBC Oman": 0.28,
+};
+
 const WEEKS = 8;
 const FIX_WEEK = 5; // simulated content fixes go live from this week
 
@@ -67,7 +77,7 @@ export async function seedDemoHistory(c: Client) {
       args: [when, when, "Simulated demo run"],
     });
     const runId = Number(runRes.lastInsertRowid);
-    const lift = w >= FIX_WEEK - 1 ? 0.12 + (w - (FIX_WEEK - 1)) * 0.05 : w * 0.01;
+    const lift = w >= FIX_WEEK - 1 ? 0.06 + (w - (FIX_WEEK - 1)) * 0.03 : w * 0.01;
 
     const stmts: { sql: string; args: (string | number | null)[] }[] = [];
     const alertQueue: { idx: number; mism: ReturnType<typeof compareFacts>; engine: string; promptId: number }[] = [];
@@ -79,7 +89,10 @@ export async function seedDemoHistory(c: Client) {
         const brandBoost = p.product === "brand" || /ahli|الأهلي/i.test(p.text) ? 0.4 : 0;
         const pMention = Math.min(0.97, base + lift + brandBoost);
         const mentioned = r() < pMention;
-        const comps = [...COMPETITORS].sort(() => r() - 0.5).slice(0, 2 + Math.floor(r() * 3)).map((x) => x.name);
+        // bigger banks have more content online, so engines name them more often
+        let comps = COMPETITORS.filter((c) => r() < (COMP_WEIGHT[c.name] ?? 0.35)).map((x) => x.name);
+        if (comps.length < 2) comps = [...comps, ...COMPETITORS.map((c) => c.name).filter((n) => !comps.includes(n)).slice(0, 2 - comps.length)];
+        comps = comps.sort(() => r() - 0.5).sort((a, b) => (COMP_WEIGHT[b] ?? 0) - (COMP_WEIGHT[a] ?? 0) + (r() - 0.5) * 0.6);
         let rank: number | null = null;
         if (mentioned) {
           const topChance = 0.25 + lift * 1.5 + brandBoost;
