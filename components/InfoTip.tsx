@@ -1,7 +1,7 @@
 // Small "?" that explains a metric in plain words (hover on desktop, tap on mobile)
 export default function InfoTip({ text, light = false }: { text: string; light?: boolean }) {
   return (
-    <span className="group relative inline-flex align-middle">
+    <span className="group/tip relative inline-flex align-middle">
       <button
         type="button"
         aria-label={text}
@@ -11,7 +11,7 @@ export default function InfoTip({ text, light = false }: { text: string; light?:
       </button>
       <span
         role="tooltip"
-        className="pointer-events-none absolute bottom-full start-1/2 z-30 mb-2 hidden w-56 max-w-[70vw] -translate-x-1/2 rounded-xl bg-ink-900 px-3 py-2 text-start text-[12.5px] font-normal normal-case leading-relaxed tracking-normal text-white shadow-pop group-hover:block group-focus-within:block rtl:translate-x-1/2"
+        className="pointer-events-none absolute top-full start-1/2 z-30 mt-2 hidden w-56 max-w-[70vw] -translate-x-1/2 rounded-xl bg-ink-900 px-3 py-2 text-start text-[12.5px] font-normal normal-case leading-relaxed tracking-normal text-white shadow-pop group-hover/tip:block group-focus-within/tip:block rtl:translate-x-1/2"
       >
         {text}
       </span>

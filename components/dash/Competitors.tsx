@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { bankSummary, breakdown, ranking, slice, weekly, BRAND_IDX, type Dataset } from "@/lib/analytics";
-import type { UIText } from "@/lib/ui-text";
-import { BankBadge, ClickHint, Delta, Heatmap, Panel, RampLegend, Star, TipProvider, TipRow, useTip } from "@/components/viz/core";
+import { fill, type UIText } from "@/lib/ui-text";
+import { BankBadge, ClickHint, Delta, Heatmap, Insight, Panel, RampLegend, Star, TipProvider, TipRow, useTip } from "@/components/viz/core";
 import { FilterBar, useFilters } from "@/components/viz/filters";
 import Details, { BankName, GOLD, bankColor, bankLabel, useFmtDate, type Sel } from "@/components/viz/Details";
 import BumpChart from "@/components/viz/BumpChart";
@@ -215,6 +215,7 @@ function Inner({ ds, ui, lang }: { ds: Dataset; ui: UIText; lang: "en" | "ar" })
       {/* rank race */}
       {ds.runs.length > 1 && (
         <Panel accent={GOLD} title={ar ? "سباق الترتيب أسبوعاً بأسبوع" : "The rank race, week by week"} sub={ar ? "ترتيب كل بنك حسب وصول العلامة. مرّر على بنك لإبرازه، واضغط لملفه." : "Each bank's rank by brand reach. Hover a bank to highlight it, click for its profile."}>
+          <Insight tone={gap < 0 ? "bad" : "good"}>{gap < 0 ? fill(ui.ins.lead, { bank: name(leader.b), gap: Math.abs(gap) }) : ui.ins.weLead}</Insight>
           <BumpChart
             weeks={ds.runs.map((r) => r.date)}
             fmtDate={fmt}

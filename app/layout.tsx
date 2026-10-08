@@ -30,9 +30,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400..700&family=Readex+Pro:wght@300..700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
       </head>
       <body>
-        <div className="flex min-h-screen flex-col lg:flex-row">
-          <Sidebar nav={ui.nav} appName={t.appName} appSub={t.appSub} footer={t.footer} />
-          <main className="min-w-0 flex-1">
+        <div className="min-h-screen">
+          <Sidebar nav={ui.nav} appName={t.appName} appSub={t.appSub} />
+          <main className="min-w-0 lg:ms-64">
             <TopBar
               lang={lang}
               mode={mode}

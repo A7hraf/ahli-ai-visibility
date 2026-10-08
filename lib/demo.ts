@@ -54,6 +54,7 @@ const COMP_WEIGHT: Record<string, number> = {
   "National Bank of Oman": 0.6,
   "Bank Dhofar": 0.5,
   "Sohar International": 0.48,
+  "Sohar Islamic": 0.3,
   "Bank Nizwa": 0.36,
   "Oman Arab Bank": 0.32,
   "HSBC Oman": 0.28,

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { bankSummary, breakdown, slice, type Dataset } from "@/lib/analytics";
 import type { UIText } from "@/lib/ui-text";
-import { BarList, ClickHint, Donut, Heatmap, Panel, RampLegend, TipProvider } from "@/components/viz/core";
+import { BarList, ClickHint, Donut, Heatmap, Insight, Panel, RampLegend, TipProvider } from "@/components/viz/core";
 import { FilterBar, useFilters } from "@/components/viz/filters";
 import Details, { GOLD, type Sel } from "@/components/viz/Details";
 
@@ -125,6 +125,15 @@ function Inner({ ds, ui, lang }: { ds: Dataset; ui: UIText; lang: "en" | "ar" })
           </div>
         }
       >
+        <Insight tone={m.blind.length ? "bad" : "good"}>
+          {lang === "ar"
+            ? m.blind.length
+              ? `في ${m.blind.length} ${m.blind.length === 1 ? "سؤال" : "أسئلة"} ما يذكرنا ولا مساعد. ابدأ منها: هي أسرع فرصة.`
+              : "نظهر في كل الأسئلة مع مساعد واحد على الأقل. ممتاز!"
+            : m.blind.length
+              ? `For ${m.blind.length} question${m.blind.length === 1 ? "" : "s"}, no assistant mentions us. Start there: it's the quickest win.`
+              : "We show up for every question on at least one assistant. Great!"}
+        </Insight>
         <Heatmap
           rowWidth="minmax(220px, 2.6fr)"
           max={100}

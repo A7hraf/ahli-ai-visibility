@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { domainStats, matches, periodRuns, slice, type Dataset, type DomainKind } from "@/lib/analytics";
-import type { UIText } from "@/lib/ui-text";
-import { BarList, ClickHint, Delta, Donut, Legend, Panel, TipProvider } from "@/components/viz/core";
+import { fill, type UIText } from "@/lib/ui-text";
+import { BarList, ClickHint, Delta, Donut, Insight, Legend, Panel, TipProvider } from "@/components/viz/core";
 import { FilterBar, useFilters } from "@/components/viz/filters";
 import Details, { DomainName, domainColor, GOLD, KIND_COLOR, useFmtDate, type Sel } from "@/components/viz/Details";
 import TrendLines from "@/components/viz/TrendLines";
@@ -117,6 +117,7 @@ function Inner({ ds, ui, lang, ownPages }: { ds: Dataset; ui: UIText; lang: "en"
             )
           }
         >
+          {list[0] && <Insight>{fill(ui.ins.sources, { site: list[0].d })}</Insight>}
           <BarList
             labelWidth="w-48"
             onSelect={(k) => setSel({ kind: "domain", i: Number(k) })}

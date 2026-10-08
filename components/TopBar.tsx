@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import RunButton from "./RunButton";
 
 type Props = {
@@ -18,13 +19,25 @@ type Props = {
 
 export default function TopBar({ lang, mode, modeLabel, real, simulated, realLabel, simLabel, updated, updatedLabel, run }: Props) {
   const router = useRouter();
+  // reading progress + a slightly stronger bar once the page is scrolled
+  const [p, setP] = useState(0);
+  useEffect(() => {
+    const on = () => {
+      const h = document.documentElement;
+      setP(h.scrollHeight > h.clientHeight ? h.scrollTop / (h.scrollHeight - h.clientHeight) : 0);
+    };
+    on();
+    window.addEventListener("scroll", on, { passive: true });
+    return () => window.removeEventListener("scroll", on);
+  }, []);
   function switchLang() {
     document.cookie = `lang=${lang === "ar" ? "en" : "ar"}; path=/; max-age=31536000; samesite=lax`;
     router.refresh();
   }
   const dot = mode === "live" ? "bg-good" : mode === "hybrid" ? "bg-gold" : "bg-gold-400";
   return (
-    <div className="sticky top-0 z-30 border-b border-line/70 bg-canvas/80 backdrop-blur-md">
+    <div className={`sticky top-[52px] z-30 border-b bg-canvas/80 backdrop-blur-md transition-shadow lg:top-0 ${p > 0.01 ? "border-line shadow-card" : "border-transparent"}`}>
+      <span className="absolute bottom-0 start-0 h-[3px] rounded-full bg-gradient-to-r from-gold via-turq to-sky transition-[width] duration-150 rtl:bg-gradient-to-l" style={{ width: `${p * 100}%` }} aria-hidden="true" />
       <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-3 px-4 py-2.5 sm:px-8">
         <details className="group relative">
           <summary className="flex cursor-pointer list-none items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-[12.5px] font-semibold text-ink shadow-card hover:ring-2 hover:ring-gold-100">

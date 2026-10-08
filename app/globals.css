@@ -36,8 +36,8 @@ h3 {
 }
 
 /* Omani eight-point star lattice, used on midnight and sand surfaces */
+/* no `position` here: it must not override `sticky`/`fixed` on the element (it broke the fixed sidebar) */
 .pattern-star {
-  position: relative;
   isolation: isolate;
 }
 .pattern-star::before {
@@ -71,6 +71,78 @@ h3 {
     radial-gradient(circle at 0% 100%, rgba(15, 159, 148, 0.25) 0, transparent 48%);
 }
 
+/* scroll reveal: panels fade and slide in the first time they enter the screen */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px) scale(0.985);
+  transition:
+    opacity 0.7s ease,
+    transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--d, 0ms);
+}
+.reveal[data-in="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* hover spotlight that follows the pointer */
+.spot {
+  --mx: 50%;
+  --my: 50%;
+}
+.spot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(380px circle at var(--mx) var(--my), rgba(201, 162, 39, 0.13), transparent 45%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.spot:hover::after {
+  opacity: 1;
+}
+.spot-dark::after {
+  background: radial-gradient(420px circle at var(--mx) var(--my), rgba(243, 220, 123, 0.16), transparent 45%);
+}
+
+/* slow-moving light on the hero */
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-6%, 4%) scale(1.12);
+  }
+}
+.drift {
+  animation: drift 14s ease-in-out infinite;
+}
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(201, 162, 39, 0.55);
+  }
+  100% {
+    box-shadow: 0 0 0 14px rgba(201, 162, 39, 0);
+  }
+}
+.pulse-gold {
+  animation: pulse-ring 2s ease-out infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+.caret::after {
+  content: "▍";
+  margin-inline-start: 2px;
+  color: #c9a227;
+  animation: blink 1s steps(1) infinite;
+}
+
 @keyframes rise {
   from {
     opacity: 0;
@@ -94,9 +166,20 @@ select option {
   color: #13263a;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
   * {
     transition: none !important;
     animation: none !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
   }
 }

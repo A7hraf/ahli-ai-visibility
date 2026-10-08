@@ -65,7 +65,7 @@ export function useFmtDate(lang: "en" | "ar") {
 }
 
 /** Ahli and competitor names highlighted inside an answer. */
-function Highlight({ text }: { text: string }) {
+export function Highlight({ text }: { text: string }) {
   const terms = useMemo(() => {
     const t = [...BRAND.aliases.map((a) => ({ a, brand: true })), ...COMPETITORS.flatMap((c) => c.aliases.filter((x) => x.length > 3).map((a) => ({ a, brand: false })))];
     return t.sort((x, y) => y.a.length - x.a.length);
