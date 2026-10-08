@@ -1,6 +1,6 @@
 "use client";
 
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ComposedChart } from "recharts";
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ReferenceArea, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, ComposedChart } from "recharts";
 
 const AXIS = { fontSize: 12, fill: "#566578" };
 const GRID = "#E8EDF3";
@@ -178,6 +178,108 @@ export function ProductBars({ data, labels }: { data: { product: string; label: 
           <Legend iconType="circle" wrapperStyle={{ fontSize: 13, paddingTop: 8 }} />
           <Bar dataKey="v" name={labels.brand} fill="#ADA042" radius={[6, 6, 0, 0]} maxBarSize={26} />
           <Bar dataKey="leader" name={labels.leader} fill="#C9D6E3" radius={[6, 6, 0, 0]} maxBarSize={26} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+/** Measured history + two forecast scenarios. */
+export function ProjectionChart({
+  data,
+  labels,
+}: {
+  data: { date: string; actual?: number; noAction?: number; withPlan?: number }[];
+  labels: { actual: string; noAction: string; withPlan: string; today: string; forecast: string };
+}) {
+  const todayIdx = data.findIndex((d) => d.withPlan !== undefined);
+  const today = data[todayIdx]?.date;
+  const end = data[data.length - 1]?.date;
+  return (
+    <div dir="ltr" className="h-[320px] w-full">
+      <ResponsiveContainer>
+        <ComposedChart data={data} margin={{ top: 24, right: 16, left: 0, bottom: 0 }}>
+          <defs>
+            <linearGradient id="planFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#ADA042" stopOpacity={0.28} />
+              <stop offset="100%" stopColor="#ADA042" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid stroke={GRID} vertical={false} />
+          {today && end && <ReferenceArea x1={today} x2={end} fill="#F7F5E6" fillOpacity={0.7} label={{ value: labels.forecast, position: "insideTop", fill: "#8A7F2A", fontSize: 12 }} />}
+          <XAxis dataKey="date" tick={AXIS} tickLine={false} axisLine={{ stroke: GRID }} tickFormatter={(d: string) => d.slice(5)} interval="preserveStartEnd" minTickGap={24} />
+          <YAxis tick={AXIS} tickLine={false} axisLine={false} domain={[0, 100]} tickFormatter={(v: number) => `${v}%`} width={48} />
+          <Tooltip {...tip} formatter={(v: number) => `${v}%`} />
+          <Legend iconType="circle" wrapperStyle={{ fontSize: 13, paddingTop: 8 }} />
+          {today && <ReferenceLine x={today} stroke="#0B3A5B" strokeDasharray="4 4" label={{ value: labels.today, position: "top", fill: "#0B3A5B", fontSize: 12 }} />}
+          <Area type="monotone" dataKey="withPlan" name={labels.withPlan} stroke="#ADA042" strokeWidth={3} strokeDasharray="7 5" fill="url(#planFill)" dot={false} connectNulls />
+          <Line type="monotone" dataKey="noAction" name={labels.noAction} stroke="#8494A7" strokeWidth={2} strokeDasharray="4 4" dot={false} connectNulls />
+          <Line type="monotone" dataKey="actual" name={labels.actual} stroke="#0B6298" strokeWidth={3} dot={{ r: 3.5, fill: "#0B6298" }} connectNulls />
+        </ComposedChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+/** Mention-rate history with a marker on the date each fix was completed. */
+export function AnnotatedTrend({
+  data,
+  marks,
+  labels,
+}: {
+  data: { date: string; mention: number; ar: number; en: number }[];
+  marks: { date: string; label: string }[];
+  labels: { overall: string; ar: string; en: string; fixes: string };
+}) {
+  // snap each mark to the first measurement on or after it
+  const snapped = marks
+    .map((m) => ({ ...m, x: data.find((d) => d.date >= m.date.slice(0, 10))?.date }))
+    .filter((m): m is { date: string; label: string; x: string } => !!m.x);
+  const byX = new Map<string, string[]>();
+  for (const m of snapped) byX.set(m.x, [...(byX.get(m.x) ?? []), m.label]);
+  return (
+    <div dir="ltr" className="h-[300px] w-full">
+      <ResponsiveContainer>
+        <ComposedChart data={data} margin={{ top: 28, right: 16, left: 0, bottom: 0 }}>
+          <defs>
+            <linearGradient id="annFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#0B6298" stopOpacity={0.2} />
+              <stop offset="100%" stopColor="#0B6298" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid stroke={GRID} vertical={false} />
+          <XAxis dataKey="date" tick={AXIS} tickLine={false} axisLine={{ stroke: GRID }} tickFormatter={(d: string) => d.slice(5)} />
+          <YAxis tick={AXIS} tickLine={false} axisLine={false} domain={[0, 100]} tickFormatter={(v: number) => `${v}%`} width={48} />
+          <Tooltip {...tip} formatter={(v: number) => `${v}%`} />
+          <Legend iconType="circle" wrapperStyle={{ fontSize: 13, paddingTop: 8 }} />
+          {[...byX.entries()].map(([x, ls]) => (
+            <ReferenceLine key={x} x={x} stroke="#1D7A47" strokeWidth={2} label={{ value: `✓ ${ls.length > 1 ? `${ls.length} ${labels.fixes}` : ls[0]}`, position: "top", fill: "#1D7A47", fontSize: 12, fontWeight: 600 }} />
+          ))}
+          <Area type="monotone" dataKey="mention" name={labels.overall} stroke="#0B6298" strokeWidth={3} fill="url(#annFill)" dot={{ r: 3 }} />
+          <Line type="monotone" dataKey="ar" name={labels.ar} stroke="#ADA042" strokeWidth={2} dot={false} />
+          <Line type="monotone" dataKey="en" name={labels.en} stroke="#7FB2D9" strokeWidth={2} dot={false} />
+        </ComposedChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+/** Ahli Bank minus each competitor, in percentage points. */
+export function GapChart({ data }: { data: { name: string; gap: number }[] }) {
+  return (
+    <div dir="ltr" className="w-full" style={{ height: Math.max(220, data.length * 42) }}>
+      <ResponsiveContainer>
+        <BarChart data={data} layout="vertical" margin={{ top: 0, right: 48, left: 8, bottom: 0 }}>
+          <CartesianGrid stroke={GRID} horizontal={false} />
+          <XAxis type="number" tick={AXIS} tickLine={false} axisLine={false} tickFormatter={(v: number) => `${v > 0 ? "+" : ""}${v}`} />
+          <YAxis type="category" dataKey="name" tick={{ ...AXIS, fill: "#0B3A5B" }} tickLine={false} axisLine={false} width={150} />
+          <ReferenceLine x={0} stroke="#0B3A5B" />
+          <Tooltip {...tip} formatter={(v: number) => `${v > 0 ? "+" : ""}${v} pts`} cursor={{ fill: "#F1F5F9" }} />
+          <Bar dataKey="gap" radius={4} maxBarSize={22} label={{ position: "right", fontSize: 12, fill: "#566578", formatter: (v: number) => `${v > 0 ? "+" : ""}${v}` }}>
+            {data.map((d) => (
+              <Cell key={d.name} fill={d.gap >= 0 ? "#1D7A47" : "#B23A2E"} fillOpacity={0.85} />
+            ))}
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
     </div>

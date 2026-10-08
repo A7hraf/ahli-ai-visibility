@@ -8,16 +8,21 @@ import { Icon, type IconName } from "./Icon";
 
 type Props = {
   lang: Lang;
-  t: { nav: Record<string, string>; appName: string; appSub: string; footer: string };
+  t: { nav: Record<string, string>; nav2: Record<string, string>; appName: string; appSub: string; footer: string };
   demo: boolean;
   demoLabel: string;
   liveLabel: string;
 };
 
-const LINKS: { href: string; key: string; icon: IconName }[] = [
-  { href: "/", key: "overview", icon: "gauge" },
+const MAIN: { href: string; key: string; icon: IconName }[] = [
+  { href: "/", key: "summary", icon: "gauge" },
+  { href: "/plan", key: "plan", icon: "check" },
   { href: "/compare", key: "compare", icon: "bars" },
   { href: "/ask", key: "ask", icon: "sparkle" },
+  { href: "/how", key: "how", icon: "globe" },
+];
+
+const LINKS: { href: string; key: string; icon: IconName }[] = [
   { href: "/prompts", key: "prompts", icon: "chat" },
   { href: "/answers", key: "answers", icon: "list" },
   { href: "/sources", key: "sources", icon: "link" },
@@ -36,27 +41,33 @@ export default function Sidebar({ lang, t, demo, demoLabel, liveLabel }: Props) 
     router.refresh();
   }
 
+  const item = (l: { href: string; key: string; icon: IconName }, label: string, small = false) => {
+    const active = l.href === "/" ? path === "/" : path.startsWith(l.href);
+    return (
+      <Link
+        key={l.href}
+        href={l.href}
+        onClick={() => setOpen(false)}
+        className={`flex items-center gap-3 rounded-lg px-3 transition-colors ${small ? "py-1.5 text-[13.5px]" : "py-2.5 text-[15px] font-medium"} ${
+          active ? "bg-white/10 text-white" : "text-brand-100/80 hover:bg-white/5 hover:text-white"
+        }`}
+      >
+        <span className={`${active ? "text-gold-400" : "text-brand-300"}`}>
+          <Icon name={l.icon} size={small ? 15 : 18} />
+        </span>
+        {label}
+        {active && <span className="ms-auto h-1.5 w-1.5 rounded-full bg-gold-400" />}
+      </Link>
+    );
+  };
+
   const nav = (
-    <nav className="flex flex-col gap-1">
-      {LINKS.map((l) => {
-        const active = l.href === "/" ? path === "/" : path.startsWith(l.href);
-        return (
-          <Link
-            key={l.href}
-            href={l.href}
-            onClick={() => setOpen(false)}
-            className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] transition-colors ${
-              active ? "bg-white/10 text-white" : "text-brand-100/80 hover:bg-white/5 hover:text-white"
-            }`}
-          >
-            <span className={`${active ? "text-gold-400" : "text-brand-300"}`}>
-              <Icon name={l.icon} />
-            </span>
-            {t.nav[l.key]}
-            {active && <span className="ms-auto h-1.5 w-1.5 rounded-full bg-gold-400" />}
-          </Link>
-        );
-      })}
+    <nav className="flex flex-col gap-5">
+      <div className="flex flex-col gap-1">{MAIN.map((l) => item(l, t.nav2[l.key]))}</div>
+      <div className="flex flex-col gap-0.5 border-t border-white/10 pt-4">
+        <p className="mb-1 px-3 text-[11px] font-semibold uppercase tracking-wider text-brand-300/70">{t.nav2.details}</p>
+        {LINKS.map((l) => item(l, t.nav[l.key], true))}
+      </div>
     </nav>
   );
 
@@ -99,8 +110,8 @@ export default function Sidebar({ lang, t, demo, demoLabel, liveLabel }: Props) 
   return (
     <>
       {/* desktop */}
-      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col justify-between bg-navy p-5 lg:flex">
-        <div className="flex flex-col gap-8">
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col justify-between gap-6 overflow-y-auto bg-navy p-5 lg:flex">
+        <div className="flex flex-col gap-6">
           {header}
           {nav}
         </div>

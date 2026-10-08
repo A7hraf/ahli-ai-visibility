@@ -26,7 +26,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body>
         <div className="flex min-h-screen flex-col lg:flex-row">
-          <Sidebar lang={lang} t={{ nav: t.nav, appName: t.appName, appSub: t.appSub, footer: t.footer }} demo={demo} demoLabel={t.demoBadge} liveLabel={t.liveBadge} />
+          <Sidebar lang={lang} t={{ nav: t.nav, nav2: t.nav2, appName: t.appName, appSub: t.appSub, footer: t.footer }} demo={demo} demoLabel={t.demoBadge} liveLabel={t.liveBadge} />
           <main className="min-w-0 flex-1">
             {demo && (
               <div className="border-b border-gold-100 bg-gold-50 px-4 py-2.5 text-sm text-gold-700 sm:px-8">

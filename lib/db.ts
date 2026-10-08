@@ -80,6 +80,12 @@ const SCHEMA = [
     status TEXT NOT NULL DEFAULT 'open',
     created_at TEXT NOT NULL
   )`,
+  `CREATE TABLE IF NOT EXISTS actions (
+    key TEXT PRIMARY KEY,
+    status TEXT NOT NULL DEFAULT 'todo',
+    done_at TEXT,
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )`,
   `CREATE TABLE IF NOT EXISTS insights (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     run_id INTEGER NOT NULL,
@@ -121,6 +127,15 @@ async function init() {
       const { seedDemoHistory } = await import("./demo");
       await seedDemoHistory(c);
     }
+  }
+  // improvement plan: one row per action, keeps the team's status updates
+  const { ACTIONS, initialStatus } = await import("./plan");
+  const have = new Set((await c.execute("SELECT key FROM actions")).rows.map((r) => String(r.key)));
+  const runDates = isDemoMode() ? (await c.execute("SELECT started_at FROM runs ORDER BY started_at")).rows.map((r) => String(r.started_at)) : undefined;
+  for (const a of ACTIONS) {
+    if (have.has(a.key)) continue;
+    const s = initialStatus(a.key, runDates);
+    await c.execute({ sql: "INSERT INTO actions (key, status, done_at) VALUES (?, ?, ?)", args: [a.key, s.status, s.doneAt] });
   }
 }
 

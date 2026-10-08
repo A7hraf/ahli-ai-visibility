@@ -3,7 +3,7 @@ import { comparison, BANKS } from "@/lib/compare";
 import { ENGINES } from "@/lib/config";
 import { Card, Empty, PageHeader } from "@/components/ui";
 import { Icon } from "@/components/Icon";
-import { BankTrendChart, CompareRadar, BANK_COLORS } from "@/components/Charts";
+import { BankTrendChart, CompareRadar, GapChart, BANK_COLORS } from "@/components/Charts";
 
 function heat(v: number, max: number) {
   const a = max ? v / max : 0;
@@ -26,6 +26,20 @@ export default async function ComparePage() {
   const maxEngine = Math.max(...c.byEngine.flatMap((r) => r.cells.map((x) => x.v)), 1);
   const maxProduct = Math.max(...c.byProduct.flatMap((r) => r.cells.map((x) => x.v)), 1);
   const trendBanks = ["Ahli Bank", ...c.ranking.filter((r) => !r.isBrand).slice(0, 4).map((r) => r.bank)];
+  const gaps = c.ranking.filter((r) => !r.isBrand).map((r) => ({ name: r.bank, gap: Math.round(brand.mention - r.mention) })).sort((a, b) => a.gap - b.gap);
+  const ratio = brand.mention ? Math.round((top.mention / brand.mention) * 10) / 10 : 0;
+  const bp = c.byProduct.find((r) => r.bank === "Ahli Bank")!.cells.filter((x) => x.product !== "brand");
+  const best = [...bp].sort((a, b) => b.v - a.v)[0];
+  const worst = [...bp].sort((a, b) => a.v - b.v)[0];
+  const pn = (p: string) => t.products[p as keyof typeof t.products];
+  const ar = lang === "ar";
+  const findings: { tone: "bad" | "good" | "warn"; text: string }[] = [
+    top.isBrand
+      ? { tone: "good", text: ar ? `البنك الأهلي هو الأكثر ذكراً (${brand.mention}%).` : `Ahli Bank is the most-mentioned bank (${brand.mention}%).` }
+      : { tone: "bad", text: ar ? `${top.bank} يُذكر في ${top.mention}% من الإجابات، أي ${ratio}× البنك الأهلي (${brand.mention}%).` : `${top.bank} is mentioned in ${top.mention}% of answers, ${ratio}× Ahli Bank (${brand.mention}%).` },
+    { tone: brand.en - brand.ar > 10 ? "bad" : "good", text: ar ? `بالعربي يُذكر البنك الأهلي في ${brand.ar}% فقط مقابل ${brand.en}% بالإنجليزي. المنافسون أقل تأثراً باللغة.` : `In Arabic Ahli Bank is mentioned in only ${brand.ar}% vs ${brand.en}% in English. Competitors depend less on language.` },
+    { tone: "warn", text: ar ? `أقوى منتج للبنك في إجابات الذكاء الاصطناعي: ${pn(best.product)} (${Math.round(best.v)}%). الأضعف: ${pn(worst.product)} (${Math.round(worst.v)}%).` : `Ahli Bank's strongest product in AI answers: ${pn(best.product)} (${Math.round(best.v)}%). Weakest: ${pn(worst.product)} (${Math.round(worst.v)}%).` },
+  ];
 
   return (
     <>
@@ -50,6 +64,47 @@ export default async function ComparePage() {
           <span className={`num font-display text-[40px] font-bold leading-none ${gap > 0 ? "text-bad" : "text-good"}`}>{gap > 0 ? `−${gap}` : `+${Math.abs(gap)}`}</span>
           <span className="text-sm text-ink-muted">{lang === "ar" ? "نقطة مئوية في نسبة الذكر" : "percentage points in mention rate"}</span>
         </div>
+      </div>
+
+      {/* plain-language findings */}
+      <Card title={lang === "ar" ? "ماذا تقول الأرقام" : "What the numbers say"} className="mb-6">
+        <ul className="grid gap-4 md:grid-cols-3">
+          {findings.map((f, i) => (
+            <li key={i} className="flex gap-3">
+              <span className={`mt-1 h-2.5 w-2.5 shrink-0 rounded-full ${f.tone === "bad" ? "bg-bad" : f.tone === "good" ? "bg-good" : "bg-gold"}`} />
+              <p className="text-[14.5px] leading-relaxed text-navy">{f.text}</p>
+            </li>
+          ))}
+        </ul>
+      </Card>
+
+      <div className="mb-6 grid gap-6 lg:grid-cols-2">
+        <Card title={lang === "ar" ? "الفارق بين البنك الأهلي وكل منافس" : "Ahli Bank's gap to each competitor"} note={lang === "ar" ? "بالنقاط المئوية في نسبة الذكر. الأخضر = البنك الأهلي متقدم، الأحمر = متأخر." : "Percentage points of mention rate. Green = Ahli Bank ahead, red = behind."}>
+          <GapChart data={gaps} />
+        </Card>
+        <Card title={lang === "ar" ? "عربي مقابل إنجليزي لكل بنك" : "Arabic vs English, each bank"} note={lang === "ar" ? "طول الخط = حجم الفجوة بين اللغتين." : "Line length = size of the gap between languages."}>
+          <div className="flex flex-col gap-3" dir="ltr">
+            {c.ranking.map((r) => {
+              const lo = Math.min(r.ar, r.en), hi = Math.max(r.ar, r.en);
+              return (
+                <div key={r.bank} className="grid grid-cols-[150px_1fr_70px] items-center gap-3 text-sm">
+                  <span className={`truncate text-end ${r.isBrand ? "font-bold text-gold-700" : "text-navy"}`} dir="auto">{show(r.bank)}</span>
+                  <div className="relative h-6">
+                    <div className="absolute inset-x-0 top-1/2 h-px bg-line" />
+                    <div className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full" style={{ left: `${lo}%`, width: `${hi - lo}%`, background: r.isBrand ? "#ADA042" : "#C9D6E3" }} />
+                    <span className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-[#ADA042] shadow" style={{ left: `${r.ar}%` }} title={`AR ${r.ar}%`} />
+                    <span className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-brand shadow" style={{ left: `${r.en}%` }} title={`EN ${r.en}%`} />
+                  </div>
+                  <span className="num text-xs text-ink-muted"><span className="text-gold-700">{r.ar}</span> / <span className="text-brand">{r.en}</span></span>
+                </div>
+              );
+            })}
+            <div className="mt-1 flex justify-center gap-5 text-xs text-ink-muted">
+              <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-brand" />{t.compare.metrics.en}</span>
+              <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-[#ADA042]" />{t.compare.metrics.ar}</span>
+            </div>
+          </div>
+        </Card>
       </div>
 
       {/* ranking table */}

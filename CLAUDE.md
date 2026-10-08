@@ -18,7 +18,8 @@ Internal tool for Ahli Bank Oman's Digital Marketing team. It measures how AI as
 - `lib/metrics.ts`, `lib/compare.ts`, `lib/insights.ts` — aggregations for the pages.
 - `lib/i18n.ts` — every UI string in `en` and `ar` (same keys). Language comes from the `lang` cookie; default Arabic (RTL).
 - `lib/demo.ts` — deterministic simulated history used when no engine keys are set.
-- Pages: `/` overview, `/compare`, `/ask` (live question to the engines, rate-limited), `/prompts`, `/answers`, `/sources`, `/accuracy`, `/site`, `/settings`.
+- `lib/plan.ts` — the improvement plan (actions with category, owner, expected impact, steps; AR+EN). `lib/actions.ts` — statuses from the `actions` table and measured before/after impact. `lib/projection.ts` — 12-week forecast.
+- Pages: `/` executive summary (plain language), `/plan` action plan, `/how` explainer, `/compare`, `/ask` (live question to the engines, rate-limited), `/prompts`, `/answers`, `/sources`, `/accuracy`, `/site`, `/settings`.
 
 ## Conventions
 - Brand palette lives in `tailwind.config.ts` (navy `#0B3A5B`, blue `#0B6298`, gold `#ADA042`). Ahli Bank is always gold in charts; competitors are blue/grey.
