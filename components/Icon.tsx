@@ -19,7 +19,13 @@ export type IconName =
   | "plus"
   | "bars"
   | "search"
-  | "sparkle";
+  | "sparkle"
+  | "trophy"
+  | "rocket"
+  | "news"
+  | "flask"
+  | "book"
+  | "grid";
 
 const P: Record<IconName, string> = {
   gauge: "M12 14l3-5M4.9 19a9 9 0 1 1 14.2 0M12 14a1 1 0 1 0 0 .01",
@@ -43,6 +49,12 @@ const P: Record<IconName, string> = {
   bars: "M5 20V10M12 20V4M19 20v-7",
   search: "M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14z M20 20l-4-4",
   sparkle: "M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16z",
+  trophy: "M8 4h8v5a4 4 0 0 1-8 0V4z M8 6H5a3 3 0 0 0 3 4 M16 6h3a3 3 0 0 1-3 4 M12 13v4 M8 21h8 M10 17h4v4h-4z",
+  rocket: "M14 4c3-1 6-1 6-1s0 3-1 6l-6 6-5-5 6-6z M9 10l-4 1-2 3 4 1 M14 15l-1 4-3 2-1-4 M15 9h.01",
+  news: "M5 4h12v16H6a2 2 0 0 1-2-2V8h1 M17 8h3v10a2 2 0 0 1-2 2h-1 M8 8h6 M8 12h6 M8 16h4",
+  flask: "M9 3h6 M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3 M7 15h10",
+  book: "M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5z M4 21a2 2 0 0 1 2-2h13 M9 7h6",
+  grid: "M4 4h7v7H4z M13 4h7v7h-7z M4 13h7v7H4z M13 13h7v7h-7z",
 };
 
 export function Icon({ name, size = 18, className = "" }: { name: IconName; size?: number; className?: string }) {

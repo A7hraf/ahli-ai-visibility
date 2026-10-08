@@ -24,7 +24,7 @@ type Row = {
   lang: string;
 };
 
-type SP = Promise<{ engine?: string; lang?: string; named?: string; page?: string; q?: string }>;
+type SP = Promise<{ engine?: string; lang?: string; named?: string; page?: string; q?: string; product?: string; persona?: string; run?: string; prompt?: string }>;
 
 export default async function AnswersPage({ searchParams }: { searchParams: SP }) {
   const sp = await searchParams;
@@ -33,8 +33,12 @@ export default async function AnswersPage({ searchParams }: { searchParams: SP }
   const last = runs[runs.length - 1];
   if (!last) return (<><PageHeader title={t.answers.title} lead={t.answers.lead} /><Empty>{t.noData}</Empty></>);
 
+  const runId = runs.some((r) => Number(r.id) === Number(sp.run)) ? Number(sp.run) : Number(last.id);
   const where = ["a.run_id = ?"];
-  const args: (string | number)[] = [Number(last.id)];
+  const args: (string | number)[] = [runId];
+  if (sp.product) { where.push("p.product = ?"); args.push(sp.product); }
+  if (sp.persona) { where.push("p.persona = ?"); args.push(sp.persona); }
+  if (sp.prompt) { where.push("p.id = ?"); args.push(Number(sp.prompt)); }
   if (sp.engine) { where.push("a.engine = ?"); args.push(sp.engine); }
   if (sp.lang === "en" || sp.lang === "ar") { where.push("p.lang = ?"); args.push(sp.lang); }
   if (sp.named === "1") where.push("a.mentioned = 1");
@@ -93,6 +97,17 @@ export default async function AnswersPage({ searchParams }: { searchParams: SP }
           <Link href={q({ named: "0" })} className={chip(sp.named === "0")}>{t.answers.notNamed}</Link>
         </div>
       </div>
+
+      {(sp.product || sp.persona || sp.run || sp.prompt) && (
+        <div className="mb-3 flex flex-wrap items-center gap-2 text-[12.5px]">
+          {sp.product && <Badge tone="brand">{t.products[sp.product as keyof typeof t.products] ?? sp.product}</Badge>}
+          {sp.persona && <Badge tone="brand">{t.personas[sp.persona as keyof typeof t.personas] ?? sp.persona}</Badge>}
+          {sp.run && <Badge tone="brand">{runs.find((r) => Number(r.id) === runId)?.started_at.slice(0, 10)}</Badge>}
+          <Link href={q({ product: undefined, persona: undefined, run: undefined, prompt: undefined })} className="font-semibold text-brand hover:underline">
+            {lang === "ar" ? "إزالة" : "Clear"}
+          </Link>
+        </div>
+      )}
 
       <p className="mb-3 text-sm text-ink-muted">
         {t.answers.showing} <span className="num">{rows.length ? (page - 1) * PER + 1 : 0}–{(page - 1) * PER + rows.length}</span> {t.answers.of} <span className="num">{total}</span>

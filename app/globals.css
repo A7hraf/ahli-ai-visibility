@@ -8,8 +8,8 @@
 
 html,
 body {
-  background: #f5f7fa;
-  color: #0b3a5b;
+  background: #f4f6f9;
+  color: #0b2540;
 }
 
 body {
@@ -27,33 +27,33 @@ h3 {
   text-wrap: balance;
 }
 
-html[dir="rtl"] .font-display {
-  font-family: "IBM Plex Sans Arabic", "Rubik", sans-serif;
-  font-weight: 700;
-}
-
+/* aligned numbers in tables and axes only */
 .num {
   font-variant-numeric: tabular-nums;
 }
 
-/* gold hairline used as the section accent */
 .accent-rule {
-  width: 40px;
-  height: 4px;
+  width: 32px;
+  height: 3px;
   border-radius: 2px;
   background: #ada042;
 }
 
-/* soft brand pattern behind the hero */
-.hero-pattern {
+/* soft brand light on navy surfaces */
+.hero-pattern,
+.hero-glow {
   background-image:
-    radial-gradient(circle at 100% 0%, rgba(173, 160, 66, 0.18) 0, transparent 38%),
-    radial-gradient(circle at 0% 100%, rgba(127, 178, 217, 0.22) 0, transparent 42%);
+    radial-gradient(circle at 100% 0%, rgba(173, 160, 66, 0.22) 0, transparent 45%),
+    radial-gradient(circle at 0% 100%, rgba(127, 178, 217, 0.18) 0, transparent 50%);
 }
 
 :focus-visible {
   outline: 2px solid #0b6298;
   outline-offset: 2px;
+}
+
+select option {
+  color: #0b2540;
 }
 
 @media (prefers-reduced-motion: reduce) {

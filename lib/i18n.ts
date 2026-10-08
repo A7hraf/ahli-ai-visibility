@@ -7,7 +7,7 @@ export async function getLang(): Promise<Lang> {
 }
 
 const en = {
-  appName: "AI Visibility Monitor",
+  appName: "AI Visibility · Digital Marketing",
   appSub: "Generative Engine Optimisation",
   nav: { overview: "Overview", compare: "Bank comparison", ask: "Ask the AI", prompts: "Questions", answers: "Answers", sources: "Sources", accuracy: "Accuracy", site: "Website readiness", settings: "Settings" },
   nav2: { summary: "Summary", plan: "Action plan", compare: "Bank comparison", ask: "Ask the AI", how: "How it works", details: "Details for the team" },
@@ -129,7 +129,7 @@ const en = {
     metrics: { mention: "Named", first: "First", top3: "Top 3", en: "English", ar: "Arabic" },
   },
   ask: {
-    title: "Ask the AI engines",
+    title: "Live AI test",
     lead: "Type any question a customer might ask. The system sends it to the AI engines now and shows their answers side by side, with bank names highlighted.",
     placeholder: "e.g. Which bank in Oman is best for a car loan?",
     examples: "Try",
@@ -200,8 +200,8 @@ const en = {
     overall: "Overall",
   },
   prompts: {
-    title: "Question library",
-    lead: "The questions real customers ask. Every active question is sent to every engine on each run.",
+    title: "Customer query library",
+    lead: "The questions real customers ask. Every active query is sent to every AI channel each week.",
     add: "Add question",
     text: "Question",
     lang: "Language",
@@ -216,14 +216,14 @@ const en = {
     tip: "Tip: ask the call-centre team for the questions customers ask most, in their own words and dialect.",
   },
   answers: {
-    title: "Answer explorer",
-    lead: "Read exactly what each AI engine told the customer.",
+    title: "Response feed",
+    lead: "Every AI answer, word for word. Filter by channel, audience and whether Ahli Bank was recommended.",
     all: "All",
-    filterEngine: "Engine",
-    filterLang: "Language",
+    filterEngine: "AI channel",
+    filterLang: "Audience",
     filterNamed: "Ahli Bank",
-    named: "Named",
-    notNamed: "Not named",
+    named: "Recommended",
+    notNamed: "Not recommended",
     rank: "Rank",
     competitors: "Competitors named",
     cited: "Sources cited",
@@ -253,8 +253,8 @@ const en = {
     },
   },
   accuracy: {
-    title: "Accuracy check",
-    lead: "The Bank's approved figures are the source of truth. When an AI engine quotes something different, an alert is raised.",
+    title: "Brand accuracy",
+    lead: "AI must quote the Bank's approved rates and terms. When an AI channel quotes something different, a misinformation alert is raised.",
     truth: "Approved facts (source of truth)",
     truthNote: "Sample values are pre-filled. Replace each with the figure approved by the Product and Compliance teams.",
     field: "Fact",
@@ -273,7 +273,7 @@ const en = {
   },
   site: {
     title: "Website readiness",
-    lead: "Can AI search engines reach, read and trust ahlibank.om? These are the fixes that raise visibility.",
+    lead: "Is ahlibank.om ready to be read, understood and trusted by AI search? These owned-media fixes raise visibility.",
     audit: "Audit findings",
     auditNote: "Manual audit of public search results, 8 Oct 2026.",
     runCheck: "Run live check",
@@ -342,7 +342,7 @@ const en = {
 type Dict = typeof en;
 
 const ar: Dict = {
-  appName: "مرصد الظهور في الذكاء الاصطناعي",
+  appName: "الظهور في الذكاء الاصطناعي · التسويق الرقمي",
   appSub: "تحسين الظهور في محركات الذكاء الاصطناعي",
   nav: { overview: "نظرة عامة", compare: "مقارنة البنوك", ask: "اسأل الذكاء الاصطناعي", prompts: "الأسئلة", answers: "الإجابات", sources: "المصادر", accuracy: "دقة المعلومات", site: "جاهزية الموقع", settings: "الإعدادات" },
   nav2: { summary: "الملخص", plan: "خطة العمل", compare: "مقارنة البنوك", ask: "اسأل الذكاء الاصطناعي", how: "كيف يعمل النظام", details: "تفاصيل للفريق" },
@@ -464,7 +464,7 @@ const ar: Dict = {
     metrics: { mention: "الذكر", first: "أولاً", top3: "أول 3", en: "إنجليزي", ar: "عربي" },
   },
   ask: {
-    title: "اسأل محركات الذكاء الاصطناعي",
+    title: "اختبار مباشر للذكاء الاصطناعي",
     lead: "اكتب أي سؤال قد يسأله العميل. يرسله النظام الآن إلى محركات الذكاء الاصطناعي ويعرض إجاباتها جنباً إلى جنب، مع تمييز أسماء البنوك.",
     placeholder: "مثال: أي بنك في عمان أفضل لتمويل السيارات؟",
     examples: "جرّب",
@@ -535,8 +535,8 @@ const ar: Dict = {
     overall: "الإجمالي",
   },
   prompts: {
-    title: "مكتبة الأسئلة",
-    lead: "الأسئلة التي يسألها العملاء فعلاً. كل سؤال مفعّل يُرسل إلى كل محرك في كل قياس.",
+    title: "مكتبة استفسارات العملاء",
+    lead: "الأسئلة التي يسألها العملاء فعلاً. كل استفسار مفعّل يُرسل إلى كل قناة ذكاء اصطناعي كل أسبوع.",
     add: "إضافة سؤال",
     text: "السؤال",
     lang: "اللغة",
@@ -551,14 +551,14 @@ const ar: Dict = {
     tip: "نصيحة: اطلب من فريق مركز الاتصال أكثر الأسئلة التي يسألها العملاء، بكلماتهم ولهجتهم.",
   },
   answers: {
-    title: "مستكشف الإجابات",
-    lead: "اقرأ بالضبط ماذا قال كل محرك ذكاء اصطناعي للعميل.",
+    title: "سجل الإجابات",
+    lead: "كل إجابة من الذكاء الاصطناعي كما هي. صفّها حسب القناة والجمهور وهل أوصت بالبنك الأهلي.",
     all: "الكل",
-    filterEngine: "المحرك",
-    filterLang: "اللغة",
+    filterEngine: "القناة",
+    filterLang: "الجمهور",
     filterNamed: "البنك الأهلي",
-    named: "مذكور",
-    notNamed: "غير مذكور",
+    named: "موصى به",
+    notNamed: "غير موصى به",
     rank: "الترتيب",
     competitors: "المنافسون المذكورون",
     cited: "المصادر",
@@ -588,8 +588,8 @@ const ar: Dict = {
     },
   },
   accuracy: {
-    title: "فحص الدقة",
-    lead: "الأرقام المعتمدة من البنك هي المرجع. عندما يذكر الذكاء الاصطناعي رقماً مختلفاً يظهر تنبيه.",
+    title: "دقة رسائل العلامة",
+    lead: "يجب أن يذكر الذكاء الاصطناعي أسعار البنك وشروطه المعتمدة. عندما تذكر قناة رقماً مختلفاً يظهر تنبيه معلومات خاطئة.",
     truth: "المعلومات المعتمدة (المرجع)",
     truthNote: "القيم الحالية أمثلة. استبدل كل قيمة بالرقم المعتمد من فريق المنتجات والامتثال.",
     field: "المعلومة",

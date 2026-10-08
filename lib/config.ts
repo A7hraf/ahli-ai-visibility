@@ -31,11 +31,11 @@ export const COMPETITORS: { name: string; aliases: string[]; domain: string }[] 
 ];
 
 export const ENGINES: { id: EngineId; label: string; envKey: string; webSearch: boolean; color: string }[] = [
-  { id: "chatgpt", label: "ChatGPT", envKey: "OPENAI_API_KEY", webSearch: true, color: "#0B6298" },
-  { id: "gemini", label: "Gemini", envKey: "GEMINI_API_KEY", webSearch: true, color: "#ADA042" },
-  { id: "claude", label: "Claude", envKey: "ANTHROPIC_API_KEY", webSearch: true, color: "#C2703D" },
-  { id: "perplexity", label: "Perplexity", envKey: "PERPLEXITY_API_KEY", webSearch: true, color: "#2E8B87" },
-  { id: "deepseek", label: "DeepSeek", envKey: "DEEPSEEK_API_KEY", webSearch: false, color: "#5B6CB5" },
+  { id: "chatgpt", label: "ChatGPT", envKey: "OPENAI_API_KEY", webSearch: true, color: "#2a78d6" },
+  { id: "gemini", label: "Gemini", envKey: "GEMINI_API_KEY", webSearch: true, color: "#eb6834" },
+  { id: "claude", label: "Claude", envKey: "ANTHROPIC_API_KEY", webSearch: true, color: "#1baf7a" },
+  { id: "perplexity", label: "Perplexity", envKey: "PERPLEXITY_API_KEY", webSearch: true, color: "#4a3aa7" },
+  { id: "deepseek", label: "DeepSeek", envKey: "DEEPSEEK_API_KEY", webSearch: false, color: "#e87ba4" },
 ];
 
 export const PRODUCTS = ["accounts", "personal_finance", "home_finance", "cards", "islamic", "brand"] as const;

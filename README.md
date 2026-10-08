@@ -14,15 +14,17 @@ This system measures that every week, in **Arabic and English**, and shows the D
 
 | Page | What you get |
 |---|---|
-| **Overview** | Visibility score gauge, position among Omani banks, mention rate, top-3 rate, share of voice, key insights (written by AI when a key is set), weekly trend, Arabic vs English gap, product and sentiment breakdowns |
-| **Bank comparison** | Ranking of all Omani banks in AI answers, head-to-head radar with the leader, trend per bank, heatmaps by engine and by product |
-| **Ask the AI** | Any employee types a question and sees, side by side, what each engine answers right now, with bank names highlighted. Rate-limited |
-| **Questions** | The library of real customer questions (AR/EN, by product and customer type). Add, pause or delete. Result per engine |
-| **Answers** | Read exactly what each engine said; full-text search; filter by engine, language, named / not named |
-| **Sources** | Which websites the engines rely on (comparison sites, news, forums, competitors, look-alike names) and which Ahli pages get cited |
-| **Accuracy** | The Bank's approved figures (source of truth). Any AI answer quoting a different rate, amount or term raises an alert |
-| **Website readiness** | Audit findings plus a live check of ahlibank.om: AI crawler access (robots.txt), structured data, canonical URLs, Arabic versions, PDF dependence |
-| **Settings** | Engine connection status, schedule, privacy notes |
+| **Overview** | AI Visibility Index, brand reach, shortlist rate, top-of-mind and share of voice with trends; ranking among Omani banks; performance by AI channel; Arabic vs English audience; product × channel heatmap; brand sentiment; who wins when Ahli is missing; media mix; growth-plan forecast |
+| **Competitors** | Positioning map (reach vs top-of-mind), brand reach over time, leaderboard, heatmaps by channel and product |
+| **Customer queries** | Every tracked question × AI channel, blind spots, performance by audience segment |
+| **Media & sources** | Media mix (owned, comparison, news, forums, competitors, look-alike brands), most-cited websites, owned-media citation rate |
+| **Brand accuracy** | Approved figures (source of truth) and misinformation alerts by channel and fact |
+| **Growth plan** | Impact vs effort matrix, action board (to do / in progress / done), measured result of each fix, 12-week forecast |
+| **Website readiness** | Audit findings plus a live check of ahlibank.om (AI crawler access, structured data, canonical URLs, Arabic versions, PDFs) |
+| **Live AI test** | Any employee types a question and sees, side by side, what each AI channel answers right now. Rate-limited |
+| **Response feed** | Every answer word for word, with search and filters |
+
+**Everything is interactive:** the filter bar (period, AI channel, audience, product, segment) re-draws every chart, and clicking any bar, cell, bubble or week opens a detail panel with the numbers behind it, the competitors and sources involved, and the actual AI answers.
 
 Interface in **Arabic (RTL) and English**, switch with one click. Ahli Bank colours.
 

@@ -11,7 +11,7 @@ export default function InfoTip({ text, light = false }: { text: string; light?:
       </button>
       <span
         role="tooltip"
-        className="pointer-events-none invisible absolute bottom-full start-1/2 z-30 mb-2 w-64 -translate-x-1/2 rounded-xl bg-navy px-3 py-2 text-start text-[12.5px] font-normal normal-case leading-relaxed tracking-normal text-white opacity-0 shadow-card transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 rtl:translate-x-1/2"
+        className="pointer-events-none absolute bottom-full start-1/2 z-30 mb-2 hidden w-56 max-w-[70vw] -translate-x-1/2 rounded-xl bg-ink-900 px-3 py-2 text-start text-[12.5px] font-normal normal-case leading-relaxed tracking-normal text-white shadow-pop group-hover:block group-focus-within:block rtl:translate-x-1/2"
       >
         {text}
       </span>

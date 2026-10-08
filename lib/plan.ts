@@ -202,10 +202,10 @@ export const ACTIONS: ActionDef[] = [
 ];
 
 export const CATEGORY_COLOR: Record<Category, string> = {
-  content: "#0B6298",
-  technical: "#5B6CB5",
-  partners: "#2F8A78",
-  accuracy: "#B23A2E",
+  content: "#2a78d6",
+  technical: "#4a3aa7",
+  partners: "#1baf7a",
+  accuracy: "#eb6834",
 };
 
 

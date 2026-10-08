@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Icon } from "./Icon";
 
-export default function RunButton({ labels, disabled, disabledHint }: { labels: { run: string; running: string; done: string; failed: string }; disabled?: boolean; disabledHint?: string }) {
+export default function RunButton({ labels, disabled, disabledHint, compact = false }: { labels: { run: string; running: string; done: string; failed: string }; disabled?: boolean; disabledHint?: string; compact?: boolean }) {
   const router = useRouter();
   const [state, setState] = useState<"idle" | "running" | "done" | "failed">("idle");
   const [msg, setMsg] = useState("");
@@ -27,19 +27,19 @@ export default function RunButton({ labels, disabled, disabledHint }: { labels: 
   }
 
   return (
-    <div className="flex flex-col items-end gap-1">
+    <div className={compact ? "relative" : "flex flex-col items-end gap-1"}>
       <button
         onClick={go}
         disabled={disabled || state === "running"}
         title={disabled ? disabledHint : undefined}
-        className="inline-flex items-center gap-2 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white shadow-card transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50"
+        className={`inline-flex items-center gap-2 rounded-xl bg-navy font-semibold text-white transition hover:bg-navy-700 disabled:cursor-not-allowed disabled:opacity-40 ${compact ? "px-3.5 py-2 text-[13px]" : "px-4 py-2.5 text-sm shadow-card"}`}
       >
-        <Icon name="play" size={15} />
+        <Icon name="play" size={compact ? 13 : 15} />
         {state === "running" ? labels.running : labels.run}
       </button>
-      {state === "done" && <span className="text-xs text-good">{labels.done} · {msg}</span>}
-      {state === "failed" && <span className="max-w-xs text-xs text-bad">{labels.failed}: {msg}</span>}
-      {disabled && disabledHint && <span className="max-w-xs text-end text-xs text-ink-soft">{disabledHint}</span>}
+      {state === "done" && <span className={`text-xs text-good ${compact ? "absolute end-0 top-full mt-1 w-64 rounded-lg bg-white p-2 text-end shadow-pop" : ""}`}>{labels.done} · {msg}</span>}
+      {state === "failed" && <span className={`max-w-xs text-xs text-bad ${compact ? "absolute end-0 top-full mt-1 w-72 rounded-lg bg-white p-2 shadow-pop" : ""}`}>{labels.failed}: {msg}</span>}
+      {!compact && disabled && disabledHint && <span className="max-w-xs text-end text-xs text-ink-soft">{disabledHint}</span>}
     </div>
   );
 }

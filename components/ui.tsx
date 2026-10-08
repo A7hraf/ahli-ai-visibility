@@ -2,11 +2,10 @@ import { Icon } from "./Icon";
 
 export function PageHeader({ title, lead, children }: { title: string; lead?: string; children?: React.ReactNode }) {
   return (
-    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      <div className="flex max-w-3xl flex-col gap-3">
-        <span className="accent-rule" />
-        <h1 className="font-display text-[28px] font-bold leading-tight text-navy sm:text-[34px]">{title}</h1>
-        {lead && <p className="text-[15px] leading-relaxed text-ink-muted">{lead}</p>}
+    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex max-w-3xl flex-col gap-1.5">
+        <h1 className="text-[24px] font-semibold leading-tight text-ink sm:text-[28px]">{title}</h1>
+        {lead && <p className="text-[14px] leading-relaxed text-ink-muted">{lead}</p>}
       </div>
       {children && <div className="flex shrink-0 flex-wrap items-center gap-3">{children}</div>}
     </div>
@@ -15,12 +14,12 @@ export function PageHeader({ title, lead, children }: { title: string; lead?: st
 
 export function Card({ title, note, action, children, className = "" }: { title?: string; note?: string; action?: React.ReactNode; children: React.ReactNode; className?: string }) {
   return (
-    <section className={`min-w-0 rounded-2xl border border-line bg-white p-5 shadow-card sm:p-6 ${className}`}>
+    <section className={`min-w-0 rounded-2xl border border-line bg-white p-5 shadow-card ${className}`}>
       {(title || action) && (
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
-            {title && <h2 className="font-display text-[17px] font-semibold text-navy">{title}</h2>}
-            {note && <p className="mt-1 text-[13px] text-ink-muted">{note}</p>}
+            {title && <h2 className="text-[15px] font-semibold text-ink">{title}</h2>}
+            {note && <p className="mt-0.5 text-[12.5px] text-ink-muted">{note}</p>}
           </div>
           {action}
         </div>
@@ -35,7 +34,7 @@ export function Kpi({ label, value, hint, delta, tone = "default" }: { label: st
   return (
     <div className={`flex min-w-0 flex-col gap-1.5 rounded-2xl border p-5 shadow-card ${tone === "brand" ? "border-navy bg-navy text-white" : "border-line bg-white"}`}>
       <span className={`text-[12px] font-medium uppercase tracking-wide ${tone === "brand" ? "text-gold-400" : "text-ink-muted"}`}>{label}</span>
-      <span className={`num font-display text-[34px] font-bold leading-none ${tone === "bad" ? "text-bad" : tone === "brand" ? "text-white" : "text-navy"}`}>{value}</span>
+      <span className={`num text-[30px] font-semibold leading-none ${tone === "bad" ? "text-bad" : tone === "brand" ? "text-white" : "text-navy"}`}>{value}</span>
       <div className="flex flex-wrap items-center gap-2">
         {delta !== undefined && delta !== null && delta !== 0 && (
           <span className={`num inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[11px] font-semibold ${up ? "bg-good-soft text-good" : "bg-bad-soft text-bad"}`}>

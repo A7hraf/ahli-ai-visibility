@@ -3,6 +3,9 @@ import { all } from "@/lib/db";
 import { openAlerts } from "@/lib/metrics";
 import { engineLabel } from "@/lib/config";
 import { Badge, Card, PageHeader } from "@/components/ui";
+import { BarList, Donut, Legend } from "@/components/viz/core";
+import { CHANNEL_COLORS } from "@/lib/dataset";
+import { ENGINES } from "@/lib/config";
 import { FactEditor, AlertToggle } from "@/components/AccuracyControls";
 import type { Fact } from "@/lib/types";
 
@@ -19,6 +22,47 @@ export default async function AccuracyPage() {
   return (
     <>
       <PageHeader title={t.accuracy.title} lead={t.accuracy.lead} />
+
+      <div className="mb-6 grid gap-4 lg:grid-cols-12">
+        <Card title={lang === "ar" ? "حالة التنبيهات" : "Alert status"} className="lg:col-span-4">
+          <Donut
+            size={160}
+            thickness={18}
+            data={[
+              { key: "open", label: t.accuracy.open, value: open, color: "#d03b3b" },
+              { key: "resolved", label: t.accuracy.resolved, value: alerts.length - open, color: "#1D7A47" },
+            ]}
+            center={
+              <>
+                <span className={`text-[34px] font-semibold leading-none ${open ? "text-bad" : "text-good"}`}>{open}</span>
+                <span className="mt-1 text-[11px] text-ink-muted">{t.accuracy.open}</span>
+              </>
+            }
+          />
+          <Legend
+            className="mt-4 justify-center"
+            items={[
+              { label: t.accuracy.open, color: "#d03b3b", value: open },
+              { label: t.accuracy.resolved, color: "#1D7A47", value: alerts.length - open },
+            ]}
+          />
+        </Card>
+        <Card title={lang === "ar" ? "التنبيهات حسب القناة" : "Alerts by AI channel"} note={lang === "ar" ? "كل التنبيهات المسجلة" : "All alerts recorded"} className="lg:col-span-4">
+          <BarList
+            unit=""
+            items={ENGINES.map((e, i) => ({ key: e.id, label: e.label, value: alerts.filter((a) => a.engine === e.id).length, color: CHANNEL_COLORS[i] })).filter((x) => x.value > 0)}
+          />
+        </Card>
+        <Card title={lang === "ar" ? "أكثر المعلومات خطأً" : "Most misquoted facts"} note={lang === "ar" ? "عدد مرات ذكر رقم مختلف عن المعتمد" : "Times AI quoted a different figure"} className="lg:col-span-4">
+          <BarList
+            unit=""
+            labelWidth="w-44"
+            items={[...new Set(alerts.map((a) => a.field))]
+              .map((fd) => ({ key: fd, label: label(fd), value: alerts.filter((a) => a.field === fd).length, color: "#eb6834" }))
+              .sort((x, y) => y.value - x.value)}
+          />
+        </Card>
+      </div>
 
       <div className="grid gap-6 xl:grid-cols-5">
         <Card title={t.accuracy.truth} note={t.accuracy.truthNote} className="xl:col-span-2">

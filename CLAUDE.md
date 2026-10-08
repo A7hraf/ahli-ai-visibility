@@ -19,12 +19,14 @@ Internal tool for Ahli Bank Oman's Digital Marketing team. It measures how AI as
 - `lib/i18n.ts` — every UI string in `en` and `ar` (same keys). Language comes from the `lang` cookie; default Arabic (RTL).
 - `lib/demo.ts` — deterministic simulated history used when no engine keys are set.
 - `lib/plan.ts` — the improvement plan (actions with category, owner, expected impact, steps; AR+EN). `lib/actions.ts` — statuses from the `actions` table and measured before/after impact. `lib/projection.ts` — 12-week forecast.
-- Pages: `/` executive summary (plain language), `/plan` action plan, `/how` explainer, `/compare`, `/ask` (live question to the engines, rate-limited), `/prompts`, `/answers`, `/sources`, `/accuracy`, `/site`, `/settings`.
+- Interactive dashboards: `lib/dataset.ts` loads one compact payload (runs, prompts, banks, cited domains, one row per answer); `lib/analytics.ts` holds pure metric functions that run in the browser, so filters and drill-downs need no reload. Client dashboards live in `components/dash/` (Overview, Competitors, Queries, Sources, PlanBoard); shared chart pieces in `components/viz/` (`core.tsx` bars/donut/heatmap/drawer/tooltips, `TrendLines.tsx`, `filters.tsx` URL-synced filter bar, `Details.tsx` the click-through detail drawer). `/api/answers?ids=` returns answer text for the drawer.
+- Interface wording uses digital-marketing terms (brand reach, shortlist rate, top-of-mind, share of voice, AI channels, audiences, owned/earned media). Dashboard text lives in `lib/ui-text.ts` (en + ar); older pages still read `lib/i18n.ts`.
+- Pages: `/` overview, `/competitors` (`/compare` redirects), `/queries` (query × channel heatmap; `/prompts` manages the library), `/sources` media mix, `/accuracy` brand accuracy, `/plan` growth plan (impact/effort matrix + action board), `/site`, `/ask` live AI test, `/answers` response feed (accepts `engine`, `lang`, `product`, `persona`, `run`, `prompt`), `/how`, `/settings`.
 
 ## Conventions
-- Brand palette lives in `tailwind.config.ts` (navy `#0B3A5B`, blue `#0B6298`, gold `#ADA042`). Ahli Bank is always gold in charts; competitors are blue/grey.
+- Brand palette lives in `tailwind.config.ts` (navy `#0B3A5B`, blue `#0B6298`, gold `#ADA042`). Ahli Bank is always gold in charts; the market leader is navy, other banks grey. AI channel colours are set once in `lib/config.ts` (validated colour-blind-safe order); don't reuse them for other meanings.
 - Add new UI text to BOTH `en` and `ar` in `lib/i18n.ts`. Use logical Tailwind classes (`ms-`, `pe-`, `start-`) so RTL works.
-- Charts are client components in `components/Charts.tsx`; wrap them in `dir="ltr"`.
+- Charts are client components in `components/viz/`; plotted SVG/Recharts areas are wrapped in `dir="ltr"`. Every chart element that shows a number should open the detail drawer or carry a tooltip.
 - Never send customer data to any engine. Never commit `.env.local` or keys.
 - Write actions honour `ADMIN_TOKEN` (header `x-admin-token`) via `lib/auth.ts`.
 - Keep Next.js on a patched version: Vercel refuses to deploy versions with known critical CVEs.

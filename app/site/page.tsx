@@ -4,12 +4,14 @@ import { AUDIT_FINDINGS, type SiteReport } from "@/lib/sitecheck";
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import SiteCheckButton from "@/components/SiteCheckButton";
+import { Donut } from "@/components/viz/core";
 
 export default async function SitePage() {
   const { lang, t } = await getT();
   const last = (await all<{ results: string }>("SELECT results FROM site_checks ORDER BY id DESC LIMIT 1"))[0];
   const report = last ? parseJSON<SiteReport | null>(last.results, null) : null;
   const sevTone = { high: "bad", medium: "warn", verify: "muted" } as const;
+  const checks = report ? report.pages.flatMap((p) => p.items) : [];
 
   return (
     <>
@@ -17,12 +19,53 @@ export default async function SitePage() {
         <SiteCheckButton labels={{ run: t.site.runCheck, running: t.site.checking }} />
       </PageHeader>
 
+      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {report ? (
+          <div className="flex items-center gap-4 rounded-2xl border border-line bg-white p-5 shadow-card">
+            <Donut
+              size={92}
+              thickness={11}
+              data={[
+                { key: "ok", label: "✓", value: checks.filter((c) => c.ok).length, color: "#1D7A47" },
+                { key: "no", label: "✗", value: checks.filter((c) => c.ok === false).length, color: "#d03b3b" },
+                { key: "na", label: "?", value: checks.filter((c) => c.ok !== true && c.ok !== false).length, color: "#CBD5E1" },
+              ]}
+              center={<span className="text-[18px] font-semibold text-ink">{checks.length ? Math.round((100 * checks.filter((c) => c.ok).length) / checks.length) : 0}%</span>}
+            />
+            <div>
+              <p className="text-[12.5px] font-medium text-ink-muted">{lang === "ar" ? "الفحوصات الناجحة" : "Checks passed"}</p>
+              <p className="mt-1 text-[24px] font-semibold text-ink">
+                {checks.filter((c) => c.ok).length}
+                <span className="text-[14px] font-normal text-ink-muted">/{checks.length}</span>
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center rounded-2xl border border-dashed border-line bg-white p-5 text-[13px] text-ink-muted">{t.site.runCheck} →</div>
+        )}
+        {(["high", "medium", "verify"] as const).map((sv) => {
+          const n = AUDIT_FINDINGS.filter((f) => f.severity === sv).length;
+          const tone = sv === "high" ? "text-bad bg-bad-soft/50 border-bad/20" : sv === "medium" ? "text-warn bg-warn-soft/50 border-warn/20" : "text-ink-muted bg-white border-line";
+          return (
+            <div key={sv} className={`flex flex-col rounded-2xl border p-5 shadow-card ${tone}`}>
+              <p className="text-[12.5px] font-medium text-ink-muted">{lang === "ar" ? "أولوية" : "Priority"}: {t.site.severity[sv]}</p>
+              <p className="mt-2 text-[38px] font-semibold leading-none">{n}</p>
+              <div className="mt-auto flex gap-1 pt-3">
+                {Array.from({ length: AUDIT_FINDINGS.length }).map((_, i) => (
+                  <span key={i} className={`h-1.5 flex-1 rounded-full ${i < n ? "bg-current" : "bg-slate-200"}`} />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
       <Card title={t.site.audit} note={t.site.auditNote} className="mb-6">
         <ul className="flex flex-col divide-y divide-line">
           {AUDIT_FINDINGS.map((f) => {
             const tx = t.site.findings[f.id];
             return (
-              <li key={f.id} className="grid gap-3 py-4 md:grid-cols-12 md:gap-6">
+              <li key={f.id} className="grid gap-3 py-4 md:grid-cols-12 md:gap-6 [&>*]:min-w-0">
                 <div className="md:col-span-1">
                   <Badge tone={sevTone[f.severity]}>{t.site.severity[f.severity]}</Badge>
                 </div>
