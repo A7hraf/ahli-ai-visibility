@@ -1,37 +1,49 @@
 import { NextResponse } from "next/server";
-import { ASK } from "@/lib/engines";
 import { all } from "@/lib/db";
-import { configuredEngines, isDemoMode } from "@/lib/config";
+import { configuredEngines, env, isDemoMode } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-// Diagnostics: is each connected engine answering? Never returns keys.
-let cache: { at: number; body: unknown } | null = null;
+// Diagnostics: one quick, no-retry call per check. Never returns keys.
+const clean = (s: string) => s.replace(/key=[^&\s"]+/gi, "key=***").replace(/\s+/g, " ").slice(0, 300);
+
+async function quick(url: string, init: RequestInit) {
+  const t0 = Date.now();
+  try {
+    const r = await fetch(url, { ...init, signal: AbortSignal.timeout(15000) });
+    const text = await r.text();
+    return { status: r.status, ms: Date.now() - t0, body: clean(text) };
+  } catch (e) {
+    return { status: 0, ms: Date.now() - t0, body: clean(String((e as Error).message)) };
+  }
+}
 
 export async function GET() {
-  if (cache && Date.now() - cache.at < 60_000) return NextResponse.json(cache.body);
-  const engines = configuredEngines();
-  const checks: Record<string, string> = {};
-  for (const e of engines) {
-    const t0 = Date.now();
-    try {
-      const r = await ASK[e]("Reply with one word: OK");
-      checks[e] = `ok in ${Date.now() - t0} ms: ${r.text.slice(0, 40)}`;
-    } catch (err) {
-      checks[e] = `error: ${String((err as Error).message).replace(/key=[^&\s]+/gi, "key=***").slice(0, 300)}`;
-    }
+  const out: Record<string, unknown> = { mode: isDemoMode() ? "demo" : "live", engines: configuredEngines() };
+  const key = env("GEMINI_API_KEY");
+  if (key) {
+    const model = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+    const headers = { "x-goog-api-key": key, "content-type": "application/json" };
+    const base = "https://generativelanguage.googleapis.com/v1beta";
+    const body = JSON.stringify({ contents: [{ parts: [{ text: "Reply with one word: OK" }] }] });
+    out.geminiModel = model;
+    out.geminiPlain = await quick(`${base}/models/${model}:generateContent`, { method: "POST", headers, body });
+    out.geminiSearch = await quick(`${base}/models/${model}:generateContent`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ contents: [{ parts: [{ text: "Reply with one word: OK" }] }], tools: [{ google_search: {} }] }),
+    });
+    const models = await quick(`${base}/models?pageSize=200`, { headers });
+    out.flashModels = (models.body.match(/models\/gemini-[a-z0-9.\-]*flash[a-z0-9.\-]*/g) ?? []).slice(0, 15);
+    if (models.status !== 200) out.modelsList = models;
   }
-  const runs = await all<{ id: number; status: string; notes: string | null; started_at: string; mode: string }>("SELECT id, status, notes, started_at, mode FROM runs ORDER BY id DESC LIMIT 3");
-  const errs = await all<{ error: string }>("SELECT error FROM answers WHERE error IS NOT NULL ORDER BY id DESC LIMIT 2");
-  const body = {
-    mode: isDemoMode() ? "demo" : "live",
-    engines,
-    checks,
-    database: process.env.DATABASE_URL ? "external" : process.env.VERCEL ? "temporary (/tmp)" : "local file",
-    lastRuns: runs,
-    lastErrors: errs.map((e) => e.error.replace(/key=[^&\s]+/gi, "key=***").slice(0, 300)),
-  };
-  cache = { at: Date.now(), body };
-  return NextResponse.json(body);
+  try {
+    out.lastRuns = await all("SELECT id, status, notes, started_at, mode FROM runs ORDER BY id DESC LIMIT 3");
+    out.lastErrors = (await all<{ error: string }>("SELECT error FROM answers WHERE error IS NOT NULL ORDER BY id DESC LIMIT 2")).map((e) => clean(e.error));
+  } catch (e) {
+    out.db = clean(String((e as Error).message));
+  }
+  out.database = process.env.DATABASE_URL ? "external" : process.env.VERCEL ? "temporary (/tmp)" : "local file";
+  return NextResponse.json(out);
 }
