@@ -45,7 +45,7 @@ export function FilterBar({ ds, ui, f, set, period = true, hide = [] }: { ds: Da
   const active = (["ch", "mk", "pl", "seg"] as const).filter((k) => f[k]);
   const sel = (key: "ch" | "mk" | "pl" | "seg", label: string, opts: { value: string; label: string }[]) =>
     hide.includes(key) ? null : (
-      <label className={`relative flex items-center gap-2 rounded-xl border bg-white py-1.5 pe-8 ps-3 text-[13px] transition hover:border-brand ${f[key] ? "border-brand ring-2 ring-brand-100" : "border-line"}`}>
+      <label className={`relative flex items-center gap-2 rounded-full bg-white py-2 pe-9 ps-4 text-[13px] shadow-card transition hover:ring-2 hover:ring-gold-100 ${f[key] ? "bg-gold-50 ring-2 ring-gold" : ""}`}>
         <select value={f[key] ?? ""} onChange={(e) => set({ [key]: e.target.value || undefined })} className="cursor-pointer appearance-none bg-transparent font-semibold text-ink outline-none">
           <option value="">{`${label}: ${ui.f.all}`}</option>
           {opts.map((o) => (
@@ -54,7 +54,7 @@ export function FilterBar({ ds, ui, f, set, period = true, hide = [] }: { ds: Da
             </option>
           ))}
         </select>
-        <svg className="pointer-events-none absolute end-2.5 text-ink-soft" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+        <svg className="pointer-events-none absolute end-3.5 text-ink-soft" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
           <path d="m6 9 6 6 6-6" />
         </svg>
       </label>
@@ -80,7 +80,7 @@ export function FilterBar({ ds, ui, f, set, period = true, hide = [] }: { ds: Da
       {sel("pl", ui.f.product, products.map((p) => ({ value: p, label: ui.products[p as keyof UIText["products"]] ?? p })))}
       {sel("seg", ui.f.segment, personas.map((p) => ({ value: p, label: ui.personas[p as keyof UIText["personas"]] ?? p })))}
       {active.length > 0 && (
-        <button onClick={() => set({ ch: undefined, mk: undefined, pl: undefined, seg: undefined })} className="rounded-xl px-3 py-1.5 text-[13px] font-medium text-brand hover:bg-brand-50">
+        <button onClick={() => set({ ch: undefined, mk: undefined, pl: undefined, seg: undefined })} className="rounded-full bg-navy px-4 py-2 text-[13px] font-medium text-white hover:bg-navy-700">
           {ui.f.clear}
         </button>
       )}

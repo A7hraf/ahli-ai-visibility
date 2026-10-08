@@ -37,7 +37,7 @@ const GROUPS: { key: keyof UIText["nav"]; items: Item[] }[] = [
   },
 ];
 
-export default function Sidebar({ nav, appName, footer }: { nav: UIText["nav"]; appName: string; footer: string }) {
+export default function Sidebar({ nav, appName, appSub, footer }: { nav: UIText["nav"]; appName: string; appSub: string; footer: string }) {
   const path = usePathname();
   const [open, setOpen] = useState(false);
   useEffect(() => setOpen(false), [path]);
@@ -48,7 +48,7 @@ export default function Sidebar({ nav, appName, footer }: { nav: UIText["nav"]; 
     <nav className="flex flex-col gap-6">
       {GROUPS.map((g) => (
         <div key={g.key} className="flex flex-col gap-0.5">
-          <p className="mb-1.5 px-3 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-brand-300/70">{nav[g.key]}</p>
+          <p className="mb-2 flex items-center gap-2 px-3 font-display text-[12px] font-semibold tracking-wide text-gold-400/80"><span className="h-px w-3 bg-gold-400/50" />{nav[g.key]}</p>
           {g.items.map((it) => {
             const active = isActive(it);
             return (
@@ -56,10 +56,9 @@ export default function Sidebar({ nav, appName, footer }: { nav: UIText["nav"]; 
                 key={it.href}
                 href={it.href}
                 aria-current={active ? "page" : undefined}
-                className={`relative flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] transition-colors ${active ? "bg-white/[0.09] font-semibold text-white" : "text-brand-100/75 hover:bg-white/[0.05] hover:text-white"}`}
+                className={`relative flex items-center gap-3 rounded-full px-3 py-2 text-[14px] transition-colors ${active ? "bg-gold font-semibold text-navy shadow-glow" : "text-white/70 hover:bg-white/[0.07] hover:text-white"}`}
               >
-                {active && <span className="absolute inset-y-1.5 start-0 w-[3px] rounded-full bg-gold-400" />}
-                <span className={active ? "text-gold-400" : "text-brand-300/80"}>
+                <span className={active ? "text-navy" : "text-gold-400/70"}>
                   <Icon name={it.icon} size={17} />
                 </span>
                 {nav[it.key]}
@@ -73,16 +72,19 @@ export default function Sidebar({ nav, appName, footer }: { nav: UIText["nav"]; 
 
   return (
     <>
-      <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col gap-7 overflow-y-auto bg-navy px-3 py-5 lg:flex">
+      <aside className="pattern-star sticky top-0 hidden h-screen w-64 shrink-0 flex-col gap-7 overflow-y-auto bg-navy px-4 py-6 lg:flex">
         <div className="flex flex-col gap-3 px-2">
-          <div className="self-start rounded-xl bg-white px-3 py-2">
+          <div className="self-start rounded-2xl bg-white px-3 py-2 shadow-glow">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/ahlibank-logo.png" alt="ahlibank" className="h-9 w-auto" />
           </div>
-          <p className="text-[12px] font-medium leading-snug text-brand-100/80">{appName}</p>
+          <div>
+            <p className="font-display text-[17px] font-semibold leading-snug text-white">{appName}</p>
+            <p className="mt-0.5 text-[11.5px] text-white/50">{appSub}</p>
+          </div>
         </div>
         {list}
-        <p className="mt-auto px-3 text-[10.5px] leading-relaxed text-brand-300/60">{footer}</p>
+        <p className="mt-auto px-3 text-[10.5px] leading-relaxed text-white/40">{footer}</p>
       </aside>
 
       <div className="sticky top-0 z-40 flex items-center justify-between bg-navy px-4 py-2.5 lg:hidden">
@@ -92,7 +94,7 @@ export default function Sidebar({ nav, appName, footer }: { nav: UIText["nav"]; 
           <Icon name={open ? "close" : "menu"} />
         </button>
       </div>
-      {open && <div className="fixed inset-0 top-[52px] z-30 overflow-y-auto bg-navy px-3 pb-8 pt-4 lg:hidden">{list}</div>}
+      {open && <div className="pattern-star fixed inset-0 top-[52px] z-30 overflow-y-auto bg-navy px-4 pb-8 pt-4 lg:hidden">{list}</div>}
     </>
   );
 }

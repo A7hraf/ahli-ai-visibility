@@ -68,7 +68,7 @@ function Inner({ ds, ui, lang }: { ds: Dataset; ui: UIText; lang: "en" | "ar" })
             ]}
             center={
               <>
-                <span className="text-[34px] font-semibold leading-none text-ink">
+                <span className="font-display text-[36px] font-bold leading-none text-ink">
                   {m.won}
                   <span className="text-[16px] font-normal text-ink-muted">/{m.qs.length}</span>
                 </span>

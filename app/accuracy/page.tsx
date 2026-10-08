@@ -34,7 +34,7 @@ export default async function AccuracyPage() {
             ]}
             center={
               <>
-                <span className={`text-[34px] font-semibold leading-none ${open ? "text-bad" : "text-good"}`}>{open}</span>
+                <span className={`font-display text-[36px] font-bold leading-none ${open ? "text-bad" : "text-good"}`}>{open}</span>
                 <span className="mt-1 text-[11px] text-ink-muted">{t.accuracy.open}</span>
               </>
             }

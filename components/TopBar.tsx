@@ -24,10 +24,10 @@ export default function TopBar({ lang, mode, modeLabel, real, simulated, realLab
   }
   const dot = mode === "live" ? "bg-good" : mode === "hybrid" ? "bg-gold" : "bg-gold-400";
   return (
-    <div className="sticky top-0 z-30 border-b border-line bg-white/85 backdrop-blur lg:top-0">
+    <div className="sticky top-0 z-30 border-b border-line/70 bg-canvas/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-3 px-4 py-2.5 sm:px-8">
         <details className="group relative">
-          <summary className="flex cursor-pointer list-none items-center gap-2 rounded-full border border-line bg-white px-3 py-1.5 text-[12.5px] font-semibold text-ink hover:border-brand-300">
+          <summary className="flex cursor-pointer list-none items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-[12.5px] font-semibold text-ink shadow-card hover:ring-2 hover:ring-gold-100">
             <span className="relative flex h-2 w-2">
               {mode !== "demo" && <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${dot}`} />}
               <span className={`relative inline-flex h-2 w-2 rounded-full ${dot}`} />
@@ -37,7 +37,7 @@ export default function TopBar({ lang, mode, modeLabel, real, simulated, realLab
               <path d="m6 9 6 6 6-6" />
             </svg>
           </summary>
-          <div className="absolute start-0 top-full z-40 mt-2 w-72 rounded-xl border border-line bg-white p-4 text-[12.5px] shadow-pop">
+          <div className="absolute start-0 top-full z-40 mt-2 w-72 rounded-3xl bg-white p-5 text-[12.5px] shadow-pop">
             {real.length > 0 && (
               <>
                 <p className="mb-1.5 font-semibold text-good">{realLabel}</p>
@@ -59,7 +59,7 @@ export default function TopBar({ lang, mode, modeLabel, real, simulated, realLab
         )}
         <div className="ms-auto flex items-center gap-2">
           <RunButton labels={run} disabled={mode === "demo"} compact />
-          <button onClick={switchLang} className="rounded-xl border border-line bg-white px-3 py-2 text-[13px] font-semibold text-ink hover:border-brand hover:text-brand" aria-label="Switch language">
+          <button onClick={switchLang} className="rounded-full bg-white px-4 py-2 font-display text-[13px] font-semibold text-ink shadow-card hover:bg-gold-50" aria-label="Switch language">
             {lang === "ar" ? "EN" : "عربي"}
           </button>
         </div>

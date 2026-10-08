@@ -5,7 +5,7 @@ import { domainStats, matches, periodRuns, slice, type Dataset, type DomainKind 
 import type { UIText } from "@/lib/ui-text";
 import { BarList, ClickHint, Delta, Donut, Legend, Panel, TipProvider } from "@/components/viz/core";
 import { FilterBar, useFilters } from "@/components/viz/filters";
-import Details, { GOLD, KIND_COLOR, useFmtDate, type Sel } from "@/components/viz/Details";
+import Details, { DomainName, domainColor, GOLD, KIND_COLOR, useFmtDate, type Sel } from "@/components/viz/Details";
 import TrendLines from "@/components/viz/TrendLines";
 
 export default function Sources(props: { ds: Dataset; ui: UIText; lang: "en" | "ar"; ownPages: { url: string; n: number }[] }) {
@@ -50,29 +50,29 @@ function Inner({ ds, ui, lang, ownPages }: { ds: Dataset; ui: UIText; lang: "en"
       <FilterBar ds={ds} ui={ui} f={f} set={set} />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="relative overflow-hidden rounded-2xl bg-navy p-5 text-white shadow-card">
+        <div className="pattern-star rise relative overflow-hidden rounded-4xl bg-navy p-6 text-white shadow-pop">
           <div className="hero-glow pointer-events-none absolute inset-0" />
           <p className="relative text-[12px] font-semibold uppercase tracking-[0.08em] text-gold-400">{ui.sources.owned}</p>
-          <p className="relative mt-3 text-[44px] font-semibold leading-none">{m.s.ownRate}%</p>
+          <p className="relative mt-3 font-display text-[48px] font-bold leading-none">{m.s.ownRate}%</p>
           <p className="relative mt-2 flex items-center gap-2 text-[12px] text-white/65">
             <Delta v={m.p ? m.s.ownRate - m.p.ownRate : null} /> {ui.vsPrev}
           </p>
         </div>
-        <div className="flex flex-col rounded-2xl border border-line bg-white p-5 shadow-card">
+        <div className="flex flex-col rise rounded-4xl bg-white p-6 shadow-card">
           <p className="text-[12.5px] font-medium text-ink-muted">{lang === "ar" ? "إجمالي الاستشهادات" : "Total citations"}</p>
-          <p className="mt-2 text-[38px] font-semibold leading-none text-ink">{m.s.total}</p>
+          <p className="mt-2 font-display text-[44px] font-bold leading-none text-ink">{m.s.total}</p>
           <p className="mt-auto pt-2 text-[12.5px] text-ink-muted">
             {m.s.withCites} {ui.answers}
           </p>
         </div>
-        <div className="flex flex-col rounded-2xl border border-line bg-white p-5 shadow-card">
+        <div className="flex flex-col rise rounded-4xl bg-white p-6 shadow-card">
           <p className="text-[12.5px] font-medium text-ink-muted">{lang === "ar" ? "مواقع مختلفة" : "Unique websites"}</p>
-          <p className="mt-2 text-[38px] font-semibold leading-none text-ink">{m.s.domains.length}</p>
+          <p className="mt-2 font-display text-[44px] font-bold leading-none text-ink">{m.s.domains.length}</p>
           <p className="mt-auto pt-2 text-[12.5px] text-ink-muted">{lang === "ar" ? "يقرأها الذكاء الاصطناعي" : "read by AI"}</p>
         </div>
-        <div className={`flex flex-col rounded-2xl border p-5 shadow-card ${risky ? "border-bad/30 bg-bad-soft/50" : "border-line bg-white"}`}>
+        <div className={`flex flex-col rise rounded-4xl border p-6 shadow-card ${risky ? "border-bad/30 bg-bad-soft/50" : "border-line bg-white"}`}>
           <p className="text-[12.5px] font-medium text-ink-muted">{ui.media.lookalike}</p>
-          <p className={`mt-2 text-[38px] font-semibold leading-none ${risky ? "text-bad" : "text-ink"}`}>{risky}</p>
+          <p className={`mt-2 font-display text-[44px] font-bold leading-none ${risky ? "text-bad" : "text-ink"}`}>{risky}</p>
           <p className="mt-auto pt-2 text-[12.5px] text-ink-muted">{lang === "ar" ? "استشهاد قد يسبب خلطاً بالعلامة" : "citations that risk brand confusion"}</p>
         </div>
       </div>
@@ -120,7 +120,7 @@ function Inner({ ds, ui, lang, ownPages }: { ds: Dataset; ui: UIText; lang: "en"
           <BarList
             labelWidth="w-48"
             onSelect={(k) => setSel({ kind: "domain", i: Number(k) })}
-            items={list.map((d) => ({ key: String(d.i), label: <span dir="ltr">{d.d}</span>, sub: ui.media[d.k], value: d.share, color: KIND_COLOR[d.k], strong: d.k === "own" }))}
+            items={list.map((d) => ({ key: String(d.i), label: <DomainName ds={ds} d={d} />, sub: ui.media[d.k], value: d.share, color: domainColor(ds, d), strong: d.k === "own" }))}
           />
         </Panel>
       </div>

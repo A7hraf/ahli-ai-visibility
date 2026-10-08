@@ -4,6 +4,8 @@ export const BRAND = {
   name: "Ahli Bank",
   nameAr: "البنك الأهلي",
   domain: "ahlibank.om",
+  color: "#C9A227",
+  short: "AHLI",
   // Every way people (and AI engines) write the Bank's name
   aliases: [
     "ahli bank oman",
@@ -20,14 +22,16 @@ export const BRAND = {
   lookalikes: ["ahlibank qatar", "ahli bank qatar", "al ahli bank of kuwait", "saudi national bank", "ahli united bank", "أهلي بنك قطر"],
 };
 
-export const COMPETITORS: { name: string; aliases: string[]; domain: string }[] = [
-  { name: "Bank Muscat", aliases: ["bank muscat", "bankmuscat", "بنك مسقط"], domain: "bankmuscat.com" },
-  { name: "National Bank of Oman", aliases: ["national bank of oman", "nbo", "البنك الوطني العماني"], domain: "nbo.om" },
-  { name: "Bank Dhofar", aliases: ["bank dhofar", "بنك ظفار"], domain: "bankdhofar.com" },
-  { name: "Sohar International", aliases: ["sohar international", "صحار الدولي"], domain: "soharinternational.com" },
-  { name: "Oman Arab Bank", aliases: ["oman arab bank", "بنك عمان العربي"], domain: "oman-arabbank.com" },
-  { name: "Bank Nizwa", aliases: ["bank nizwa", "بنك نزوى"], domain: "banknizwa.om" },
-  { name: "HSBC Oman", aliases: ["hsbc oman", "hsbc", "إتش إس بي سي"], domain: "hsbc.co.om" },
+// Each bank's colour and short code, used on every chart (codes keep banks apart for colour-blind readers).
+// Colours are a validated set, not official brand colours; change them here only.
+export const COMPETITORS: { name: string; aliases: string[]; domain: string; color: string; short: string }[] = [
+  { name: "Bank Muscat", aliases: ["bank muscat", "bankmuscat", "بنك مسقط"], domain: "bankmuscat.com", color: "#2A4DBA", short: "BM" },
+  { name: "National Bank of Oman", aliases: ["national bank of oman", "nbo", "البنك الوطني العماني"], domain: "nbo.om", color: "#C2307A", short: "NBO" },
+  { name: "Bank Dhofar", aliases: ["bank dhofar", "بنك ظفار"], domain: "bankdhofar.com", color: "#1E9E55", short: "BD" },
+  { name: "Sohar International", aliases: ["sohar international", "صحار الدولي"], domain: "soharinternational.com", color: "#8B5CF6", short: "SI" },
+  { name: "Oman Arab Bank", aliases: ["oman arab bank", "بنك عمان العربي"], domain: "oman-arabbank.com", color: "#1AA7E0", short: "OAB" },
+  { name: "Bank Nizwa", aliases: ["bank nizwa", "بنك نزوى"], domain: "banknizwa.om", color: "#A0461B", short: "BN" },
+  { name: "HSBC Oman", aliases: ["hsbc oman", "hsbc", "إتش إس بي سي"], domain: "hsbc.co.om", color: "#DB0011", short: "HSBC" },
 ];
 
 export const ENGINES: { id: EngineId; label: string; envKey: string; webSearch: boolean; color: string }[] = [

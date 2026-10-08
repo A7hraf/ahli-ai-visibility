@@ -4,27 +4,30 @@
 
 :root {
   color-scheme: light;
+  --star-white: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1'%3E%3Crect x='18' y='18' width='28' height='28'/%3E%3Crect x='18' y='18' width='28' height='28' transform='rotate(45 32 32)'/%3E%3Ccircle cx='32' cy='32' r='5'/%3E%3Cpath d='M0 32h8M56 32h8M32 0v8M32 56v8'/%3E%3C/g%3E%3C/svg%3E");
+  --star-gold: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23C9A227' stroke-width='1'%3E%3Crect x='18' y='18' width='28' height='28'/%3E%3Crect x='18' y='18' width='28' height='28' transform='rotate(45 32 32)'/%3E%3Ccircle cx='32' cy='32' r='5'/%3E%3Cpath d='M0 32h8M56 32h8M32 0v8M32 56v8'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 html,
 body {
-  background: #f4f6f9;
-  color: #0b2540;
+  background: #f4eee3;
+  color: #13263a;
 }
 
 body {
-  font-family: "IBM Plex Sans", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  font-family: "Readex Pro", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
-}
-
-html[dir="rtl"] body {
-  font-family: "IBM Plex Sans Arabic", "IBM Plex Sans", Tahoma, sans-serif;
 }
 
 h1,
 h2,
 h3 {
+  font-family: "Reem Kufi", "Readex Pro", sans-serif;
   text-wrap: balance;
+}
+
+.font-display {
+  font-family: "Reem Kufi", "Readex Pro", sans-serif;
 }
 
 /* aligned numbers in tables and axes only */
@@ -32,28 +35,63 @@ h3 {
   font-variant-numeric: tabular-nums;
 }
 
+/* Omani eight-point star lattice, used on midnight and sand surfaces */
+.pattern-star {
+  position: relative;
+  isolation: isolate;
+}
+.pattern-star::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: var(--star-white);
+  background-size: 64px 64px;
+  opacity: 0.07;
+  pointer-events: none;
+  border-radius: inherit;
+}
+.pattern-gold::before {
+  background-image: var(--star-gold);
+  opacity: 0.16;
+}
+
 .accent-rule {
   width: 32px;
   height: 3px;
   border-radius: 2px;
-  background: #ada042;
+  background: #c9a227;
 }
 
-/* soft brand light on navy surfaces */
+/* soft gold light on midnight surfaces */
 .hero-pattern,
 .hero-glow {
   background-image:
-    radial-gradient(circle at 100% 0%, rgba(173, 160, 66, 0.22) 0, transparent 45%),
-    radial-gradient(circle at 0% 100%, rgba(127, 178, 217, 0.18) 0, transparent 50%);
+    radial-gradient(circle at 92% 0%, rgba(201, 162, 39, 0.28) 0, transparent 42%),
+    radial-gradient(circle at 0% 100%, rgba(15, 159, 148, 0.25) 0, transparent 48%);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise {
+  animation: rise 0.5s ease-out both;
 }
 
 :focus-visible {
-  outline: 2px solid #0b6298;
+  outline: 2px solid #c9a227;
   outline-offset: 2px;
 }
 
 select option {
-  color: #0b2540;
+  color: #13263a;
 }
 
 @media (prefers-reduced-motion: reduce) {

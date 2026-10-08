@@ -27,11 +27,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400..700&family=Readex+Pro:wght@300..700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
       </head>
       <body>
         <div className="flex min-h-screen flex-col lg:flex-row">
-          <Sidebar nav={ui.nav} appName={t.appName} footer={t.footer} />
+          <Sidebar nav={ui.nav} appName={t.appName} appSub={t.appSub} footer={t.footer} />
           <main className="min-w-0 flex-1">
             <TopBar
               lang={lang}

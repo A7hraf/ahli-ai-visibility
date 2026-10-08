@@ -5,21 +5,21 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { BRAND, COMPETITORS } from "@/lib/config";
 import { bankSummary, breakdown, domainStats, matches, periodRuns, ranking, weekly, BRAND_IDX, type Dataset, type DRow, type Filters } from "@/lib/analytics";
 import type { UIText } from "@/lib/ui-text";
-import { BarList, Delta, Drawer } from "./core";
+import { BankBadge, BarList, Delta, Drawer } from "./core";
 import TrendLines from "./TrendLines";
 
-export const GOLD = "#B39E2E";
-export const NAVY = "#0B3A5B";
-export const GREY = "#9AA8B8";
+export const GOLD = "#C9A227";
+export const NAVY = "#0E2235";
+export const GREY = "#A79C88";
 export const KIND_COLOR: Record<string, string> = {
   own: GOLD,
-  comparison: "#2a78d6",
-  news: "#1baf7a",
-  community: "#4a3aa7",
-  competitor: "#94A3B8",
-  lookalike: "#d03b3b",
-  government: "#e87ba4",
-  other: "#CBD5E1",
+  comparison: "#1F86E0",
+  news: "#0F9F94",
+  community: "#7A4FE0",
+  competitor: "#A79C88",
+  lookalike: "#DB2B39",
+  government: "#E0559A",
+  other: "#D3C8B5",
 };
 
 export type Sel =
@@ -29,6 +29,35 @@ export type Sel =
 
 export function bankLabel(ds: Dataset, ui: UIText, b: number) {
   return b === BRAND_IDX ? ui.overview.ahli : ui.lang === "ar" ? ds.banksAr[b] : ds.banks[b];
+}
+
+export const bankColor = (ds: Dataset, b: number) => ds.bankColors[b] ?? GREY;
+
+/** A cited website's colour: its bank's colour when a bank owns it, otherwise its media type. */
+export const domainColor = (ds: Dataset, d: { k: string; b?: number }) => (d.b !== undefined ? bankColor(ds, d.b) : KIND_COLOR[d.k]);
+
+/** Website label, with the owning bank's badge. */
+export function DomainName({ ds, d }: { ds: Dataset; d: { d: string; b?: number } }) {
+  return (
+    <span className="flex min-w-0 items-center gap-2">
+      {d.b !== undefined && <BankBadge color={bankColor(ds, d.b)} short={ds.bankShort[d.b]} size={20} />}
+      <span dir="ltr" className="truncate">
+        {d.d}
+      </span>
+    </span>
+  );
+}
+
+/** Bank badge + name, for labels in lists and tables. */
+export function BankName({ ds, ui, b, size = 24, bold }: { ds: Dataset; ui: UIText; b: number; size?: number; bold?: boolean }) {
+  return (
+    <span className="flex min-w-0 items-center gap-2">
+      <BankBadge color={bankColor(ds, b)} short={ds.bankShort[b]} size={size} brand={b === BRAND_IDX} />
+      <span dir="auto" className={`truncate ${bold || b === BRAND_IDX ? "font-semibold text-ink" : ""}`}>
+        {bankLabel(ds, ui, b)}
+      </span>
+    </span>
+  );
 }
 
 export function useFmtDate(lang: "en" | "ar") {
@@ -204,11 +233,11 @@ export default function Details({ ds, ui, lang, base, sel, onClose, onFocus }: {
             </>
           )}
           <H>{ui.drawer.competitors}</H>
-          <BarList dense unit="%" items={rk.map((r) => ({ key: String(r.b), label: bankLabel(ds, ui, r.b), value: r.reach, strong: r.isBrand, color: r.isBrand ? GOLD : GREY }))} />
+          <BarList dense unit="%" labelWidth="w-44" items={rk.map((r) => ({ key: String(r.b), label: <BankName ds={ds} ui={ui} b={r.b} size={22} />, value: r.reach, strong: r.isBrand, color: bankColor(ds, r.b) }))} />
           {dom.length > 0 && (
             <>
               <H>{ui.drawer.sources}</H>
-              <BarList dense labelWidth="w-44" items={dom.map((d) => ({ key: d.d, label: <span dir="ltr">{d.d}</span>, sub: ui.media[d.k], value: d.share, color: KIND_COLOR[d.k] }))} />
+              <BarList dense labelWidth="w-44" items={dom.map((d) => ({ key: d.d, label: <DomainName ds={ds} d={d} />, sub: ui.media[d.k], value: d.share, color: domainColor(ds, d) }))} />
             </>
           )}
           <H>{ui.drawer.sample}</H>
@@ -243,7 +272,7 @@ export default function Details({ ds, ui, lang, base, sel, onClose, onFocus }: {
       const byEA = breakdown(ds, rows, "engine", ds.engines.map((e) => e.id), BRAND_IDX);
       const byP = breakdown(ds, rows, "product", Object.keys(ui.products), sel.b);
       const byPA = breakdown(ds, rows, "product", Object.keys(ui.products), BRAND_IDX);
-      const color = brand ? GOLD : NAVY;
+      const color = bankColor(ds, sel.b);
       return (
         <>
           <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
@@ -267,7 +296,7 @@ export default function Details({ ds, ui, lang, base, sel, onClose, onFocus }: {
                   height={180}
                   data={tr}
                   fmtDate={fmt}
-                  series={brand ? [{ key: "ahli", label: name, color: GOLD, width: 2.5, area: true }] : [{ key: "ahli", label: ui.overview.ahli, color: GOLD, width: 2 }, { key: "bank", label: name, color: NAVY, width: 2.5 }]}
+                  series={brand ? [{ key: "ahli", label: name, color: GOLD, width: 2.5, area: true }] : [{ key: "ahli", label: ui.overview.ahli, color: GOLD, width: 2 }, { key: "bank", label: name, color, width: 3, area: true }]}
                 />
               </div>
             </>
@@ -322,7 +351,15 @@ export default function Details({ ds, ui, lang, base, sel, onClose, onFocus }: {
   const title = !sel ? "" : sel.kind === "seg" ? sel.title : sel.kind === "bank" ? bankLabel(ds, ui, sel.b) : <span dir="ltr">{ds.domains[sel.i].d}</span>;
   const kicker = !sel ? "" : sel.kind === "seg" ? sel.kicker : sel.kind === "bank" ? sel.kicker ?? ui.drawer.bank : ui.drawer.source;
   return (
-    <Drawer open={!!sel} onClose={onClose} title={title} kicker={kicker} closeLabel={ui.drawer.close}>
+    <Drawer
+      open={!!sel}
+      onClose={onClose}
+      title={title}
+      kicker={kicker}
+      closeLabel={ui.drawer.close}
+      accent={sel?.kind === "bank" ? bankColor(ds, sel.b) : sel?.kind === "domain" ? KIND_COLOR[ds.domains[sel.i].k] : GOLD}
+      badge={sel?.kind === "bank" ? <BankBadge color={bankColor(ds, sel.b)} short={ds.bankShort[sel.b]} size={46} brand={sel.b === BRAND_IDX} /> : undefined}
+    >
       {content}
     </Drawer>
   );

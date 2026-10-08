@@ -2,10 +2,14 @@ import { Icon } from "./Icon";
 
 export function PageHeader({ title, lead, children }: { title: string; lead?: string; children?: React.ReactNode }) {
   return (
-    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      <div className="flex max-w-3xl flex-col gap-1.5">
-        <h1 className="text-[24px] font-semibold leading-tight text-ink sm:text-[28px]">{title}</h1>
-        {lead && <p className="text-[14px] leading-relaxed text-ink-muted">{lead}</p>}
+    <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex max-w-3xl flex-col gap-2">
+        <span className="flex items-center gap-2" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 1.5l2.6 4.2 4.8-1.1-1.1 4.8 4.2 2.6-4.2 2.6 1.1 4.8-4.8-1.1L12 22.5l-2.6-4.2-4.8 1.1 1.1-4.8L1.5 12l4.2-2.6-1.1-4.8 4.8 1.1z" fill="#C9A227" /></svg>
+          <span className="h-px w-16 bg-gradient-to-r from-gold to-transparent rtl:bg-gradient-to-l" />
+        </span>
+        <h1 className="font-display text-[30px] font-bold leading-[1.15] text-ink sm:text-[40px]">{title}</h1>
+        {lead && <p className="text-[14.5px] leading-relaxed text-ink-muted">{lead}</p>}
       </div>
       {children && <div className="flex shrink-0 flex-wrap items-center gap-3">{children}</div>}
     </div>
@@ -14,11 +18,11 @@ export function PageHeader({ title, lead, children }: { title: string; lead?: st
 
 export function Card({ title, note, action, children, className = "" }: { title?: string; note?: string; action?: React.ReactNode; children: React.ReactNode; className?: string }) {
   return (
-    <section className={`min-w-0 rounded-2xl border border-line bg-white p-5 shadow-card ${className}`}>
+    <section className={`min-w-0 rounded-4xl bg-white p-6 shadow-card ${className}`}>
       {(title || action) && (
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
-            {title && <h2 className="text-[15px] font-semibold text-ink">{title}</h2>}
+            {title && <h2 className="font-display text-[18px] font-semibold text-ink">{title}</h2>}
             {note && <p className="mt-0.5 text-[12.5px] text-ink-muted">{note}</p>}
           </div>
           {action}

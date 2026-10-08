@@ -111,16 +111,16 @@ export function BarList({ items, max, unit = "%", onSelect, active, labelWidth =
             <Tag
               {...(onSelect ? { type: "button" as const, onClick: () => onSelect(it.key) } : {})}
               {...(it.tip ? tip(it.tip) : {})}
-              className={`group flex w-full items-center gap-3 rounded-lg px-2 text-start transition ${dense ? "py-1" : "py-1.5"} ${onSelect ? "cursor-pointer hover:bg-canvas focus-visible:bg-canvas" : ""} ${active === it.key ? "bg-brand-50 ring-1 ring-brand-100" : ""}`}
+              className={`group flex w-full items-center gap-3 rounded-xl px-2 text-start transition ${dense ? "py-1" : "py-1.5"} ${onSelect ? "cursor-pointer hover:bg-paper focus-visible:bg-paper" : ""} ${active === it.key ? "bg-gold-50 ring-1 ring-gold-100" : ""}`}
             >
               <span className={`${labelWidth} min-w-0 shrink-0 truncate text-[13px] ${it.strong ? "font-semibold text-ink" : "text-ink-2"}`}>
                 {it.label}
                 {it.sub && <span className="block truncate text-[11px] font-normal text-ink-soft">{it.sub}</span>}
               </span>
-              <span className="relative h-2.5 min-w-0 flex-1 rounded-full bg-slate-100">
+              <span className="relative h-3 min-w-0 flex-1 rounded-full bg-slate-100">
                 <span
                   className="absolute inset-y-0 start-0 rounded-full transition-[width] duration-500 group-hover:brightness-110"
-                  style={{ width: `${Math.max(1.5, (it.value / top) * 100)}%`, background: it.color ?? "#0B6298" }}
+                  style={{ width: `${Math.max(1.5, (it.value / top) * 100)}%`, background: it.color ?? "#0B6298", boxShadow: `0 2px 8px -2px ${(it.color ?? "#0B6298")}66` }}
                 />
                 {it.marker !== undefined && it.marker !== null && (
                   <span className="absolute -inset-y-1 w-0.5 rounded-full bg-ink/60" style={{ insetInlineStart: `calc(${(it.marker / top) * 100}% - 1px)` }} />
@@ -152,7 +152,7 @@ export function Donut({ data, size = 168, thickness = 22, center, onSelect }: { 
   return (
     <div className="relative mx-auto" style={{ width: size, height: size }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90" style={{ direction: "ltr" }}>
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#EEF2F6" strokeWidth={thickness} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#F1EBE0" strokeWidth={thickness} />
         {data.map((d) => {
           const len = (d.value / total) * C;
           const off = acc;
@@ -201,7 +201,7 @@ export function Legend({ items, className = "" }: { items: { label: ReactNode; c
 
 /* ---------- heatmap ---------- */
 
-const RAMP = ["#EEF5FC", "#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"];
+const RAMP = ["#F3EEE4", "#D3EEE9", "#A6DDD4", "#6CC5B8", "#35A79A", "#15877C", "#0D6760", "#0A4845"];
 export function rampColor(v: number, max: number) {
   const t = max ? Math.max(0, Math.min(1, v / max)) : 0;
   return RAMP[Math.round(t * (RAMP.length - 1))];
@@ -240,7 +240,7 @@ export function Heatmap({
             <span className={`flex items-center truncate pe-2 text-[13px] ${r.strong ? "font-semibold text-ink" : "text-ink-2"}`}>{r.label}</span>
             {r.cells.map((v, i) => {
               const c = cols[i];
-              if (v === null) return <span key={c.key} className="h-10 rounded-md bg-slate-50" />;
+              if (v === null) return <span key={c.key} className="h-11 rounded-xl bg-slate-50" />;
               const bg = rampColor(v, top);
               const dark = v / top > 0.5;
               return (
@@ -249,8 +249,8 @@ export function Heatmap({
                   type="button"
                   onClick={() => onSelect?.(r.key, c.key)}
                   {...tip(tipText ? tipText(r.key, c.key, v) : format(v))}
-                  className={`num h-10 rounded-md text-[12.5px] font-semibold transition hover:scale-[1.04] hover:shadow-md focus-visible:scale-[1.04] ${r.strong ? "ring-2 ring-gold ring-offset-1" : ""} ${onSelect ? "cursor-pointer" : "cursor-default"}`}
-                  style={{ background: bg, color: dark ? "#fff" : "#0B2540" }}
+                  className={`num h-11 rounded-xl text-[13px] font-semibold transition hover:scale-[1.06] hover:shadow-lg focus-visible:scale-[1.06] ${r.strong ? "ring-2 ring-gold ring-offset-2" : ""} ${onSelect ? "cursor-pointer" : "cursor-default"}`}
+                  style={{ background: bg, color: dark ? "#fff" : "#13263A" }}
                 >
                   {format(v)}
                 </button>
@@ -279,7 +279,7 @@ export function RampLegend({ low, high }: { low: string; high: string }) {
 
 /* ---------- drawer ---------- */
 
-export function Drawer({ open, onClose, title, kicker, children, closeLabel = "Close" }: { open: boolean; onClose: () => void; title: ReactNode; kicker?: ReactNode; children: ReactNode; closeLabel?: string }) {
+export function Drawer({ open, onClose, title, kicker, children, closeLabel = "Close", accent, badge }: { open: boolean; onClose: () => void; title: ReactNode; kicker?: ReactNode; children: ReactNode; closeLabel?: string; accent?: string; badge?: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!open) return;
@@ -290,20 +290,24 @@ export function Drawer({ open, onClose, title, kicker, children, closeLabel = "C
   }, [open, onClose]);
   return (
     <div className={`fixed inset-0 z-50 overflow-hidden ${open ? "" : "pointer-events-none invisible"}`} aria-hidden={!open}>
-      <div onClick={onClose} className={`absolute inset-0 bg-ink-900/30 backdrop-blur-[2px] transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`} />
+      <div onClick={onClose} className={`absolute inset-0 bg-ink-900/40 backdrop-blur-[3px] transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`} />
       <div
         ref={ref}
         tabIndex={-1}
         role="dialog"
         aria-modal="true"
-        className={`absolute inset-y-0 end-0 flex w-full max-w-[560px] flex-col bg-canvas shadow-2xl outline-none transition-transform duration-300 ease-out ${open ? "translate-x-0" : "translate-x-full rtl:-translate-x-full"}`}
+        className={`absolute inset-y-0 end-0 flex w-full max-w-[580px] flex-col bg-canvas shadow-2xl outline-none transition-transform duration-300 ease-out ${open ? "translate-x-0" : "translate-x-full rtl:-translate-x-full"}`}
       >
-        <header className="flex items-start justify-between gap-4 border-b border-line bg-white px-6 py-5">
-          <div className="min-w-0">
-            {kicker && <p className="mb-1 text-[11.5px] font-semibold uppercase tracking-[0.08em] text-brand">{kicker}</p>}
-            <h2 className="text-[19px] font-semibold leading-snug text-ink">{title}</h2>
+        <header className="pattern-star relative flex items-start justify-between gap-4 overflow-hidden bg-navy px-6 py-6 text-white">
+          <span className="absolute inset-x-0 bottom-0 h-1" style={{ background: accent ?? "#C9A227" }} />
+          <div className="flex min-w-0 items-center gap-3">
+            {badge}
+            <div className="min-w-0">
+              {kicker && <p className="mb-1 text-[11.5px] font-semibold uppercase tracking-[0.1em] text-gold-400">{kicker}</p>}
+              <h2 className="text-[21px] font-semibold leading-snug text-white">{title}</h2>
+            </div>
           </div>
-          <button onClick={onClose} aria-label={closeLabel} className="rounded-lg p-2 text-ink-muted hover:bg-canvas hover:text-ink">
+          <button onClick={onClose} aria-label={closeLabel} className="rounded-full p-2 text-white/70 hover:bg-white/10 hover:text-white">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M6 6l12 12M18 6 6 18" />
             </svg>
@@ -319,14 +323,14 @@ export function Drawer({ open, onClose, title, kicker, children, closeLabel = "C
 
 export function Segmented<T extends string>({ value, options, onChange, size = "md" }: { value: T; options: { value: T; label: ReactNode }[]; onChange: (v: T) => void; size?: "sm" | "md" }) {
   return (
-    <div className="inline-flex rounded-xl bg-slate-100 p-1" role="tablist">
+    <div className="inline-flex rounded-full bg-white p-1 shadow-card" role="tablist">
       {options.map((o) => (
         <button
           key={o.value}
           role="tab"
           aria-selected={value === o.value}
           onClick={() => onChange(o.value)}
-          className={`whitespace-nowrap rounded-lg font-medium transition ${size === "sm" ? "px-2.5 py-1 text-[12px]" : "px-3 py-1.5 text-[13px]"} ${value === o.value ? "bg-white text-ink shadow-sm" : "text-ink-muted hover:text-ink"}`}
+          className={`whitespace-nowrap rounded-full font-medium transition ${size === "sm" ? "px-3 py-1 text-[12px]" : "px-4 py-1.5 text-[13px]"} ${value === o.value ? "bg-navy text-white shadow-sm" : "text-ink-muted hover:text-ink"}`}
         >
           {o.label}
         </button>
@@ -335,25 +339,56 @@ export function Segmented<T extends string>({ value, options, onChange, size = "
   );
 }
 
-export function Panel({ title, sub, action, children, className = "", info }: { title?: ReactNode; sub?: ReactNode; action?: ReactNode; children: ReactNode; className?: string; info?: ReactNode }) {
+const TONES = {
+  white: "bg-white text-ink",
+  midnight: "pattern-star bg-navy text-white",
+  gold: "pattern-star pattern-gold bg-gold-50 text-ink",
+  sand: "bg-paper text-ink",
+} as const;
+
+/** Eight-point star, the section marker. */
+export function Star({ color = "#C9A227", size = 14 }: { color?: string; size?: number }) {
   return (
-    <section className={`min-w-0 rounded-2xl border border-line bg-white p-5 shadow-card ${className}`}>
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" className="shrink-0">
+      <path d="M12 1.5l2.6 4.2 4.8-1.1-1.1 4.8 4.2 2.6-4.2 2.6 1.1 4.8-4.8-1.1L12 22.5l-2.6-4.2-4.8 1.1 1.1-4.8L1.5 12l4.2-2.6-1.1-4.8 4.8 1.1z" fill={color} />
+    </svg>
+  );
+}
+
+export function Panel({ title, sub, action, children, className = "", info, accent, tone = "white" }: { title?: ReactNode; sub?: ReactNode; action?: ReactNode; children: ReactNode; className?: string; info?: ReactNode; accent?: string; tone?: keyof typeof TONES }) {
+  const dark = tone === "midnight";
+  return (
+    <section className={`rise min-w-0 overflow-hidden rounded-4xl p-6 shadow-card ${TONES[tone]} ${className}`}>
       {(title || action) && (
-        <header className="mb-4 flex flex-wrap items-start justify-between gap-3">
+        <header className="mb-5 flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
             {title && (
-              <h2 className="flex items-center gap-2 text-[15px] font-semibold text-ink">
+              <h2 className={`flex items-center gap-2 text-[18px] font-semibold leading-tight ${dark ? "text-white" : "text-ink"}`}>
+                <Star color={accent ?? "#C9A227"} />
                 {title}
                 {info}
               </h2>
             )}
-            {sub && <p className="mt-0.5 text-[12.5px] text-ink-muted">{sub}</p>}
+            {sub && <p className={`mt-1 text-[12.5px] ${dark ? "text-white/60" : "text-ink-muted"}`}>{sub}</p>}
           </div>
           {action}
         </header>
       )}
       {children}
     </section>
+  );
+}
+
+/** A bank's colour disc with its short code. */
+export function BankBadge({ color, short, size = 28, brand = false }: { color: string; short: string; size?: number; brand?: boolean }) {
+  return (
+    <span
+      className={`inline-flex shrink-0 items-center justify-center rounded-full font-display font-bold leading-none text-white ${brand ? "ring-2 ring-gold-100" : ""}`}
+      style={{ width: size, height: size, background: color, fontSize: Math.max(8, size * (short.length > 3 ? 0.27 : short.length > 2 ? 0.32 : 0.4)), boxShadow: `0 3px 10px -3px ${color}aa` }}
+      aria-hidden="true"
+    >
+      {short}
+    </span>
   );
 }
 

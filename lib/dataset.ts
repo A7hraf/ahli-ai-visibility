@@ -20,7 +20,8 @@ export async function loadDataset(): Promise<Dataset> {
   const promptIdx = new Map(prompts.map((p, i) => [Number(p.id), i]));
   const engineIdx = new Map(ENGINES.map((e, i) => [e.id as string, i]));
   const bankIdx = new Map(banks.map((b, i) => [b, i]));
-  const domains: { d: string; k: DomainKind }[] = [];
+  const domains: { d: string; k: DomainKind; b?: number }[] = [];
+  const siteBank = (d: string) => [BRAND.domain, ...COMPETITORS.map((c) => c.domain)].findIndex((x) => d.endsWith(x));
   const domainIdx = new Map<string, number>();
 
   const raw = runs.length
@@ -50,7 +51,8 @@ export async function loadDataset(): Promise<Dataset> {
       let i = domainIdx.get(d);
       if (i === undefined) {
         i = domains.length;
-        domains.push({ d, k: classifyDomain(d) });
+        const b = siteBank(d);
+        domains.push({ d, k: classifyDomain(d), ...(b >= 0 ? { b } : {}) });
         domainIdx.set(d, i);
       }
       if (!c.includes(i)) c.push(i);
@@ -66,6 +68,8 @@ export async function loadDataset(): Promise<Dataset> {
     prompts: prompts.map((p) => ({ id: Number(p.id), text: p.text, lang: p.lang, product: p.product, persona: p.persona, active: Number(p.active) === 1 })),
     banks,
     banksAr: [BRAND.nameAr, ...COMPETITORS.map((c) => c.aliases.find((a) => /[\u0600-\u06FF]/.test(a)) ?? c.name)],
+    bankColors: [BRAND.color, ...COMPETITORS.map((c) => c.color)],
+    bankShort: [BRAND.short, ...COMPETITORS.map((c) => c.short)],
     engines: ENGINES.map((e) => ({ id: e.id, label: e.label, color: e.color })),
     domains,
     rows,

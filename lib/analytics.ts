@@ -20,8 +20,10 @@ export interface Dataset {
   prompts: { id: number; text: string; lang: Lang; product: string; persona: string; active: boolean }[];
   banks: string[];
   banksAr: string[];
+  bankColors: string[];
+  bankShort: string[];
   engines: { id: string; label: string; color: string }[];
-  domains: { d: string; k: DomainKind }[];
+  domains: { d: string; k: DomainKind; b?: number }[]; // b = bank that owns the site
   rows: DRow[];
   openAlerts: number;
 }
@@ -156,7 +158,7 @@ export function domainStats(ds: Dataset, rows: DRow[]) {
     }
     if (own) citingOwn++;
   }
-  const domains = [...n.entries()].map(([i, v]) => ({ i, d: ds.domains[i].d, k: ds.domains[i].k, n: v, share: pct(v, total) })).sort((a, b) => b.n - a.n);
+  const domains = [...n.entries()].map(([i, v]) => ({ i, d: ds.domains[i].d, k: ds.domains[i].k, b: ds.domains[i].b, n: v, share: pct(v, total) })).sort((a, b) => b.n - a.n);
   const kinds = new Map<DomainKind, number>();
   for (const d of domains) kinds.set(d.k, (kinds.get(d.k) ?? 0) + d.n);
   return {

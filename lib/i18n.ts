@@ -7,8 +7,8 @@ export async function getLang(): Promise<Lang> {
 }
 
 const en = {
-  appName: "AI Visibility · Digital Marketing",
-  appSub: "Generative Engine Optimisation",
+  appName: "AI Visibility",
+  appSub: "Digital Marketing · Ahli Bank",
   nav: { overview: "Overview", compare: "Bank comparison", ask: "Ask the AI", prompts: "Questions", answers: "Answers", sources: "Sources", accuracy: "Accuracy", site: "Website readiness", settings: "Settings" },
   nav2: { summary: "Summary", plan: "Action plan", compare: "Bank comparison", ask: "Ask the AI", how: "How it works", details: "Details for the team" },
   cats: { content: "Content", technical: "Technical", partners: "Partners & media", accuracy: "Information accuracy" },
@@ -342,8 +342,8 @@ const en = {
 type Dict = typeof en;
 
 const ar: Dict = {
-  appName: "الظهور في الذكاء الاصطناعي · التسويق الرقمي",
-  appSub: "تحسين الظهور في محركات الذكاء الاصطناعي",
+  appName: "الظهور في الذكاء الاصطناعي",
+  appSub: "التسويق الرقمي · البنك الأهلي",
   nav: { overview: "نظرة عامة", compare: "مقارنة البنوك", ask: "اسأل الذكاء الاصطناعي", prompts: "الأسئلة", answers: "الإجابات", sources: "المصادر", accuracy: "دقة المعلومات", site: "جاهزية الموقع", settings: "الإعدادات" },
   nav2: { summary: "الملخص", plan: "خطة العمل", compare: "مقارنة البنوك", ask: "اسأل الذكاء الاصطناعي", how: "كيف يعمل النظام", details: "تفاصيل للفريق" },
   cats: { content: "محتوى", technical: "تقني", partners: "شركاء وإعلام", accuracy: "دقة المعلومات" },

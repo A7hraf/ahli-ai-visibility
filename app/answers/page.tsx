@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getT } from "@/lib/i18n";
 import { all, parseJSON } from "@/lib/db";
 import { getRuns, domainOf } from "@/lib/metrics";
-import { ENGINES, engineLabel } from "@/lib/config";
+import { COMPETITORS, ENGINES, engineLabel } from "@/lib/config";
 import { Badge, Card, Empty, PageHeader } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import type { Citation, ExtractedFact } from "@/lib/types";
@@ -136,7 +136,15 @@ export default async function AnswersPage({ searchParams }: { searchParams: SP }
                   {comps.length > 0 && (
                     <div className="flex flex-wrap items-center gap-1.5">
                       <span className="text-xs text-ink-muted">{t.answers.competitors}:</span>
-                      {comps.map((c) => (<Badge key={c}>{c}</Badge>))}
+                      {comps.map((c) => {
+                        const color = COMPETITORS.find((x) => x.name === c)?.color ?? "#A79C88";
+                        return (
+                          <span key={c} className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[12px] font-semibold" style={{ background: `${color}1a`, color }}>
+                            <span className="h-2 w-2 rounded-full" style={{ background: color }} />
+                            {c}
+                          </span>
+                        );
+                      })}
                     </div>
                   )}
                   {facts.length > 0 && (
