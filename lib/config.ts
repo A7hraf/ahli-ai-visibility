@@ -23,8 +23,9 @@ export const BRAND = {
 };
 
 // Each bank's colour and short code, used on every chart (codes keep banks apart for colour-blind readers).
-// Brand colours: Bank Muscat blood red, Sohar International black, Sohar Islamic dark blue (Digital Marketing team);
-// NBO blue and Bank Dhofar green from public brand listings; Bank Nizwa not confirmed yet. Change them here only.
+// Brand colours: Bank Muscat blood red, Sohar International black, Sohar Islamic dark blue, Bank Nizwa purple
+// (Digital Marketing team); NBO blue and Bank Dhofar green from public brand listings. Change them here only.
+// Sohar Islamic is tracked as its own bank, separate from Sohar International.
 export const COMPETITORS: { name: string; aliases: string[]; domain: string; color: string; short: string }[] = [
   { name: "Bank Muscat", aliases: ["bank muscat", "bankmuscat", "بنك مسقط"], domain: "bankmuscat.com", color: "#A3141B", short: "BM" },
   { name: "National Bank of Oman", aliases: ["national bank of oman", "nbo", "البنك الوطني العماني"], domain: "nbo.om", color: "#0083BE", short: "NBO" },
