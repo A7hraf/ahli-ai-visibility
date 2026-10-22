@@ -74,7 +74,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 realLabel={t.hybrid.banner}
                 simLabel={demo ? t.demoBadge : t.hybrid.simulated}
                 updated={runs.length ? runs[runs.length - 1].started_at.slice(0, 10) : null}
-                run={{ run: t.runNow, running: t.running, done: t.runDone, failed: t.runFailed }}
+                run={{ run: t.runNow, running: t.running, done: t.runDone, failed: t.runFailed, quota: t.runQuota, quotaPart: t.runQuotaPart }}
                 canRun={user.role === "admin"}
                 engines={ENGINES.map((e) => ({ id: e.id, label: e.label, color: e.color }))}
                 products={[...new Set(prompts.map((p) => p.product))]}

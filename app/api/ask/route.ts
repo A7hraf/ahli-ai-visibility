@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { ASK } from "@/lib/engines";
+import { ASK, QuotaError } from "@/lib/engines";
 import { analyzeAnswer, heuristicAnalysis } from "@/lib/analyze";
 import { all } from "@/lib/db";
 import { ENGINES, configuredEngines, isDemoMode } from "@/lib/config";
@@ -58,6 +58,7 @@ export async function POST(req: Request) {
         const a = simulated ? heuristicAnalysis(res.text) : await analyzeAnswer(question, res.text, facts);
         return { engine, ok: true, simulated, text: res.text, citations: res.citations, mentioned: a.mentioned, rank: a.rank, competitors: a.competitors, sentiment: a.sentiment, facts: a.facts };
       } catch (e) {
+        if (e instanceof QuotaError) return { engine, ok: false, simulated: false, quota: true, error: "quota" };
         return { engine, ok: false, simulated: false, error: String((e as Error).message).slice(0, 300) };
       }
     }),

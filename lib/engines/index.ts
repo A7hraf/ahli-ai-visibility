@@ -65,7 +65,9 @@ async function askChatGPT(q: string): Promise<EngineResult> {
 // Free Google AI Studio keys may not include Google Search grounding, and each model has its own
 // small daily free quota. We try search first, and move to the next model when a model's quota is used up.
 let geminiSearchBlocked = process.env.GEMINI_SEARCH === "false";
-const exhausted = new Set<string>();
+// model -> the Google quota day it ran out on; free quotas reset at midnight Pacific time
+const exhausted = new Map<string, string>();
+const quotaDay = () => new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
 
 export function geminiModels(): string[] {
   const fromEnv = (process.env.GEMINI_MODEL || "").split(",").map((m) => m.trim()).filter(Boolean);
@@ -77,7 +79,7 @@ async function geminiCall(body: object): Promise<any> {
   const headers = { "x-goog-api-key": env("GEMINI_API_KEY")! };
   let last: Error | null = null;
   for (const model of geminiModels()) {
-    if (exhausted.has(model)) continue;
+    if (exhausted.get(model) === quotaDay()) continue;
     try {
       return await post(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, headers, body);
     } catch (e) {
@@ -85,7 +87,7 @@ async function geminiCall(body: object): Promise<any> {
       const m = String(last.message);
       // quota used up or model not available to this account: try the next model
       if (e instanceof QuotaError || /^(404|429)/.test(m)) {
-        exhausted.add(model);
+        exhausted.set(model, quotaDay());
         continue;
       }
       throw e;

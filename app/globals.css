@@ -78,13 +78,24 @@ h3 {
 }
 
 /* scroll reveal: panels fade and slide in the first time they enter the screen */
+/* never fully invisible (a quickly scrolled panel must not look empty), and a pure-CSS fallback
+   shows everything after a few seconds even if scripts fail */
 .reveal {
-  opacity: 0;
-  transform: translateY(10px);
+  opacity: 0.4;
+  transform: translateY(6px);
   transition:
-    opacity 0.5s ease,
-    transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+    opacity 0.35s ease,
+    transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
   transition-delay: var(--d, 0ms);
+}
+.reveal:not([data-in="true"]) {
+  animation: reveal-fallback 0.3s ease 3s forwards;
+}
+@keyframes reveal-fallback {
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 .reveal[data-in="true"] {
   opacity: 1;

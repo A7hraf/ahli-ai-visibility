@@ -122,7 +122,7 @@ export function BarList({ items, max, unit = "%", onSelect, active, labelWidth =
               </span>
               <span className="relative h-2 min-w-0 flex-1 rounded-[2px] bg-slate-200">
                 <span
-                  className="absolute inset-y-0 start-0 rounded-[2px] transition-[width,filter] duration-1000 ease-out group-hover:brightness-110"
+                  className="absolute inset-y-0 start-0 rounded-[2px] transition-[width,filter] duration-700 ease-out group-hover:brightness-110"
                   style={{ width: shown ? `${Math.max(1.5, (it.value / top) * 100)}%` : "0%", background: it.color ?? "#0B3A5B" }}
                 />
                 {it.marker !== undefined && it.marker !== null && (
@@ -174,7 +174,7 @@ export function Donut({ data, size = 168, thickness = 22, center, onSelect }: { 
               strokeDasharray={`${shown ? Math.max(0.5, len - gap) : 0} ${C}`}
               strokeDashoffset={-off}
               opacity={hover && hover !== d.key ? 0.45 : 1}
-              style={{ transition: "stroke-dasharray 1.1s cubic-bezier(.2,.7,.2,1), stroke-width .2s, opacity .2s" }}
+              style={{ transition: "stroke-dasharray .8s cubic-bezier(.2,.7,.2,1), stroke-width .2s, opacity .2s" }}
               className={onSelect ? "cursor-pointer" : ""}
               tabIndex={onSelect ? 0 : -1}
               onMouseEnter={() => setHover(d.key)}
@@ -257,7 +257,7 @@ export function Heatmap({
                   onClick={() => onSelect?.(r.key, c.key)}
                   {...tip(tipText ? tipText(r.key, c.key, v) : format(v))}
                   className={`num h-10 rounded-[3px] text-[13px] font-bold transition hover:z-10 hover:scale-[1.06] hover:shadow-pop focus-visible:scale-[1.06] ${r.strong ? "ring-2 ring-navy ring-offset-1" : ""} ${onSelect ? "cursor-pointer" : "cursor-default"}`}
-                  style={{ background: bg, color: zero ? "#C1005F" : "#0F1B2D", opacity: shown ? 1 : 0, transform: shown ? undefined : "scale(.6)", transitionDelay: shown ? `${(ri * cols.length + i) * 18}ms` : "0ms", transitionDuration: "450ms" }}
+                  style={{ background: bg, color: zero ? "#C1005F" : "#0F1B2D", opacity: shown ? 1 : 0, transform: shown ? undefined : "scale(.6)", transitionDelay: shown ? `${Math.min(250, (ri * cols.length + i) * 6)}ms` : "0ms", transitionDuration: "300ms" }}
                 >
                   {format(v)}
                 </button>
@@ -412,7 +412,7 @@ export function Waffle({ value, color = "#C9A227", empty = "rgba(255,255,255,0.1
               height: size,
               background: shown && on ? color : empty,
               transform: shown && on ? "scale(1)" : "scale(.82)",
-              transitionDelay: shown ? `${i * 9}ms` : "0ms",
+              transitionDelay: shown ? `${i * 3}ms` : "0ms",
             }}
           />
         );

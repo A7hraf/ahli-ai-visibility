@@ -1,5 +1,6 @@
 "use client";
 
+import { useShown } from "./motion";
 import { Area, CartesianGrid, ComposedChart, Line, ReferenceArea, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 export interface Series {
@@ -65,8 +66,11 @@ export default function TrendLines({
   marks?: { date: string; label: string }[];
 }) {
   const last = data[data.length - 1]?.date as string | undefined;
+  // Recharts' own draw-in animation can leave lines blank (dashed lines, or a resize mid-animation),
+  // so the lines are drawn at once and revealed left to right with a clip instead
+  const shown = useShown();
   return (
-    <div dir="ltr" className="w-full select-none" style={{ height }}>
+    <div dir="ltr" className="w-full select-none" style={{ height, clipPath: shown ? "inset(0 0 0 0)" : "inset(0 100% 0 0)", transition: "clip-path .9s cubic-bezier(.2,.7,.2,1)" }}>
       <ResponsiveContainer>
         <ComposedChart
           data={data}
@@ -107,6 +111,7 @@ export default function TrendLines({
                 dot={false}
                 activeDot={{ r: 5, strokeWidth: 2, stroke: "#fff" }}
                 connectNulls
+                isAnimationActive={false}
               />
             ) : (
               <Line
@@ -121,6 +126,7 @@ export default function TrendLines({
                 dot={false}
                 activeDot={s.dim ? false : { r: 4.5, strokeWidth: 2, stroke: "#fff" }}
                 connectNulls
+                isAnimationActive={false}
               />
             ),
           )}

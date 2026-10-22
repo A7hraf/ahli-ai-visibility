@@ -147,6 +147,7 @@ const en = {
     namedIn: "Named in",
     enginesWord: "engines",
     limit: "Usage limit reached. Try again later.",
+    quota: "This assistant's free daily limit is used up. It resets around 11:00 Oman time. To avoid this, turn on billing for its API key or add another assistant's key.",
     privacy: "Do not type customer names, account numbers or any personal data. Questions are sent to external AI services.",
     simShort: "simulated",
     realShort: "real",
@@ -171,6 +172,8 @@ const en = {
   running: "Running…",
   runDone: "Run finished",
   runFailed: "Run failed",
+  runQuota: "Gemini's free daily limit is used up, so nothing was measured this time and your dashboards are unchanged. It resets around 11:00 Oman time. To measure without limits, turn on billing for the Gemini key or add another assistant's key.",
+  runQuotaPart: "Some assistants hit their free daily limit partway, so this run has fewer answers than usual.",
   noData: "No measurements yet. Press Run now to collect the first answers.",
   kpi: {
     score: "Visibility score",
@@ -482,6 +485,7 @@ const ar: Dict = {
     namedIn: "ذُكر في",
     enginesWord: "محركات",
     limit: "تم الوصول إلى حد الاستخدام. حاول لاحقاً.",
+    quota: "انتهى الحد اليومي المجاني لهذا المساعد. يتجدد تقريباً الساعة 11 الصبح بتوقيت عُمان. عشان ما يتكرر، فعّل الفوترة لمفتاحه أو أضف مفتاح مساعد ثاني.",
     privacy: "لا تكتب أسماء العملاء أو أرقام الحسابات أو أي بيانات شخصية. الأسئلة تُرسل إلى خدمات ذكاء اصطناعي خارجية.",
     simShort: "محاكاة",
     realShort: "حقيقي",
@@ -506,6 +510,8 @@ const ar: Dict = {
   running: "جارٍ القياس…",
   runDone: "اكتمل القياس",
   runFailed: "فشل القياس",
+  runQuota: "انتهى الحد اليومي المجاني لـ Gemini، فما تم قياس شي هالمرة ولوحاتك ما تغيّرت. يتجدد تقريباً الساعة 11 الصبح بتوقيت عُمان. عشان تقيس بدون حدود، فعّل الفوترة لمفتاح Gemini أو أضف مفتاح مساعد ثاني.",
+  runQuotaPart: "بعض المساعدين خلص حدّهم اليومي في النص، فهالقياس فيه إجابات أقل من العادة.",
   noData: "لا توجد قياسات بعد. اضغط «قِس الآن» لجمع أول الإجابات.",
   kpi: {
     score: "مؤشر الظهور",

@@ -6,24 +6,29 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode 
 export const InViewCtx = createContext(true);
 export const useShown = () => useContext(InViewCtx);
 
-export function useInView<T extends Element>(threshold = 0.15) {
+export function useInView<T extends Element>(threshold = 0.05) {
   const ref = useRef<T>(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     if (typeof IntersectionObserver === "undefined") return setInView(true);
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setInView(true);
-          io.disconnect();
-        }
-      },
-      { threshold, rootMargin: "0px 0px -6% 0px" },
-    );
+    const show = () => {
+      setInView(true);
+      io.disconnect();
+      window.clearTimeout(fallback);
+    };
+    // already on screen (or above it, e.g. after a jump link): show at once
+    const r = el.getBoundingClientRect();
+    if (r.top < window.innerHeight && r.bottom > 0) return setInView(true);
+    const io = new IntersectionObserver(([e]) => e.isIntersecting && show(), { threshold, rootMargin: "0px 0px 20% 0px" });
     io.observe(el);
-    return () => io.disconnect();
+    // never leave a chart hidden: fast scrolling, print or an odd browser can miss the observer
+    const fallback = window.setTimeout(show, 3000);
+    return () => {
+      io.disconnect();
+      window.clearTimeout(fallback);
+    };
   }, [threshold]);
   return { ref, inView };
 }

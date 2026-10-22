@@ -6,6 +6,7 @@ import { Icon } from "./Icon";
 type Result = {
   engine: string;
   ok: boolean;
+  quota?: boolean;
   simulated?: boolean;
   text?: string;
   error?: string;
@@ -271,7 +272,7 @@ export default function AskClient({
                       <Highlight text={r.text ?? ""} brand={brandAliases} comps={competitorAliases} />
                     </div>
                   ) : (
-                    <p className="text-sm text-bad">{r.error}</p>
+                    <p className={`rounded-[4px] px-3 py-2.5 text-[13px] leading-relaxed ${r.quota ? "bg-gold-50 text-gold-700" : "bg-bad-soft text-bad"}`}>{r.quota ? t.quota : r.error}</p>
                   )}
                   {r.citations && r.citations.length > 0 && (
                     <footer className="mt-auto flex flex-wrap items-center gap-1.5 border-t border-line pt-3">

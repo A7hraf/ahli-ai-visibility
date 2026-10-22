@@ -49,7 +49,7 @@ function Ring({ value, size = 168, stroke = 14, color, track = "rgba(255,255,255
     <div className="relative shrink-0" style={{ width: size, height: size }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90" style={{ direction: "ltr" }} aria-hidden="true">
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={track} strokeWidth={stroke} />
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={stroke} strokeLinecap="round" strokeDasharray={`${shown ? C * Math.max(0.005, Math.min(1, value / 100)) : 0} ${C}`} style={{ transition: "stroke-dasharray 1.4s cubic-bezier(.2,.7,.2,1)" }} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={stroke} strokeLinecap="round" strokeDasharray={`${shown ? C * Math.max(0.005, Math.min(1, value / 100)) : 0} ${C}`} style={{ transition: "stroke-dasharray .9s cubic-bezier(.2,.7,.2,1)" }} />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">{children}</div>
     </div>
@@ -84,7 +84,7 @@ function Race({ ds, ui, rank, onPick }: { ds: Dataset; ui: UIText; rank: ReturnT
               {bankLabel(ds, ui, r.b)}
             </span>
             <span className="relative h-2 rounded-[2px] bg-slate-200">
-              <span className="absolute inset-y-0 start-0 rounded-[2px] group-hover:brightness-110" style={{ width: shown ? `${Math.max(1.5, (r.reach / top) * 100)}%` : "0%", background: bankColor(ds, r.b), transition: `width 1.1s cubic-bezier(.2,.7,.2,1) ${i * 70}ms` }} />
+              <span className="absolute inset-y-0 start-0 rounded-[2px] group-hover:brightness-110" style={{ width: shown ? `${Math.max(1.5, (r.reach / top) * 100)}%` : "0%", background: bankColor(ds, r.b), transition: `width .7s cubic-bezier(.2,.7,.2,1) ${i * 40}ms` }} />
             </span>
             <span className="num text-end text-[13px] font-bold text-ink">{r.reach}%</span>
           </button>
@@ -128,7 +128,7 @@ function AssistantColumns({ ds, ui, rows, prev, onPick }: { ds: Dataset; ui: UIT
             <span className="relative w-full max-w-[44px] flex-1">
               <span
                 className="absolute inset-x-0 bottom-0 rounded-t-[2px] group-hover:brightness-110"
-                style={{ height: shown && c ? `${Math.max(3, (c.reach / top) * 100)}%` : "0%", background: e.color, transition: `height 1s cubic-bezier(.2,.7,.2,1) ${i * 90}ms, filter .2s` }}
+                style={{ height: shown && c ? `${Math.max(3, (c.reach / top) * 100)}%` : "0%", background: e.color, transition: `height .7s cubic-bezier(.2,.7,.2,1) ${i * 50}ms, filter .2s` }}
               />
             </span>
             <span className="w-full truncate text-[11.5px] font-bold text-ink-2">{e.label}</span>

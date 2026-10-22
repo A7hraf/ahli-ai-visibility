@@ -1,5 +1,5 @@
 import { all, db, run as exec } from "./db";
-import { ASK } from "./engines";
+import { ASK, QuotaError } from "./engines";
 import { analyzeAnswer, heuristicAnalysis } from "./analyze";
 import { compareFacts } from "./accuracy";
 import { ENGINES, configuredEngines, geminiOnly, isDemoMode, repeats } from "./config";
@@ -33,12 +33,15 @@ export async function collect(opts: { promptIds?: number[] } = {}) {
   let failed = 0;
   let realOk = 0;
   let lastError = "";
+  // an engine whose daily quota ran out is skipped for the rest of the run (no pile of failed answers)
+  const outOfQuota = new Set<string>();
   // small concurrency pool: polite to the APIs, still finishes in minutes
   const CONCURRENCY = Math.max(1, Math.min(8, Number(process.env.CONCURRENCY ?? (geminiOnly() ? 2 : 4)) || 4));
   let next = 0;
   async function worker() {
     while (next < jobs.length) {
       const { p, engine, rep } = jobs[next++];
+      if (outOfQuota.has(engine)) continue;
       const now = new Date().toISOString();
       const simulated = !real.includes(engine);
       try {
@@ -57,6 +60,11 @@ export async function collect(opts: { promptIds?: number[] } = {}) {
           );
         }
       } catch (e) {
+        if (e instanceof QuotaError) {
+          outOfQuota.add(engine);
+          lastError = String(e.message).slice(0, 200);
+          continue;
+        }
         failed++;
         lastError = String((e as Error).message).slice(0, 200);
         await exec(
@@ -68,6 +76,14 @@ export async function collect(opts: { promptIds?: number[] } = {}) {
     }
   }
   await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+  const quota = [...outOfQuota];
+  // nothing real came back because the quota is used up: drop the run so the dashboards don't show an empty week
+  if (quota.length && realOk === 0) {
+    await exec("DELETE FROM answers WHERE run_id = ?", [runId]);
+    await exec("DELETE FROM alerts WHERE answer_id NOT IN (SELECT id FROM answers)");
+    await exec("DELETE FROM runs WHERE id = ?", [runId]);
+    return { runId: null, total: 0, failed: 0, real, realTotal: 0, realOk: 0, lastError, quota };
+  }
   await exec("UPDATE runs SET finished_at = ?, status = ?, notes = ? WHERE id = ?", [
     new Date().toISOString(),
     failed === jobs.length && jobs.length > 0 ? "failed" : "done",
@@ -80,5 +96,5 @@ export async function collect(opts: { promptIds?: number[] } = {}) {
     await generateAiInsights(runId);
   } catch {}
   const realTotal = jobs.filter((j) => real.includes(j.engine)).length;
-  return { runId, total: jobs.length, failed, real, realTotal, realOk, lastError };
+  return { runId, total: jobs.length, failed, real, realTotal, realOk, lastError, quota };
 }

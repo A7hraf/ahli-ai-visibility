@@ -4,9 +4,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Icon } from "./Icon";
 
-export default function RunButton({ labels, disabled, disabledHint, compact = false }: { labels: { run: string; running: string; done: string; failed: string }; disabled?: boolean; disabledHint?: string; compact?: boolean }) {
+export default function RunButton({ labels, disabled, disabledHint, compact = false }: { labels: { run: string; running: string; done: string; failed: string; quota?: string; quotaPart?: string }; disabled?: boolean; disabledHint?: string; compact?: boolean }) {
   const router = useRouter();
-  const [state, setState] = useState<"idle" | "running" | "done" | "failed">("idle");
+  const [state, setState] = useState<"idle" | "running" | "done" | "failed" | "quota">("idle");
   const [msg, setMsg] = useState("");
 
   async function go() {
@@ -15,9 +15,20 @@ export default function RunButton({ labels, disabled, disabledHint, compact = fa
     try {
       const res = await fetch("/api/run", { method: "POST" });
       const j = await res.json();
+      if (j.error === "quota") {
+        setState("quota");
+        setMsg(labels.quota ?? "");
+        return;
+      }
       if (!res.ok) throw new Error(j.error || res.statusText);
       setState(j.realTotal && !j.realOk ? "failed" : "done");
-      setMsg(j.realTotal ? `${j.real.join(", ")}: ${j.realOk}/${j.realTotal}${j.lastError ? ` · ${j.lastError}` : ""}` : `${j.total - j.failed}/${j.total}`);
+      setMsg(
+        j.quota?.length && labels.quotaPart
+          ? `${j.realOk}/${j.realTotal} · ${labels.quotaPart}`
+          : j.realTotal
+            ? `${j.real.join(", ")}: ${j.realOk}/${j.realTotal}${j.lastError ? ` · ${j.lastError}` : ""}`
+            : `${j.total - j.failed}/${j.total}`,
+      );
       router.refresh();
     } catch (e) {
       setState("failed");
@@ -38,6 +49,16 @@ export default function RunButton({ labels, disabled, disabledHint, compact = fa
       </button>
       {state === "done" && <span className={`text-xs text-good ${compact ? "absolute end-0 top-full mt-1 w-64 rounded-lg bg-white p-2 text-end shadow-pop" : ""}`}>{labels.done} · {msg}</span>}
       {state === "failed" && <span className={`max-w-xs text-xs text-bad ${compact ? "absolute end-0 top-full mt-1 w-72 rounded-lg bg-white p-2 shadow-pop" : ""}`}>{labels.failed}: {msg}</span>}
+      {state === "quota" && (
+        <span role="status" className={`max-w-sm text-[12.5px] leading-relaxed text-gold-700 ${compact ? "absolute end-0 top-full z-40 mt-2 w-80 rounded-[4px] border border-gold/40 bg-gold-50 p-3 shadow-pop" : ""}`}>
+          {msg}
+          {compact && (
+            <button onClick={() => setState("idle")} className="ms-2 font-bold underline" aria-label="Close">
+              ✕
+            </button>
+          )}
+        </span>
+      )}
       {!compact && disabled && disabledHint && <span className="max-w-xs text-end text-xs text-ink-soft">{disabledHint}</span>}
     </div>
   );

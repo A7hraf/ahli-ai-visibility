@@ -17,7 +17,7 @@ type Props = {
   realLabel: string;
   simLabel: string;
   updated: string | null;
-  run: { run: string; running: string; done: string; failed: string };
+  run: { run: string; running: string; done: string; failed: string; quota: string; quotaPart: string };
   canRun: boolean;
   engines: { id: string; label: string; color: string }[];
   products: string[];
