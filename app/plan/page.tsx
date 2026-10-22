@@ -1,8 +1,8 @@
 import { getT } from "@/lib/i18n";
 import { UI } from "@/lib/ui-text";
 import { actionViews, CATEGORY_COLOR } from "@/lib/actions";
+import { CATEGORY_TINT } from "@/lib/plan";
 import { projection } from "@/lib/projection";
-import { PageHeader } from "@/components/ui";
 import PlanBoard from "@/components/dash/PlanBoard";
 
 export default async function PlanPage() {
@@ -11,10 +11,10 @@ export default async function PlanPage() {
   const proj = await projection(actions);
   return (
     <>
-      <PageHeader title={UI[lang].nav.plan} lead={t.plan.lead} />
       <PlanBoard
         actions={actions}
         colors={CATEGORY_COLOR}
+        tints={CATEGORY_TINT}
         ui={UI[lang]}
         lang={lang}
         t={{ plan: t.plan, cats: t.cats, catsHint: t.catsHint, status: t.status, effort: t.effort, products: t.products, home: t.home }}

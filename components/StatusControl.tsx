@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type S = "todo" | "doing" | "done";
 
@@ -9,38 +9,39 @@ export default function StatusControl({ actionKey, status, labels }: { actionKey
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const [cur, setCur] = useState(status);
+  useEffect(() => setCur(status), [status]);
   async function set(s: S) {
-    if (s === status) return;
+    if (s === cur) return;
+    const was = cur;
+    setCur(s); // show the change straight away
     setBusy(true);
     setErr("");
-    let token = "";
-    try {
-      token = window.localStorage.getItem("adminToken") ?? "";
-    } catch {}
-    const res = await fetch("/api/actions", { method: "PATCH", headers: { "content-type": "application/json", "x-admin-token": token }, body: JSON.stringify({ key: actionKey, status: s }) });
+    const res = await fetch("/api/actions", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ key: actionKey, status: s }) });
     setBusy(false);
     if (!res.ok) {
+      setCur(was);
       setErr(labels.error);
       return;
     }
     router.refresh();
   }
   const style: Record<S, string> = {
-    todo: "bg-slate-100 text-ink-muted ring-slate-300",
-    doing: "bg-gold-50 text-gold-700 ring-gold",
-    done: "bg-good-soft text-good ring-good",
+    todo: "bg-white text-ink ring-line-2",
+    doing: "bg-navy text-white ring-navy",
+    done: "bg-gold text-navy ring-gold",
   };
   return (
     <div className="flex flex-col gap-1.5">
-      <div role="radiogroup" className="grid grid-cols-3 gap-1 rounded-xl bg-canvas p-1">
+      <div role="radiogroup" className="grid grid-cols-3 gap-1 rounded-[4px] border border-line bg-slate-100 p-1">
         {(["todo", "doing", "done"] as S[]).map((s) => (
           <button
             key={s}
             role="radio"
-            aria-checked={status === s}
+            aria-checked={cur === s}
             disabled={busy}
             onClick={() => set(s)}
-            className={`rounded-lg px-2 py-1.5 text-[12.5px] font-medium transition ${status === s ? `${style[s]} ring-1` : "text-ink-muted hover:bg-white"}`}
+            className={`rounded-[3px] px-2 py-2 text-[13px] font-bold transition ${cur === s ? `${style[s]} ring-1` : "text-ink-muted hover:bg-white"}`}
           >
             {labels[s]}
           </button>

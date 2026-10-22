@@ -13,8 +13,7 @@ export default function RunButton({ labels, disabled, disabledHint, compact = fa
     setState("running");
     setMsg("");
     try {
-      const token = typeof window !== "undefined" ? window.localStorage.getItem("adminToken") ?? "" : "";
-      const res = await fetch("/api/run", { method: "POST", headers: { "x-admin-token": token } });
+      const res = await fetch("/api/run", { method: "POST" });
       const j = await res.json();
       if (!res.ok) throw new Error(j.error || res.statusText);
       setState(j.realTotal && !j.realOk ? "failed" : "done");
@@ -32,7 +31,7 @@ export default function RunButton({ labels, disabled, disabledHint, compact = fa
         onClick={go}
         disabled={disabled || state === "running"}
         title={disabled ? disabledHint : undefined}
-        className={`inline-flex items-center gap-2 rounded-lg bg-navy font-bold text-white transition hover:bg-navy-700 disabled:cursor-not-allowed disabled:opacity-40 ${compact ? "px-3.5 py-2 text-[13px]" : "px-5 py-2.5 text-sm shadow-card"}`}
+        className={`inline-flex items-center gap-2 rounded-[4px] bg-navy font-bold text-white transition hover:bg-navy-700 disabled:cursor-not-allowed disabled:opacity-40 ${compact ? "px-3.5 py-2 text-[13px]" : "px-5 py-2.5 text-sm shadow-card"}`}
       >
         <Icon name="play" size={compact ? 13 : 15} />
         {state === "running" ? labels.running : labels.run}

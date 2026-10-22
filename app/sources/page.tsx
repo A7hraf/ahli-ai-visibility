@@ -3,7 +3,6 @@ import { getT } from "@/lib/i18n";
 import { UI } from "@/lib/ui-text";
 import { citationStats, getRuns } from "@/lib/metrics";
 import { loadDataset } from "@/lib/dataset";
-import { PageHeader } from "@/components/ui";
 import Sources from "@/components/dash/Sources";
 
 export default async function SourcesPage() {
@@ -14,7 +13,6 @@ export default async function SourcesPage() {
   const ownPages = last ? (await citationStats(Number(last.id))).ownPages : [];
   return (
     <>
-      <PageHeader title={ui.sources.title} lead={ui.sources.sub} />
       <Suspense>
         <Sources ds={ds} ui={ui} lang={lang} ownPages={ownPages} />
       </Suspense>

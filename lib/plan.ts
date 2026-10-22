@@ -202,10 +202,17 @@ export const ACTIONS: ActionDef[] = [
 ];
 
 export const CATEGORY_COLOR: Record<Category, string> = {
-  content: "#2a78d6",
-  technical: "#4a3aa7",
-  partners: "#1baf7a",
-  accuracy: "#eb6834",
+  content: "#0B3A5B",
+  technical: "#444141",
+  partners: "#8A6D12",
+  accuracy: "#AA0B56",
+};
+// soft tag backgrounds for the same categories
+export const CATEGORY_TINT: Record<Category, string> = {
+  content: "#E6EEF4",
+  technical: "#EAE7E7",
+  partners: "#F7EFD6",
+  accuracy: "#FFF1F4",
 };
 
 

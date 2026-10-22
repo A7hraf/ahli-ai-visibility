@@ -33,7 +33,7 @@ function Highlight({ text, brand, comps }: { text: string; brand: string[]; comp
         const hit = terms.find((x) => x.b.toLowerCase() === p.toLowerCase());
         if (!hit) return <span key={i}>{p}</span>;
         return (
-          <mark key={i} className={`rounded px-0.5 ${hit.k === "brand" ? "bg-gold-100 font-semibold text-gold-700" : "bg-brand-50 text-brand"}`}>
+          <mark key={i} className={`rounded-[3px] px-1 font-bold ${hit.k === "brand" ? "bg-gold text-navy" : "bg-navy-50 text-navy"}`}>
             {p}
           </mark>
         );
@@ -67,6 +67,8 @@ export default function AskClient({
   examples,
   brandAliases,
   competitorAliases,
+  head,
+  canSave = true,
 }: {
   t: T;
   lang: string;
@@ -75,6 +77,8 @@ export default function AskClient({
   examples: string[];
   brandAliases: string[];
   competitorAliases: string[];
+  head: { kicker: string; title: string; lead: string; empty: string };
+  canSave?: boolean;
 }) {
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState<string[]>(engines.map((e) => e.id));
@@ -105,14 +109,10 @@ export default function AskClient({
   }
 
   async function save() {
-    let token = "";
-    try {
-      token = window.localStorage.getItem("adminToken") ?? "";
-    } catch {}
     const lang2 = /[؀-ۿ]/.test(asked) ? "ar" : "en";
     const res = await fetch("/api/prompts", {
       method: "POST",
-      headers: { "content-type": "application/json", "x-admin-token": token },
+      headers: { "content-type": "application/json" },
       body: JSON.stringify({ text: asked, lang: lang2, product: guessProduct(asked), persona: "general" }),
     });
     if (res.ok) setSaved(true);
@@ -126,16 +126,24 @@ export default function AskClient({
   return (
     <div className="flex flex-col gap-6">
       {/* search box */}
-      <div className="hero-pattern rounded-2xl bg-navy p-5 shadow-card sm:p-7">
+      <div className="rise mt-3 rounded-[4px] bg-navy px-5 py-8 text-white sm:px-10">
+        <div className="mx-auto mb-6 flex max-w-2xl flex-col items-center gap-2 text-center">
+          <p className="flex items-center gap-1.5 text-[12.5px] font-bold text-gold-400">
+            <Icon name="sparkle" size={14} />
+            {head.kicker}
+          </p>
+          <h1 className="font-display text-[32px] leading-tight sm:text-[40px]">{head.title}</h1>
+          <p className="text-[14.5px] text-white/75">{head.lead}</p>
+        </div>
         <form
           onSubmit={(e) => {
             e.preventDefault();
             ask();
           }}
-          className="flex flex-col gap-3 sm:flex-row"
+          className="mx-auto flex max-w-3xl flex-col gap-2 rounded-[4px] bg-white p-1.5 sm:flex-row"
         >
           <div className="relative min-w-0 flex-1">
-            <span className="pointer-events-none absolute inset-y-0 start-4 flex items-center text-brand-300">
+            <span className="pointer-events-none absolute inset-y-0 start-4 flex items-center text-ink-soft">
               <Icon name="search" size={20} />
             </span>
             <input
@@ -144,16 +152,16 @@ export default function AskClient({
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder={t.placeholder}
-              className="w-full rounded-xl border-0 bg-white py-4 pe-4 ps-12 text-[16px] text-navy shadow-card outline-none ring-gold focus:ring-2"
+              className="w-full rounded-[3px] border-0 bg-white py-3.5 pe-4 ps-12 text-[16px] text-ink outline-none"
             />
           </div>
-          <button disabled={busy || q.trim().length < 5} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gold px-7 py-4 text-[16px] font-semibold text-navy transition hover:bg-gold-400 disabled:opacity-60">
-            <Icon name="sparkle" size={18} />
+          <button disabled={busy || q.trim().length < 5} className="inline-flex items-center justify-center gap-2 rounded-[3px] bg-navy px-6 py-3.5 text-[15px] font-bold text-white transition hover:bg-navy-700 active:scale-[0.98] disabled:opacity-60">
+            {busy ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" /> : <Icon name="sparkle" size={17} />}
             {busy ? t.asking : t.ask}
           </button>
         </form>
-        <div className="mt-4 flex flex-wrap items-center gap-2">
-          <span className="text-sm text-brand-100/80">{t.examples}:</span>
+        <div className="mx-auto mt-4 flex max-w-3xl flex-wrap items-center justify-center gap-2">
+          <span className="text-[12.5px] text-white/60">{t.examples}</span>
           {examples.map((ex) => (
             <button
               key={ex}
@@ -162,14 +170,14 @@ export default function AskClient({
                 ask(ex);
               }}
               dir="auto"
-              className="rounded-full border border-white/20 px-3 py-1.5 text-start text-sm text-white hover:bg-white/10"
+              className="rounded-[4px] border border-white/25 px-3 py-1.5 text-start text-[13px] text-white transition hover:-translate-y-0.5 hover:bg-white/10"
             >
               {ex}
             </button>
           ))}
         </div>
-        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-white/10 pt-4">
-          <span className="text-sm text-brand-100/80">{t.engines}:</span>
+        <div className="mx-auto mt-4 flex max-w-3xl flex-wrap items-center justify-center gap-2 border-t border-white/10 pt-4">
+          <span className="text-[12.5px] text-white/60">{t.engines}</span>
           {engines.map((e) => {
             const on = selected.includes(e.id);
             return (
@@ -177,7 +185,7 @@ export default function AskClient({
                 key={e.id}
                 onClick={() => setSelected(on ? selected.filter((x) => x !== e.id) : [...selected, e.id])}
                 aria-pressed={on}
-                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition ${on ? "bg-white text-navy" : "border border-white/20 text-brand-100/70"}`}
+                className={`inline-flex items-center gap-1.5 rounded-[4px] px-3 py-1.5 text-[13px] font-medium transition ${on ? "bg-white text-ink" : "border border-white/20 text-white/60 hover:text-white"}`}
               >
                 <span className="h-2 w-2 rounded-full" style={{ background: e.color }} />
                 {e.label}
@@ -186,13 +194,21 @@ export default function AskClient({
             );
           })}
         </div>
-        <p className="mt-4 flex items-start gap-2 text-xs text-brand-100/70">
+        <p className="mx-auto mt-4 flex max-w-3xl items-start justify-center gap-2 text-xs text-white/55">
           <Icon name="shield" size={14} className="mt-0.5 shrink-0" />
           {t.privacy}
         </p>
       </div>
 
-      {demo && <p className="rounded-xl bg-gold-50 px-4 py-3 text-sm text-gold-700">{t.demoNote}</p>}
+      {demo && <p className="rounded-[4px] bg-gold-50 px-4 py-3 text-sm text-gold-700">{t.demoNote}</p>}
+      {!busy && !results && !err && (
+        <div className="flex flex-col items-center gap-3 py-10 text-center text-ink-muted">
+          <span className="text-ink-soft">
+            <Icon name="chat" size={34} />
+          </span>
+          <p className="text-[14px]">{head.empty}</p>
+        </div>
+      )}
       {err && <p className="rounded-xl bg-bad-soft px-4 py-3 text-sm text-bad">{err}</p>}
 
       {busy && (
@@ -205,7 +221,7 @@ export default function AskClient({
 
       {results && (
         <>
-          <div className="flex flex-col gap-4 rounded-2xl border border-line bg-white p-5 shadow-card sm:flex-row sm:items-center sm:justify-between">
+          <div className="rise flex flex-col gap-4 rounded-[4px] border border-line bg-white p-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
               <div className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl ${namedCount ? "bg-gold-50 text-gold-700" : "bg-bad-soft text-bad"}`}>
                 <span className="num font-display text-2xl font-bold">{namedCount}/{ok.length}</span>
@@ -218,17 +234,19 @@ export default function AskClient({
                 <p dir="auto" className="text-sm text-ink-muted">“{asked}”</p>
               </div>
             </div>
-            <button onClick={save} disabled={saved} className="inline-flex items-center gap-2 self-start rounded-xl border border-brand px-4 py-2.5 text-sm font-semibold text-brand hover:bg-brand-50 disabled:border-good disabled:text-good sm:self-auto">
-              <Icon name={saved ? "check" : "plus"} size={15} />
-              {saved ? t.saved : t.save}
-            </button>
+            {canSave && (
+              <button onClick={save} disabled={saved} className="inline-flex items-center gap-2 self-start rounded-[4px] border border-navy px-4 py-2.5 text-sm font-bold text-navy transition hover:bg-navy hover:text-white disabled:border-good disabled:text-good sm:self-auto">
+                <Icon name={saved ? "check" : "plus"} size={15} />
+                {saved ? t.saved : t.save}
+              </button>
+            )}
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {results.map((r) => {
               const eng = engines.find((e) => e.id === r.engine);
               return (
-                <article key={r.engine} className="flex min-w-0 flex-col gap-3 rounded-2xl border border-line bg-white p-5 shadow-card">
+                <article key={r.engine} className="rise lift flex min-w-0 flex-col gap-3 rounded-[4px] border border-line bg-white p-5">
                   <header className="flex items-center justify-between gap-2">
                     <span className="flex items-center gap-2 font-display font-semibold text-navy">
                       <span className="h-2.5 w-2.5 rounded-full" style={{ background: eng?.color }} />

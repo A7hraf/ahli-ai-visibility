@@ -3,8 +3,10 @@
 import { useMemo, useState } from "react";
 import { bankSummary, breakdown, ranking, slice, weekly, BRAND_IDX, type Dataset } from "@/lib/analytics";
 import { fill, type UIText } from "@/lib/ui-text";
-import { BankBadge, ClickHint, Delta, Heatmap, Insight, Panel, RampLegend, Star, TipProvider, TipRow, useTip } from "@/components/viz/core";
-import { FilterBar, useFilters } from "@/components/viz/filters";
+import { Delta, Heatmap, Insight, Panel, RampLegend, TipProvider, TipRow, useTip } from "@/components/viz/core";
+import { useFilters } from "@/components/viz/filters";
+import { PageHeader } from "@/components/ui";
+import { CountUp } from "@/components/viz/motion";
 import Details, { BankName, GOLD, bankColor, bankLabel, useFmtDate, type Sel } from "@/components/viz/Details";
 import BumpChart from "@/components/viz/BumpChart";
 
@@ -64,7 +66,7 @@ function PositionMap({ data, ui, onPick, ds }: { data: ReturnType<typeof ranking
         ))}
         <line x1={x(avgX)} x2={x(avgX)} y1={P.t} y2={H - P.b} stroke="#D0D5DD" />
         <line x1={P.l} x2={W - P.r} y1={y(avgY)} y2={y(avgY)} stroke="#D0D5DD" />
-        <text x={x(avgX) + 10} y={P.t + 18} fontSize="12.5" fill="#A6841A" fontWeight="700" fontFamily="Tajawal, sans-serif">
+        <text x={x(avgX) + 10} y={P.t + 18} fontSize="12.5" fill="#A6841A" fontWeight="700" fontFamily="IBM Plex Sans Arabic, sans-serif">
           ★ {ui.lang === "ar" ? "منطقة القادة" : "Leaders' corner"}
         </text>
         <text x={P.l + 8} y={H - P.b - 10} fontSize="11.5" fill="#98A2B3" fontWeight="600">
@@ -103,7 +105,7 @@ function PositionMap({ data, ui, onPick, ds }: { data: ReturnType<typeof ranking
             >
               {d.isBrand && <circle cx={x(d.reach)} cy={y(d.first)} r={r + 7} fill={c} opacity={0.22} />}
               <circle cx={x(d.reach)} cy={y(d.first)} r={r} fill={c} fillOpacity={0.92} stroke="#fff" strokeWidth={3} />
-              <text x={x(d.reach)} y={y(d.first) + 4} fontSize={short.length > 3 ? 9 : short.length > 2 ? 10.5 : 12.5} fontWeight="700" textAnchor="middle" fill="#fff" fontFamily="Tajawal, sans-serif">
+              <text x={x(d.reach)} y={y(d.first) + 4} fontSize={short.length > 3 ? 9 : short.length > 2 ? 10.5 : 12.5} fontWeight="700" textAnchor="middle" fill="#fff" fontFamily="IBM Plex Sans Arabic, sans-serif">
                 {short}
               </text>
               {lab && (
@@ -146,10 +148,10 @@ function Inner({ ds, ui, lang }: { ds: Dataset; ui: UIText; lang: "en" | "ar" })
 
   if (!m.n)
     return (
-      <div className="flex flex-col gap-5">
-        <FilterBar ds={ds} ui={ui} f={f} set={set} />
-        <div className="rounded-4xl border border-dashed border-line bg-paper p-12 text-center text-ink-muted">{ui.overview.noData}</div>
-      </div>
+      <>
+        <PageHeader kicker={ui.kick.competitors} title={ui.competitors.title} lead={ui.competitors.sub} />
+        <div className="rounded-[4px] border border-dashed border-line-2 bg-white p-12 text-center text-ink-muted">{ui.overview.noData}</div>
+      </>
     );
 
   const brand = m.rank.find((r) => r.isBrand)!;
@@ -161,57 +163,59 @@ function Inner({ ds, ui, lang }: { ds: Dataset; ui: UIText; lang: "en" | "ar" })
   const lc = bankColor(ds, leader.b);
 
   return (
-    <div className="flex flex-col gap-6">
-      <FilterBar ds={ds} ui={ui} f={f} set={set} />
+    <div className="flex flex-col gap-5">
+      <PageHeader
+        kicker={ui.kick.competitors}
+        title={ui.competitors.title}
+        lead={
+          <>
+            {fill(ui.leads.competitors, { lead: name(m.rank[0].b), lv: m.rank[0].reach, rank: pos, n: ds.banks.length, v: brand.reach })}{" "}
+            {brand.delta !== null && (brand.delta > 0.5 ? fill(ui.ins.up, { d: brand.delta }) : brand.delta < -0.5 ? fill(ui.ins.down, { d: Math.abs(brand.delta) }) : "")}
+          </>
+        }
+      />
 
       {/* headline tiles */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="rise flex flex-col rounded-2xl border border-line bg-white p-5 shadow-card">
-          <p className="text-[13.5px] font-bold text-ink-2">{ui.competitors.position}</p>
-          <p className="mt-2 text-[36px] font-extrabold leading-none text-ink">
-            #{pos}
-            <span className="ms-1.5 text-[15px] font-medium text-ink-muted">
-              {ui.of} {ds.banks.length}
-            </span>
+        <div className="rise lift flex flex-col gap-2 rounded-[4px] border border-line bg-white p-5">
+          <p className="text-[14px] font-bold text-ink">{ui.competitors.position}</p>
+          <p className="font-display text-[36px] leading-none text-navy">#{pos}</p>
+          <p className="text-[12px] text-ink-muted">
+            {ui.of} {ds.banks.length}
           </p>
         </div>
-        <button
-          onClick={() => setSel({ kind: "bank", b: leader.b })}
-          className="rise relative flex flex-col overflow-hidden rounded-2xl border border-line bg-white p-5 text-start shadow-card transition hover:-translate-y-0.5 hover:shadow-pop"
-          style={{ borderTop: `3px solid ${lc}` }}
-        >
-          <p className="text-[13.5px] font-bold text-ink-2">{ui.competitors.leader}</p>
-          <p className="mt-2 flex items-center gap-2.5 text-[20px] font-extrabold leading-tight text-ink">
-            <BankBadge color={lc} short={ds.bankShort[leader.b]} size={32} />
+        <button onClick={() => setSel({ kind: "bank", b: leader.b })} className="rise lift flex flex-col gap-2 rounded-[4px] border border-line bg-white p-5 text-start">
+          <p className="text-[14px] font-bold text-ink">{ui.competitors.leader}</p>
+          <p className="font-display text-[26px] leading-none" style={{ color: lc }}>
             {name(leader.b)}
           </p>
-          <p className="mt-auto pt-3 text-[13px] text-ink-muted">
-            {ui.kpi.reach} <b className="text-ink">{leader.reach}%</b>
-          </p>
+          <p className="num text-[12px] text-ink-muted">{leader.reach}%</p>
         </button>
-        <div className="rise flex flex-col rounded-2xl border border-line bg-white p-5 shadow-card">
-          <p className="text-[13.5px] font-bold text-ink-2">{ui.competitors.gap}</p>
-          <p className={`mt-2 text-[36px] font-extrabold leading-none ${gap < 0 ? "text-bad" : "text-good"}`}>
+        <div className="rise lift flex flex-col gap-2 rounded-[4px] border border-line bg-white p-5">
+          <p className="text-[14px] font-bold text-ink">{ui.competitors.gap}</p>
+          <p dir="ltr" className={`font-display text-[36px] leading-none ${gap < 0 ? "text-bad" : "text-good"}`} style={{ textAlign: ar ? "right" : "left" }}>
             {gap > 0 ? "+" : gap < 0 ? "−" : ""}
             {Math.abs(gap)}
           </p>
-          <p className="mt-auto pt-2 text-[12.5px] text-ink-muted">{ui.competitors.gapUnit}</p>
+          <p className="text-[12px] text-ink-muted">{ui.competitors.gapUnit}</p>
         </div>
-        <div className="rise flex flex-col rounded-2xl border border-line bg-white p-5 shadow-card">
-          <p className="text-[13.5px] font-bold text-ink-2">{ui.kpi.sov}</p>
-          <p className="mt-2 text-[36px] font-extrabold leading-none text-ink">{brand.sov}%</p>
-          <div className="mt-auto flex h-3 gap-[3px] overflow-hidden rounded-full pt-0" dir="ltr">
+        <div className="rise lift flex flex-col gap-2 rounded-[4px] border border-line bg-white p-5">
+          <p className="text-[14px] font-bold text-ink">{ui.kpi.sov}</p>
+          <p className="font-display text-[36px] leading-none text-navy">
+            <CountUp value={brand.sov} />%
+          </p>
+          <div className="mt-auto flex h-2 gap-[2px] overflow-hidden rounded-[2px]" dir="ltr">
             {m.rank.map((r) => (
-              <span key={r.b} className="rounded-full" style={{ flex: r.sov, background: bankColor(ds, r.b), opacity: r.isBrand ? 1 : 0.85 }} title={`${name(r.b)} ${r.sov}%`} />
+              <span key={r.b} style={{ flex: r.sov, background: r.isBrand ? GOLD : "#E3E0DC" }} title={`${name(r.b)} ${r.sov}%`} />
             ))}
           </div>
         </div>
       </div>
 
-      {/* rank race */}
-      {ds.runs.length > 1 && (
-        <Panel accent={GOLD} title={ar ? "سباق الترتيب أسبوعاً بأسبوع" : "The rank race, week by week"} sub={ar ? "ترتيب كل بنك حسب وصول العلامة. مرّر على بنك لإبرازه، واضغط لملفه." : "Each bank's rank by brand reach. Hover a bank to highlight it, click for its profile."}>
-          <Insight tone={gap < 0 ? "bad" : "good"}>{gap < 0 ? fill(ui.ins.lead, { bank: name(leader.b), gap: Math.abs(gap) }) : ui.ins.weLead}</Insight>
+      <div className="grid gap-5 lg:grid-cols-12">
+        {ds.runs.length > 1 && (
+          <Panel className="lg:col-span-7" title={ui.leads.rankRace} term={ui.leads.rankTerm}>
+            <Insight>{gap < 0 ? fill(ui.ins.lead, { bank: name(leader.b), gap: Math.abs(gap) }) : ui.ins.weLead}</Insight>
           <BumpChart
             weeks={ds.runs.map((r) => r.date)}
             fmtDate={fmt}
@@ -227,61 +231,20 @@ function Inner({ ds, ui, lang }: { ds: Dataset; ui: UIText; lang: "en" | "ar" })
               values: m.weeks[b].map((w) => (w.n ? w.reach : null)),
             }))}
           />
-          <ul className="mt-4 flex flex-wrap gap-2">
-            {m.rank.map((r) => (
-              <li key={r.b}>
-                <button onClick={() => setSel({ kind: "bank", b: r.b })} className={`flex items-center gap-2 rounded-full py-1 pe-3 ps-1 text-[12.5px] transition hover:-translate-y-0.5 ${r.isBrand ? "bg-gold-50 font-semibold text-ink ring-1 ring-gold" : "bg-paper text-ink-2"}`}>
-                  <BankBadge color={bankColor(ds, r.b)} short={ds.bankShort[r.b]} size={24} brand={r.isBrand} />
-                  {name(r.b)}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </Panel>
-      )}
-
-      <div className="grid gap-5 lg:grid-cols-12">
-        <Panel className="lg:col-span-7" accent="#7A4FE0" title={ui.competitors.map} sub={ui.competitors.mapSub} action={<ClickHint>{ui.clickHint}</ClickHint>}>
+          </Panel>
+        )}
+        <Panel className={ds.runs.length > 1 ? "lg:col-span-5" : "lg:col-span-12"} title={ui.competitors.map} term={ui.leads.mapTerm}>
+          <Insight>{ui.competitors.mapSub}</Insight>
           <PositionMap data={m.rank} ui={ui} ds={ds} onPick={(b) => setSel({ kind: "bank", b })} />
-        </Panel>
-        <Panel className="lg:col-span-5" accent="#0F9F94" title={ui.competitors.board} sub={ui.competitors.boardSub}>
-          <ol className="flex flex-col gap-1.5">
-            {m.board.map((r, i) => {
-              const c = bankColor(ds, r.b);
-              return (
-                <li key={r.b}>
-                  <button onClick={() => setSel({ kind: "bank", b: r.b })} className={`group flex w-full items-center gap-3 rounded-2xl p-2 text-start transition hover:bg-paper ${r.isBrand ? "bg-gold-50 ring-1 ring-gold-100" : ""}`}>
-                    <span className="w-6 text-center font-display text-[15px] font-bold text-ink-soft">{i + 1}</span>
-                    <BankBadge color={c} short={ds.bankShort[r.b]} size={34} brand={r.isBrand} />
-                    <span className="min-w-0 flex-1">
-                      <span dir="auto" className={`block truncate text-[13.5px] ${r.isBrand ? "font-bold text-ink" : "font-medium text-ink-2"}`}>
-                        {name(r.b)}
-                      </span>
-                      <span className="mt-1 block h-2 overflow-hidden rounded-full bg-slate-100">
-                        <span className="block h-full rounded-full transition-all duration-700" style={{ width: `${(r.reach / Math.max(top.reach, 1)) * 100}%`, background: c }} />
-                      </span>
-                    </span>
-                    <span className="text-end">
-                      <span className="block font-display text-[17px] font-bold leading-none" style={{ color: c }}>
-                        {r.reach}%
-                      </span>
-                      <span className="mt-1 block">
-                        <Delta v={r.delta} size="xs" />
-                      </span>
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-          </ol>
         </Panel>
       </div>
 
-      <Panel accent="#1F86E0" title={ar ? "التفاصيل الكاملة" : "Full scorecard"} sub={ui.competitors.boardSub}>
-        <div className="-mx-6 overflow-x-auto">
+      <Panel title={ui.leads.board} term={ui.leads.scoreTerm}>
+        <Insight>{ui.competitors.boardSub}</Insight>
+        <div className="-mx-5 overflow-x-auto sm:-mx-6">
           <table className="w-full min-w-[820px] text-[13px]">
             <thead>
-              <tr className="border-b border-line text-[12px] text-ink-muted">
+              <tr className="border-b border-line text-[12px] font-bold text-ink-2">
                 <th className="w-12 px-6 py-3 text-start font-medium">#</th>
                 <th className="px-2 py-3 text-start font-medium">{ui.competitors.bank}</th>
                 <th className="px-2 py-3 text-center font-medium">{ui.kpi.reach}</th>
@@ -295,13 +258,18 @@ function Inner({ ds, ui, lang }: { ds: Dataset; ui: UIText; lang: "en" | "ar" })
             </thead>
             <tbody>
               {m.board.map((r, i) => (
-                <tr key={r.b} onClick={() => setSel({ kind: "bank", b: r.b })} className={`cursor-pointer border-b border-line/70 transition last:border-0 hover:bg-paper ${r.isBrand ? "bg-gold-50/70" : ""}`}>
+                <tr key={r.b} onClick={() => setSel({ kind: "bank", b: r.b })} className={`cursor-pointer border-b border-line/70 transition last:border-0 hover:bg-slate-100 ${r.isBrand ? "bg-gold-100" : ""}`}>
                   <td className="num px-6 py-3 font-semibold text-ink-soft">{i + 1}</td>
                   <td className="px-2 py-3">
                     <BankName ds={ds} ui={ui} b={r.b} />
                   </td>
-                  <td className="num px-2 py-3 text-center font-bold" style={{ color: bankColor(ds, r.b) }}>
-                    {r.reach}%
+                  <td className="px-2 py-3">
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="relative h-1.5 w-20 rounded-[2px] bg-slate-200" dir="ltr">
+                        <span className="absolute inset-y-0 left-0 rounded-[2px]" style={{ width: `${(r.reach / Math.max(top.reach, 1)) * 100}%`, background: bankColor(ds, r.b) }} />
+                      </span>
+                      <b className="num w-12 text-ink">{r.reach}%</b>
+                    </span>
                   </td>
                   <td className="num px-2 py-3 text-center">{r.first}%</td>
                   <td className="num px-2 py-3 text-center">{r.top3}%</td>
@@ -319,7 +287,7 @@ function Inner({ ds, ui, lang }: { ds: Dataset; ui: UIText; lang: "en" | "ar" })
       </Panel>
 
       <div className="grid gap-5 xl:grid-cols-2">
-        <Panel accent="#0F9F94" title={ui.competitors.byChannel} sub={ui.competitors.heatSub} action={<RampLegend low={ui.overview.weak} high={ui.overview.strong} />}>
+        <Panel title={ui.competitors.byChannel} sub={ui.competitors.heatSub} action={<RampLegend low={ui.overview.weak} high={ui.overview.strong} />}>
           <Heatmap
             max={100}
             rowWidth="11rem"
@@ -336,7 +304,7 @@ function Inner({ ds, ui, lang }: { ds: Dataset; ui: UIText; lang: "en" | "ar" })
             onSelect={(rk, c) => setSel({ kind: "bank", b: Number(rk), f: { ch: c }, kicker: `${ui.drawer.bank} · ${ds.engines.find((e) => e.id === c)?.label}` })}
           />
         </Panel>
-        <Panel accent="#0F9F94" title={ui.competitors.byProduct} sub={ui.competitors.heatSub} action={<RampLegend low={ui.overview.weak} high={ui.overview.strong} />}>
+        <Panel title={ui.competitors.byProduct} sub={ui.competitors.heatSub} action={<RampLegend low={ui.overview.weak} high={ui.overview.strong} />}>
           <Heatmap
             max={100}
             rowWidth="11rem"

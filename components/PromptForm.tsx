@@ -5,11 +5,7 @@ import { useState } from "react";
 import { Icon } from "./Icon";
 
 function adminHeaders(): Record<string, string> {
-  try {
-    return { "content-type": "application/json", "x-admin-token": window.localStorage.getItem("adminToken") ?? "" };
-  } catch {
-    return { "content-type": "application/json" };
-  }
+  return { "content-type": "application/json" };
 }
 
 const field = "w-full rounded-xl border border-line bg-white px-3 py-2.5 text-sm text-navy outline-none focus:border-brand focus:ring-2 focus:ring-brand-100";
@@ -74,7 +70,7 @@ export default function PromptForm({
         </select>
       </label>
       <div className="flex items-center gap-3 md:col-span-12">
-        <button disabled={busy} className="inline-flex items-center gap-2 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-600 disabled:opacity-50">
+        <button disabled={busy} className="inline-flex items-center gap-2 rounded-[4px] bg-navy px-4 py-2.5 text-sm font-bold text-white transition hover:bg-navy-700 disabled:opacity-50">
           <Icon name="plus" size={15} /> {labels.save}
         </button>
         {err && <span className="text-sm text-bad">{err}</span>}

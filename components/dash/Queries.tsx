@@ -5,7 +5,9 @@ import { useMemo, useState } from "react";
 import { bankSummary, breakdown, slice, type Dataset } from "@/lib/analytics";
 import type { UIText } from "@/lib/ui-text";
 import { BarList, ClickHint, Donut, Heatmap, Insight, Panel, RampLegend, TipProvider } from "@/components/viz/core";
-import { FilterBar, useFilters } from "@/components/viz/filters";
+import { useFilters } from "@/components/viz/filters";
+import { PageHeader } from "@/components/ui";
+import { fill } from "@/lib/ui-text";
 import Details, { GOLD, type Sel } from "@/components/viz/Details";
 
 export default function Queries(props: { ds: Dataset; ui: UIText; lang: "en" | "ar" }) {
@@ -44,7 +46,7 @@ function Inner({ ds, ui, lang }: { ds: Dataset; ui: UIText; lang: "en" | "ar" })
   const sorted = [...m.qs].sort((a, b) => (sort === "weak" ? a.reach - b.reach : b.reach - a.reach));
   const qLabel = (q: (typeof m.qs)[number]) => (
     <span className="flex min-w-0 items-center gap-2">
-      <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold ${q.p.lang === "ar" ? "bg-brand-50 text-brand" : "bg-slate-100 text-ink-muted"}`}>{q.p.lang.toUpperCase()}</span>
+      <span className="shrink-0 rounded-[3px] bg-slate-200 px-1.5 py-0.5 text-[10px] font-bold text-ink-2">{q.p.lang.toUpperCase()}</span>
       <span dir="auto" className="truncate" title={q.p.text}>
         {q.p.text}
       </span>
@@ -57,18 +59,18 @@ function Inner({ ds, ui, lang }: { ds: Dataset; ui: UIText; lang: "en" | "ar" })
 
   return (
     <div className="flex flex-col gap-5">
-      <FilterBar ds={ds} ui={ui} f={f} set={set} />
+      <PageHeader kicker={ui.kick.queries} title={ui.queries.title} lead={m.qs.length ? fill(ui.leads.queries, { won: m.won, all: m.qs.length, blind: m.blind.length }) : ui.queries.sub} />
 
-      <div className="grid gap-4 lg:grid-cols-12">
-        <Panel className="lg:col-span-4" title={ui.queries.winRate}>
+      <div className="grid gap-5 lg:grid-cols-12">
+        <Panel className="lg:col-span-4" title={ui.queries.winRate} term="Prompt coverage">
           <Donut
             data={[
               { key: "won", label: ui.queries.winRate, value: m.won, color: GOLD },
-              { key: "blind", label: ui.queries.blind, value: m.qs.length - m.won, color: "#E2E8F0" },
+              { key: "blind", label: ui.queries.blind, value: m.qs.length - m.won, color: "#FFE4EC" },
             ]}
             center={
               <>
-                <span className="text-[32px] font-extrabold leading-none text-ink">
+                <span className="font-display text-[34px] leading-none text-ink">
                   {m.won}
                   <span className="text-[16px] font-normal text-ink-muted">/{m.qs.length}</span>
                 </span>
@@ -80,12 +82,13 @@ function Inner({ ds, ui, lang }: { ds: Dataset; ui: UIText; lang: "en" | "ar" })
             {ui.kpi.reach}: <b className="text-ink">{m.avg}%</b>
           </p>
         </Panel>
-        <Panel className="lg:col-span-4" title={`${ui.queries.blind} (${m.blind.length})`} sub={ui.queries.blindSub}>
+        <Panel className="lg:col-span-4" title={`${ui.queries.blind} (${m.blind.length})`} term={`${ui.term.reach} 0%`}>
+          <Insight>{ui.queries.blindSub}</Insight>
           {m.blind.length ? (
-            <ul className="flex max-h-[230px] flex-col gap-1 overflow-y-auto">
+            <ul className="flex max-h-[230px] flex-col gap-2 overflow-y-auto">
               {m.blind.map((q) => (
                 <li key={q.i}>
-                  <button onClick={() => openQuery(q.i)} className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-start text-[13px] text-ink-2 hover:bg-bad-soft/60">
+                  <button onClick={() => openQuery(q.i)} className="flex w-full items-center gap-2 rounded-[4px] border border-[#FBD3E0] bg-bad-soft px-3 py-2.5 text-start text-[13px] font-medium text-ink transition hover:-translate-y-0.5 hover:shadow-pop">
                     <span className="h-2 w-2 shrink-0 rounded-full bg-bad" />
                     <span className="min-w-0 flex-1">{qLabel(q)}</span>
                   </button>
@@ -96,30 +99,30 @@ function Inner({ ds, ui, lang }: { ds: Dataset; ui: UIText; lang: "en" | "ar" })
             <p className="rounded-xl bg-good-soft p-4 text-[13px] text-good">✓</p>
           )}
         </Panel>
-        <Panel className="lg:col-span-4" title={ui.f.segment} sub={ui.kpi.reach} action={<ClickHint>{ui.clickHint}</ClickHint>}>
+        <Panel className="lg:col-span-4" title={ui.f.segment} term="Reach by segment" action={<ClickHint>{ui.clickHint}</ClickHint>}>
           <BarList
             dense
             labelWidth="w-40"
             onSelect={(k) => setSel({ kind: "seg", kicker: ui.drawer.segment, title: ui.personas[k as keyof UIText["personas"]], f: { seg: k } })}
-            items={m.seg.map((s) => ({ key: s.key, label: ui.personas[s.key as keyof UIText["personas"]] ?? s.key, value: s.reach, color: "#0B6298" }))}
+            items={m.seg.map((s) => ({ key: s.key, label: ui.personas[s.key as keyof UIText["personas"]] ?? s.key, value: s.reach, color: GOLD }))}
           />
         </Panel>
       </div>
 
       <Panel
         title={ui.queries.grid}
-        sub={ui.queries.gridSub}
+        term="Question × assistant"
         action={
           <div className="flex flex-wrap items-center gap-3">
             <RampLegend low="0%" high="100%" />
-            <div className="inline-flex rounded-lg bg-slate-100 p-0.5 text-[12px]">
+            <div className="inline-flex overflow-hidden rounded-[4px] border border-line-2 text-[12px]">
               {(["weak", "strong"] as const).map((k) => (
-                <button key={k} onClick={() => setSort(k)} className={`rounded-md px-2.5 py-1 font-medium ${sort === k ? "bg-white text-ink shadow-sm" : "text-ink-muted"}`}>
+                <button key={k} onClick={() => setSort(k)} className={`px-2.5 py-1.5 font-medium transition ${sort === k ? "bg-navy font-bold text-white" : "bg-white text-ink-2 hover:bg-slate-100"}`}>
                   {k === "weak" ? (lang === "ar" ? "الأضعف أولاً" : "Weakest first") : lang === "ar" ? "الأقوى أولاً" : "Strongest first"}
                 </button>
               ))}
             </div>
-            <Link href="/prompts" className="rounded-lg border border-line px-3 py-1.5 text-[12.5px] font-semibold text-ink hover:border-brand hover:text-brand">
+            <Link href="/prompts" className="rounded-[4px] border border-line px-3 py-1.5 text-[12.5px] font-bold text-navy transition hover:bg-slate-100">
               {ui.queries.manage}
             </Link>
           </div>

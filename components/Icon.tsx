@@ -25,7 +25,10 @@ export type IconName =
   | "news"
   | "flask"
   | "book"
-  | "grid";
+  | "grid"
+  | "logout"
+  | "users"
+  | "translate";
 
 const P: Record<IconName, string> = {
   gauge: "M12 14l3-5M4.9 19a9 9 0 1 1 14.2 0M12 14a1 1 0 1 0 0 .01",
@@ -55,6 +58,9 @@ const P: Record<IconName, string> = {
   flask: "M9 3h6 M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3 M7 15h10",
   book: "M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5z M4 21a2 2 0 0 1 2-2h13 M9 7h6",
   grid: "M4 4h7v7H4z M13 4h7v7h-7z M4 13h7v7H4z M13 13h7v7h-7z",
+  logout: "M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3 M10 17l-5-5 5-5 M5 12h11",
+  users: "M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M2 21v-1a6 6 0 0 1 12 0v1 M16 3.1a4 4 0 0 1 0 7.8 M22 21v-1a6 6 0 0 0-4-5.6",
+  translate: "M5 8l6 6M4 14l6-6 2-3M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6",
 };
 
 export function Icon({ name, size = 18, className = "" }: { name: IconName; size?: number; className?: string }) {

@@ -3,18 +3,22 @@ import { getRuns, promptMatrix } from "@/lib/metrics";
 import { ENGINES } from "@/lib/config";
 import { Badge, Card, PageHeader } from "@/components/ui";
 import PromptForm, { PromptRowActions } from "@/components/PromptForm";
+import { UI } from "@/lib/ui-text";
+import { currentUser } from "@/lib/auth";
 
 export default async function PromptsPage() {
   const { lang, t } = await getT();
   const runs = await getRuns();
   const last = runs[runs.length - 1];
   const matrix = last ? await promptMatrix(Number(last.id)) : [];
+  const admin = (await currentUser())?.role === "admin";
 
   return (
     <>
-      <PageHeader title={t.prompts.title} lead={t.prompts.lead} />
+      <PageHeader kicker={UI[lang].kick.prompts} title={t.prompts.title} lead={t.prompts.lead} />
 
-      <Card title={t.prompts.add} note={t.prompts.tip} className="mb-6">
+      {!admin && <p className="mb-5 rounded-[4px] bg-slate-100 px-4 py-3 text-[13px] text-ink-muted">{UI[lang].users.adminOnly}</p>}
+      {admin && <Card title={t.prompts.add} note={t.prompts.tip} className="mb-6">
         <PromptForm
           labels={{ text: t.prompts.text, lang: t.prompts.lang, product: t.prompts.product, persona: t.prompts.persona, save: t.prompts.save }}
           langs={t.langs}
@@ -22,13 +26,13 @@ export default async function PromptsPage() {
           personas={t.personas}
           defaultLang={lang}
         />
-      </Card>
+      </Card>}
 
       <Card title={t.prompts.results}>
         <div className="-mx-5 overflow-x-auto sm:-mx-6">
           <table className="w-full min-w-[980px] text-sm">
             <thead>
-              <tr className="border-b border-line text-start text-[12px] uppercase tracking-wide text-ink-muted">
+              <tr className="border-b border-line text-start text-[12px] font-bold text-ink-2">
                 <th className="px-5 py-3 text-start font-medium sm:px-6">{t.prompts.text}</th>
                 {ENGINES.map((e) => (
                   <th key={e.id} className="px-2 py-3 text-center font-medium">{e.label}</th>
@@ -40,7 +44,7 @@ export default async function PromptsPage() {
               {matrix.map(({ prompt: p, cells }) => (
                 <tr key={p.id} className={`border-b border-line last:border-0 ${Number(p.active) ? "" : "opacity-50"}`}>
                   <td className="max-w-[420px] px-5 py-3 sm:px-6">
-                    <p dir="auto" className={`font-medium text-navy ${p.lang === "ar" ? "font-arabic text-[15px]" : ""}`}>{p.text}</p>
+                    <p dir="auto" className="font-bold text-ink">{p.text}</p>
                     <div className="mt-1.5 flex flex-wrap gap-1.5">
                       <Badge tone={p.lang === "ar" ? "gold" : "brand"}>{t.langs[p.lang as "en" | "ar"]}</Badge>
                       <Badge>{t.products[p.product as keyof typeof t.products] ?? p.product}</Badge>
@@ -59,7 +63,7 @@ export default async function PromptsPage() {
                     );
                   })}
                   <td className="px-5 py-3 sm:px-6">
-                    <PromptRowActions id={Number(p.id)} active={!!Number(p.active)} labels={{ active: t.prompts.active, delete: t.prompts.delete }} />
+                    {admin && <PromptRowActions id={Number(p.id)} active={!!Number(p.active)} labels={{ active: t.prompts.active, delete: t.prompts.delete }} />}
                   </td>
                 </tr>
               ))}

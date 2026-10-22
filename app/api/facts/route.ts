@@ -3,7 +3,7 @@ import { run } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 
 export async function PATCH(req: Request) {
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
   const b = await req.json().catch(() => ({}));
   const id = Number(b.id);

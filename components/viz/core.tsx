@@ -16,7 +16,7 @@ export function TipProvider({ children }: { children: ReactNode }) {
       {tip && (
         <div
           role="tooltip"
-          className="pointer-events-none fixed z-[70] max-w-[260px] rounded-xl bg-ink-900 px-3 py-2 text-[12.5px] leading-snug text-white shadow-pop"
+          className="pointer-events-none fixed z-[70] max-w-[260px] rounded-[4px] bg-ink-900 px-3 py-2 text-[12.5px] leading-snug text-white shadow-pop"
           style={{ left: Math.min(tip.x + 14, (typeof window !== "undefined" ? window.innerWidth : 9999) - 270), top: tip.y + 14 }}
         >
           {tip.content}
@@ -58,20 +58,21 @@ export function TipRow({ color, label, value, line = false }: { color?: string; 
 export function Delta({ v, unit = "", invert = false, size = "sm" }: { v: number | null | undefined; unit?: string; invert?: boolean; size?: "sm" | "xs" }) {
   if (v === null || v === undefined) return null;
   const r = Math.round(v * 10) / 10;
-  if (r === 0) return <span className={`num inline-flex items-center rounded-full bg-slate-100 px-1.5 py-0.5 font-semibold text-ink-muted ${size === "xs" ? "text-[10.5px]" : "text-[11.5px]"}`}>±0</span>;
+  if (r === 0) return <span className={`num inline-flex items-center rounded-[3px] bg-slate-100 px-1.5 py-0.5 font-semibold text-ink-muted ${size === "xs" ? "text-[10.5px]" : "text-[11.5px]"}`}>±0</span>;
   const good = invert ? r < 0 : r > 0;
   return (
-    <span className={`num inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 font-semibold ${good ? "bg-good-soft text-good" : "bg-bad-soft text-bad"} ${size === "xs" ? "text-[10.5px]" : "text-[11.5px]"}`}>
-      <svg width="9" height="9" viewBox="0 0 10 10" aria-hidden="true" className={r > 0 ? "" : "rotate-180"}>
-        <path d="M5 1.5 9 7.5H1z" fill="currentColor" />
+    <span dir="ltr" className={`num inline-flex items-center gap-1 rounded-[3px] px-1.5 py-0.5 font-bold ${good ? "bg-good-soft text-good" : "bg-bad-soft text-bad"} ${size === "xs" ? "text-[10.5px]" : "text-[11.5px]"}`}>
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        {r > 0 ? <path d="M3 17l6-6 4 4 8-8M15 7h6v6" /> : <path d="M3 7l6 6 4-4 8 8M15 17h6v-6" />}
       </svg>
+      {r > 0 ? "+" : "−"}
       {Math.abs(r)}
       {unit}
     </span>
   );
 }
 
-export function Sparkline({ data, color = "#0B6298", w = 96, h = 28, fill = true }: { data: number[]; color?: string; w?: number; h?: number; fill?: boolean }) {
+export function Sparkline({ data, color = "#C9A227", w = 96, h = 28, fill = true }: { data: number[]; color?: string; w?: number; h?: number; fill?: boolean }) {
   if (data.length < 2) return <svg width={w} height={h} />;
   const max = Math.max(...data, 1);
   const min = Math.min(...data, 0);
@@ -80,7 +81,7 @@ export function Sparkline({ data, color = "#0B6298", w = 96, h = 28, fill = true
   const d = data.map((v, i) => `${i ? "L" : "M"}${sx(i).toFixed(1)},${sy(v).toFixed(1)}`).join("");
   return (
     <svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden="true" className="overflow-visible" style={{ direction: "ltr", maxWidth: w }}>
-      {fill && <path d={`${d}L${sx(data.length - 1)},${h}L${sx(0)},${h}Z`} fill={color} opacity={0.1} />}
+      {fill && <path d={`${d}L${sx(data.length - 1)},${h}L${sx(0)},${h}Z`} fill={color} opacity={0.12} />}
       <path d={d} fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
     </svg>
   );
@@ -113,16 +114,16 @@ export function BarList({ items, max, unit = "%", onSelect, active, labelWidth =
             <Tag
               {...(onSelect ? { type: "button" as const, onClick: () => onSelect(it.key) } : {})}
               {...(it.tip ? tip(it.tip) : {})}
-              className={`group flex w-full items-center gap-3 rounded-xl px-2 text-start transition ${dense ? "py-1" : "py-1.5"} ${onSelect ? "cursor-pointer hover:bg-slate-50 focus-visible:bg-slate-50" : ""} ${active === it.key ? "bg-brand-50 ring-1 ring-brand-100" : ""}`}
+              className={`group flex w-full items-center gap-3 rounded-[4px] px-2 text-start transition ${dense ? "py-1.5" : "py-2"} ${onSelect ? "cursor-pointer hover:bg-slate-100 focus-visible:bg-slate-100" : ""} ${active === it.key ? "bg-gold-100" : ""}`}
             >
               <span className={`${labelWidth} min-w-0 shrink-0 truncate text-[13px] ${it.strong ? "font-semibold text-ink" : "text-ink-2"}`}>
                 {it.label}
                 {it.sub && <span className="block truncate text-[11px] font-normal text-ink-soft">{it.sub}</span>}
               </span>
-              <span className="relative h-2.5 min-w-0 flex-1 rounded-full bg-slate-100">
+              <span className="relative h-2 min-w-0 flex-1 rounded-[2px] bg-slate-200">
                 <span
-                  className="absolute inset-y-0 start-0 rounded-full transition-[width,filter] duration-1000 ease-out group-hover:brightness-110"
-                  style={{ width: shown ? `${Math.max(1.5, (it.value / top) * 100)}%` : "0%", background: it.color ?? "#0B6298" }}
+                  className="absolute inset-y-0 start-0 rounded-[2px] transition-[width,filter] duration-1000 ease-out group-hover:brightness-110"
+                  style={{ width: shown ? `${Math.max(1.5, (it.value / top) * 100)}%` : "0%", background: it.color ?? "#0B3A5B" }}
                 />
                 {it.marker !== undefined && it.marker !== null && (
                   <span className="absolute -inset-y-1 w-0.5 rounded-full bg-ink/60" style={{ insetInlineStart: `calc(${(it.marker / top) * 100}% - 1px)` }} />
@@ -155,7 +156,7 @@ export function Donut({ data, size = 168, thickness = 22, center, onSelect }: { 
   return (
     <div className="relative mx-auto" style={{ width: size, height: size }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90" style={{ direction: "ltr" }}>
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#F2F4F7" strokeWidth={thickness} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#EFEDE6" strokeWidth={thickness} />
         {data.map((d) => {
           const len = (d.value / total) * C;
           const off = acc;
@@ -195,7 +196,7 @@ export function Legend({ items, className = "" }: { items: { label: ReactNode; c
     <ul className={`flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[12.5px] text-ink-muted ${className}`}>
       {items.map((it, i) => (
         <li key={i} className="flex items-center gap-1.5">
-          <span className={it.line ? "h-[3px] w-4 rounded-full" : "h-2.5 w-2.5 rounded-[3px]"} style={{ background: it.color }} />
+          <span className={it.line ? "h-[3px] w-4 rounded-full" : "h-2.5 w-2.5 rounded-[2px]"} style={{ background: it.color }} />
           {it.label}
           {it.value !== undefined && <b className="num font-semibold text-ink">{it.value}</b>}
         </li>
@@ -206,7 +207,7 @@ export function Legend({ items, className = "" }: { items: { label: ReactNode; c
 
 /* ---------- heatmap ---------- */
 
-const RAMP = ["#F2F5FA", "#DCE7F4", "#BACFE9", "#8FB2DA", "#6192C9", "#3B74B5", "#255894", "#173F6D"];
+const RAMP = ["#F5EFDC", "#F0E6C6", "#EADCAE", "#E3D094", "#DCC47C", "#D4B762", "#CDAA45", "#C9A227"];
 export function rampColor(v: number, max: number) {
   const t = max ? Math.max(0, Math.min(1, v / max)) : 0;
   return RAMP[Math.round(t * (RAMP.length - 1))];
@@ -246,17 +247,17 @@ export function Heatmap({
             <span className={`flex items-center truncate pe-2 text-[13px] ${r.strong ? "font-semibold text-ink" : "text-ink-2"}`}>{r.label}</span>
             {r.cells.map((v, i) => {
               const c = cols[i];
-              if (v === null) return <span key={c.key} className="h-10 rounded-lg bg-slate-50" />;
-              const bg = rampColor(v, top);
-              const dark = v / top > 0.5;
+              if (v === null) return <span key={c.key} className="h-10 rounded-[3px] bg-slate-50" />;
+              const zero = v === 0;
+              const bg = zero ? "#FFE4EC" : rampColor(v, top);
               return (
                 <button
                   key={c.key}
                   type="button"
                   onClick={() => onSelect?.(r.key, c.key)}
                   {...tip(tipText ? tipText(r.key, c.key, v) : format(v))}
-                  className={`num h-10 rounded-lg text-[13px] font-bold transition hover:scale-[1.04] hover:shadow-md focus-visible:scale-[1.04] ${r.strong ? "ring-2 ring-gold ring-offset-1" : ""} ${onSelect ? "cursor-pointer" : "cursor-default"}`}
-                  style={{ background: bg, color: dark ? "#fff" : "#101828", opacity: shown ? 1 : 0, transform: shown ? undefined : "scale(.6)", transitionDelay: shown ? `${(ri * cols.length + i) * 18}ms` : "0ms", transitionDuration: "450ms" }}
+                  className={`num h-10 rounded-[3px] text-[13px] font-bold transition hover:z-10 hover:scale-[1.06] hover:shadow-pop focus-visible:scale-[1.06] ${r.strong ? "ring-2 ring-navy ring-offset-1" : ""} ${onSelect ? "cursor-pointer" : "cursor-default"}`}
+                  style={{ background: bg, color: zero ? "#C1005F" : "#0F1B2D", opacity: shown ? 1 : 0, transform: shown ? undefined : "scale(.6)", transitionDelay: shown ? `${(ri * cols.length + i) * 18}ms` : "0ms", transitionDuration: "450ms" }}
                 >
                   {format(v)}
                 </button>
@@ -273,7 +274,7 @@ export function RampLegend({ low, high }: { low: string; high: string }) {
   return (
     <div className="flex items-center gap-2 text-[11.5px] text-ink-muted">
       {low}
-      <span className="flex h-2 w-28 overflow-hidden rounded-full" style={{ direction: "ltr" }}>
+      <span className="flex h-2 w-28 overflow-hidden rounded-[2px]" style={{ direction: "ltr" }}>
         {RAMP.map((c) => (
           <span key={c} className="flex-1" style={{ background: c }} />
         ))}
@@ -296,7 +297,7 @@ export function Drawer({ open, onClose, title, kicker, children, closeLabel = "C
   }, [open, onClose]);
   return (
     <div className={`fixed inset-0 z-50 overflow-hidden ${open ? "" : "pointer-events-none invisible"}`} aria-hidden={!open}>
-      <div onClick={onClose} className={`absolute inset-0 bg-ink-900/40 backdrop-blur-[3px] transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`} />
+      <div onClick={onClose} className={`absolute inset-0 bg-navy/35 backdrop-blur-[2px] transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`} />
       <div
         ref={ref}
         tabIndex={-1}
@@ -310,10 +311,10 @@ export function Drawer({ open, onClose, title, kicker, children, closeLabel = "C
             {badge}
             <div className="min-w-0">
               {kicker && <p className="mb-1 text-[12px] font-medium text-ink-muted">{kicker}</p>}
-              <h2 className="text-[19px] font-bold leading-snug text-ink">{title}</h2>
+              <h2 className="font-display text-[21px] leading-snug text-ink">{title}</h2>
             </div>
           </div>
-          <button onClick={onClose} aria-label={closeLabel} className="rounded-lg p-2 text-ink-muted hover:bg-slate-100 hover:text-ink">
+          <button onClick={onClose} aria-label={closeLabel} className="rounded-[4px] p-2 text-ink-muted transition hover:bg-slate-100 hover:text-ink">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M6 6l12 12M18 6 6 18" />
             </svg>
@@ -329,14 +330,14 @@ export function Drawer({ open, onClose, title, kicker, children, closeLabel = "C
 
 export function Segmented<T extends string>({ value, options, onChange, size = "md" }: { value: T; options: { value: T; label: ReactNode }[]; onChange: (v: T) => void; size?: "sm" | "md" }) {
   return (
-    <div className="inline-flex rounded-lg border border-line bg-slate-100 p-0.5" role="tablist">
+    <div className="inline-flex overflow-hidden rounded-[4px] border border-line-2 bg-white" role="tablist">
       {options.map((o) => (
         <button
           key={o.value}
           role="tab"
           aria-selected={value === o.value}
           onClick={() => onChange(o.value)}
-          className={`whitespace-nowrap rounded-md font-medium transition ${size === "sm" ? "px-2.5 py-1 text-[12px]" : "px-3.5 py-1.5 text-[13px]"} ${value === o.value ? "bg-white font-bold text-ink shadow-sm" : "text-ink-muted hover:text-ink"}`}
+          className={`whitespace-nowrap border-e border-line last:border-e-0 font-medium transition ${size === "sm" ? "px-2.5 py-1 text-[12px]" : "px-3.5 py-1.5 text-[13px]"} ${value === o.value ? "bg-navy font-bold text-white" : "text-ink-2 hover:bg-slate-100"}`}
         >
           {o.label}
         </button>
@@ -361,23 +362,24 @@ export function Star({ color = "#C9A227", size = 14 }: { color?: string; size?: 
   );
 }
 
-export function Panel({ title, sub, action, children, className = "", info, accent, tone = "white", id }: { title?: ReactNode; sub?: ReactNode; action?: ReactNode; children: ReactNode; className?: string; info?: ReactNode; accent?: string; tone?: keyof typeof TONES; id?: string }) {
+/** A card: serif title, the marketing term underneath in small grey, then the content. */
+export function Panel({ title, term, sub, action, children, className = "", info, tone = "white", id }: { title?: ReactNode; term?: ReactNode; sub?: ReactNode; action?: ReactNode; children: ReactNode; className?: string; info?: ReactNode; accent?: string; tone?: keyof typeof TONES; id?: string }) {
   const dark = tone === "midnight";
   const { ref, inView } = useInView<HTMLElement>();
   return (
-    <section ref={ref} id={id} data-in={inView} {...spotlight} className={`reveal relative min-w-0 rounded-2xl p-5 shadow-card transition-shadow duration-300 hover:shadow-pop ${TONES[tone]} ${className}`}>
+    <section ref={ref} id={id} data-in={inView} {...spotlight} className={`reveal spot relative min-w-0 rounded-[4px] p-5 shadow-card transition-[box-shadow,border-color] duration-300 hover:border-line-2 hover:shadow-pop sm:p-6 ${TONES[tone]} ${className}`}>
       <InViewCtx.Provider value={inView}>
       {(title || action) && (
         <header className="mb-4 flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
             {title && (
-              <h2 className={`flex items-center gap-2 text-[16px] font-bold leading-tight ${dark ? "text-white" : "text-ink"}`}>
-                <span className="h-4 w-1 rounded-full" style={{ background: accent ?? "#C9A227" }} aria-hidden="true" />
+              <h2 className={`flex items-center gap-2 font-display text-[19px] leading-tight ${dark ? "text-white" : "text-ink"}`}>
                 {title}
                 {info}
               </h2>
             )}
-            {sub && <p className={`mt-1 text-[13px] ${dark ? "text-white/60" : "text-ink-muted"}`}>{sub}</p>}
+            {term && <p className={`mt-1 text-[11.5px] ${dark ? "text-white/55" : "text-ink-soft"}`}>{term}</p>}
+            {sub && <p className={`mt-1 text-[12.5px] ${dark ? "text-white/60" : "text-ink-muted"}`}>{sub}</p>}
           </div>
           {action}
         </header>
@@ -389,16 +391,8 @@ export function Panel({ title, sub, action, children, className = "", info, acce
 }
 
 /** One plain-language takeaway at the top of a chart. */
-export function Insight({ children, tone = "gold", dark = false }: { children: ReactNode; tone?: "gold" | "good" | "bad"; dark?: boolean }) {
-  const c = { gold: "#C9A227", good: "#16A34A", bad: "#DB2B39" }[tone];
-  return (
-    <p className={`mb-4 flex items-start gap-2 rounded-lg px-3 py-2 text-[13.5px] font-medium leading-relaxed ${dark ? "bg-white/[0.07] text-white/90" : "text-ink-2"}`} style={dark ? undefined : { background: `${c}12` }}>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0" aria-hidden="true">
-        <path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.8V16h5v-.3c0-.7.4-1.4 1-1.8A6 6 0 0 0 12 3z" />
-      </svg>
-      <span>{children}</span>
-    </p>
-  );
+export function Insight({ children, dark = false }: { children: ReactNode; tone?: "gold" | "good" | "bad"; dark?: boolean }) {
+  return <p className={`mb-4 text-[14px] leading-relaxed ${dark ? "text-white/85" : "text-ink-2"}`}>{children}</p>;
 }
 
 /** 100 dots: how many out of every 100 answers. */
@@ -412,7 +406,7 @@ export function Waffle({ value, color = "#C9A227", empty = "rgba(255,255,255,0.1
         return (
           <span
             key={i}
-            className="rounded-full transition-all duration-300"
+            className="rounded-[2px] transition-all duration-300"
             style={{
               width: size,
               height: size,
@@ -427,12 +421,13 @@ export function Waffle({ value, color = "#C9A227", empty = "rgba(255,255,255,0.1
   );
 }
 
-/** A bank's colour disc with its short code. */
+/** A bank's colour tag with its short code (never colour alone). */
 export function BankBadge({ color, short, size = 28, brand = false }: { color: string; short: string; size?: number; brand?: boolean }) {
+  const h = Math.max(16, Math.round(size * 0.68));
   return (
     <span
-      className={`inline-flex shrink-0 items-center justify-center rounded-full font-bold leading-none text-white transition-transform duration-200 group-hover:scale-110 ${brand ? "ring-2 ring-gold-100" : ""}`}
-      style={{ width: size, height: size, background: color, fontSize: Math.max(8, size * (short.length > 3 ? 0.27 : short.length > 2 ? 0.32 : 0.4)) }}
+      className={`inline-flex shrink-0 items-center justify-center rounded-[3px] font-bold leading-none transition-transform duration-200 group-hover:scale-105 ${brand ? "ring-1 ring-gold-600/40" : ""}`}
+      style={{ height: h, minWidth: h + 14, padding: "0 6px", background: color, color: brand ? "#1a1608" : "#fff", fontSize: Math.max(9, Math.min(12, h * 0.5)), letterSpacing: ".02em" }}
       aria-hidden="true"
     >
       {short}

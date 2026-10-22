@@ -10,13 +10,25 @@
 
 html,
 body {
-  background: #f5f6f8;
-  color: #101828;
+  background: #f7f6f2;
+  color: #0f1b2d;
 }
 
 body {
-  font-family: "Tajawal", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+}
+
+/* serif for headings and headline numbers (Latin: Source Serif 4, Arabic: Noto Naskh Arabic) */
+.font-display {
+  font-family: "Source Serif 4", "Noto Naskh Arabic", Georgia, serif;
+  font-weight: 600;
+  font-variant-numeric: lining-nums;
+}
+
+::selection {
+  background: #f3eedd;
 }
 
 h1,
@@ -90,7 +102,7 @@ h3 {
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  background: radial-gradient(320px circle at var(--mx) var(--my), rgba(11, 58, 91, 0.04), transparent 50%);
+  background: radial-gradient(320px circle at var(--mx) var(--my), rgba(201, 162, 39, 0.06), transparent 55%);
   opacity: 0;
   transition: opacity 0.3s;
 }
@@ -152,12 +164,48 @@ h3 {
 }
 
 :focus-visible {
-  outline: 2px solid #0b6298;
+  outline: 2px solid #0b3a5b;
   outline-offset: 2px;
 }
 
 select option {
-  color: #13263a;
+  color: #0f1b2d;
+}
+
+/* inputs share one look */
+.field {
+  height: 44px;
+  width: 100%;
+  border: 1px solid #dad6cb;
+  border-radius: 4px;
+  background: #fbfaf7;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 14.5px;
+  color: #0f1b2d;
+  outline: none;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    box-shadow 0.15s;
+}
+.field:focus {
+  border-color: #0b3a5b;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(11, 58, 91, 0.08);
+}
+
+/* lift on hover for clickable cards */
+.lift {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+.lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px -16px rgba(15, 27, 45, 0.28);
+  border-color: #dad6cb;
 }
 
 html {

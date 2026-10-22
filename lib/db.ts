@@ -106,6 +106,15 @@ const SCHEMA = [
     lang TEXT NOT NULL,
     body TEXT NOT NULL
   )`,
+  `CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'marketing',
+    pass_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    last_login TEXT
+  )`,
   `CREATE TABLE IF NOT EXISTS site_checks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     url TEXT NOT NULL,
@@ -147,6 +156,13 @@ async function init() {
       await seedDemoHistory(c);
       await c.execute("UPDATE answers SET simulated = 1 WHERE run_id IN (SELECT id FROM runs WHERE mode = 'demo')");
     }
+  }
+  // the two starting accounts (system admin, digital marketing); added once, never overwritten
+  const { seedAccounts, hashPassword } = await import("./users");
+  for (const u of seedAccounts()) {
+    const ex = await c.execute({ sql: "SELECT id FROM users WHERE email = ?", args: [u.email] });
+    if (ex.rows.length) continue;
+    await c.execute({ sql: "INSERT INTO users (email, name, role, pass_hash) VALUES (?, ?, ?, ?)", args: [u.email, u.name, u.role, await hashPassword(u.password)] });
   }
   // improvement plan: one row per action, keeps the team's status updates
   const { ACTIONS, initialStatus } = await import("./plan");

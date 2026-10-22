@@ -1,6 +1,7 @@
 import { getT } from "@/lib/i18n";
 import { CATEGORY_COLOR } from "@/lib/actions";
-import { PageHeader } from "@/components/ui";
+import { UI } from "@/lib/ui-text";
+import { CATEGORY_TINT } from "@/lib/plan";
 import { Icon, type IconName } from "@/components/Icon";
 
 export default async function HowPage() {
@@ -25,48 +26,47 @@ export default async function HowPage() {
 
   return (
     <>
-      <PageHeader title={t.how.title} lead={t.how.lead} />
-
-      {/* flow */}
-      <div className="mb-8 rounded-3xl bg-navy p-6 shadow-card sm:p-8">
-        <ol className="grid gap-3 md:grid-cols-5">
+      {/* hero with the weekly flow */}
+      <section className="rise mb-6 mt-3 rounded-[4px] bg-navy px-6 py-8 text-white sm:px-10">
+        <p className="text-[12.5px] font-bold text-gold-400">{UI[lang].kick.how}</p>
+        <h1 className="mt-2 font-display text-[32px] leading-tight sm:text-[40px]">{t.how.title}</h1>
+        <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-white/75">{t.how.lead}</p>
+        <ol className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
           {t.how.flow.map((f, i) => (
-            <li key={f} className="relative flex flex-col items-center gap-3 rounded-2xl bg-white/[0.07] p-5 text-center ring-1 ring-white/10">
-              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-gold text-navy">
-                <Icon name={icons[i]} size={22} />
-              </span>
-              <span className="num text-xs font-semibold text-gold-400">{i + 1}</span>
-              <span className="text-[15px] font-semibold text-white">{f}</span>
-              {i < t.how.flow.length - 1 && (
-                <span aria-hidden="true" className="absolute -end-3 top-1/2 z-10 hidden -translate-y-1/2 text-xl text-gold-400 md:block">
-                  {ar ? "←" : "→"}
+            <li key={f} className="group flex flex-col gap-3 border-t-2 border-gold pt-4 transition hover:-translate-y-0.5">
+              <span className="flex items-center justify-between">
+                <span className="font-display text-[28px] leading-none text-white/45 transition group-hover:text-gold-400">{String(i + 1).padStart(2, "0")}</span>
+                <span className="text-gold-400">
+                  <Icon name={icons[i]} size={22} />
                 </span>
-              )}
+              </span>
+              <span className="text-[16px] font-bold">{f}</span>
             </li>
           ))}
         </ol>
-      </div>
+      </section>
 
       {/* Q&A */}
-      <div className="mb-8 grid gap-4 lg:grid-cols-2">
+      <div className="mb-6 grid gap-4 lg:grid-cols-2">
         {qa.map((x, i) => (
-          <section key={i} className={`rounded-2xl border border-line bg-white p-6 shadow-card ${i === 0 ? "lg:col-span-2" : ""}`}>
-            <h2 className="font-display mb-2 text-[19px] font-bold text-navy">{x.q}</h2>
-            <p className="text-[15px] leading-relaxed text-ink-muted">{x.a}</p>
+          <section key={i} className={`lift rounded-[4px] border border-line bg-white p-6 ${i === 0 ? "lg:col-span-2" : ""}`}>
+            <h2 className="mb-2 font-display text-[20px] text-ink">{x.q}</h2>
+            <p className="text-[15px] leading-relaxed text-ink-2">{x.a}</p>
           </section>
         ))}
       </div>
 
       {/* fix types */}
-      <section className="mb-8">
-        <h2 className="font-display mb-4 text-[22px] font-bold text-navy">{t.plan.byCategory}</h2>
+      <section className="mb-6">
+        <h2 className="mb-4 font-display text-[24px] text-ink">{t.plan.byCategory}</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {(["content", "technical", "partners", "accuracy"] as const).map((c) => (
-            <div key={c} className="overflow-hidden rounded-2xl border border-line bg-white shadow-card">
-              <div className="h-1.5" style={{ background: CATEGORY_COLOR[c] }} />
+            <div key={c} className="lift overflow-hidden rounded-[4px] border border-line bg-white">
               <div className="flex flex-col gap-2 p-5">
-                <span className="font-display text-[17px] font-bold" style={{ color: CATEGORY_COLOR[c] }}>{t.cats[c]}</span>
-                <p className="text-[14px] leading-relaxed text-ink-muted">{t.catsHint[c]}</p>
+                <span className="self-start rounded-[3px] px-2 py-0.5 text-[13px] font-bold" style={{ background: CATEGORY_TINT[c], color: CATEGORY_COLOR[c] }}>
+                  {t.cats[c]}
+                </span>
+                <p className="text-[14px] leading-relaxed text-ink-2">{t.catsHint[c]}</p>
               </div>
             </div>
           ))}
@@ -75,12 +75,12 @@ export default async function HowPage() {
 
       {/* glossary */}
       <section>
-        <h2 className="font-display mb-4 text-[22px] font-bold text-navy">{t.how.glossary}</h2>
-        <dl className="grid gap-3 md:grid-cols-2">
+        <h2 className="mb-4 font-display text-[24px] text-ink">{t.how.glossary}</h2>
+        <dl className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {glossary.map((g) => (
-            <div key={g.k} className="rise rounded-2xl border border-line bg-white p-5 shadow-card">
-              <dt className="font-semibold text-navy">{g.k}</dt>
-              <dd className="mt-1 text-[14px] leading-relaxed text-ink-muted">{g.v}</dd>
+            <div key={g.k} className="rise lift rounded-[4px] border border-line bg-white p-5">
+              <dt className="text-[16px] font-bold text-ink">{g.k}</dt>
+              <dd className="mt-1 text-[14px] leading-relaxed text-ink-2">{g.v}</dd>
             </div>
           ))}
         </dl>

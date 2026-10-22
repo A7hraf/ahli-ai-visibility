@@ -9,17 +9,17 @@ import { BankBadge, BarList, Delta, Drawer } from "./core";
 import TrendLines from "./TrendLines";
 
 export const GOLD = "#C9A227";
-export const NAVY = "#0E2235";
-export const GREY = "#98A2B3";
+export const NAVY = "#0B3A5B";
+export const GREY = "#9B9797";
 export const KIND_COLOR: Record<string, string> = {
   own: GOLD,
-  comparison: "#1F86E0",
-  news: "#0F9F94",
-  community: "#7A4FE0",
-  competitor: "#98A2B3",
-  lookalike: "#DB2B39",
-  government: "#E0559A",
-  other: "#D0D5DD",
+  comparison: "#0B3A5B",
+  news: "#3F6E8F",
+  community: "#7FA3BD",
+  competitor: "#9B9797",
+  lookalike: "#D6006C",
+  government: "#C9D6E0",
+  other: "#E3E0DC",
 };
 
 export type Sel =

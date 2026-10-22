@@ -60,7 +60,7 @@ export default function BumpChart({ weeks, series, onPick, fmtDate, valueLabel }
         {Array.from({ length: n }).map((_, i) => (
           <g key={i}>
             <rect x={P.l - 14} y={y(i + 1) - rowH / 2} width={W - P.l - P.r + 28} height={rowH} fill={i % 2 ? "transparent" : "#F9FAFB"} rx={10} />
-            <text x={18} y={y(i + 1) + 5} fontSize="14" fontWeight="700" fill="#98A2B3" fontFamily="Tajawal, sans-serif">
+            <text x={18} y={y(i + 1) + 5} fontSize="14" fontWeight="700" fill="#98A2B3" fontFamily="IBM Plex Sans Arabic, sans-serif">
               #{i + 1}
             </text>
           </g>
@@ -91,7 +91,7 @@ export default function BumpChart({ weeks, series, onPick, fmtDate, valueLabel }
                     {i === 0 || i === last ? (
                       <>
                         <circle cx={x(i)} cy={y(r)} r={s.brand ? 17 : 15} fill={s.color} stroke="#fff" strokeWidth={3} />
-                        <text x={x(i)} y={y(r) + 3.5} fontSize={s.short.length > 3 ? 8 : s.short.length > 2 ? 9.5 : 11} fontWeight="700" textAnchor="middle" fill="#fff" fontFamily="Tajawal, sans-serif">
+                        <text x={x(i)} y={y(r) + 3.5} fontSize={s.short.length > 3 ? 8 : s.short.length > 2 ? 9.5 : 11} fontWeight="700" textAnchor="middle" fill="#fff" fontFamily="IBM Plex Sans Arabic, sans-serif">
                           {s.short}
                         </text>
                       </>

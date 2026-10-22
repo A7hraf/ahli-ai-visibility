@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { run } from "@/lib/db";
-import { requireAdmin } from "@/lib/auth";
+import { requireMember } from "@/lib/auth";
 
 export async function PATCH(req: Request) {
-  const denied = requireAdmin(req);
+  const denied = await requireMember(req);
   if (denied) return denied;
   const b = await req.json().catch(() => ({}));
   const id = Number(b.id);
